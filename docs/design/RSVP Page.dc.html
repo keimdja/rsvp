@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&family=DM+Serif+Display&family=DM+Sans:wght@400;500;700&family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@400;500;600&family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@400;600;700&family=Space+Grotesk:wght@500;700&family=Work+Sans:wght@400;500;600&family=Bricolage+Grotesque:wght@600;800&family=Figtree:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"><style>@keyframes rsvpspin{to{transform:rotate(360deg)}}</style></helmet>
+<div style="{{ rootStyle }}">
+  <sc-if value="{{ isImage }}">
+    <div style="position:absolute;inset:-24px;background:var(--rsvp-bg-image);background-size:cover;background-position:center;filter:blur(var(--rsvp-blur))"></div>
+    <div style="position:absolute;inset:0;background:var(--rsvp-overlay)"></div>
+    <sc-if value="{{ showBgLabel }}"><div style="position:absolute;right:16px;bottom:48px;font:500 10px/1.4 'IBM Plex Mono',monospace;letter-spacing:.04em;color:var(--rsvp-muted);opacity:.7">background photo · overlay 55% · blur 3px</div></sc-if>
+  </sc-if>
+  <sc-if value="{{ showChrome }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;top:0;left:0;right:0;height:47px;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:4px 30px 0 34px;font:600 15px/1 -apple-system,system-ui,sans-serif;color:var(--rsvp-status,var(--rsvp-text));pointer-events:none">
+      <span>9:41</span>
+      <span style="position:absolute;left:50%;top:11px;width:122px;height:34px;margin-left:-61px;border-radius:20px;background:#000"></span>
+      <span style="display:flex;gap:5px;align-items:center"><span style="width:17px;height:10px;border-radius:2px;background:currentColor;opacity:.9"></span><span style="width:24px;height:11px;border-radius:3px;border:1.5px solid currentColor;opacity:.9"></span></span>
+    </div>
+  </sc-if>
+  <div style="{{ shellStyle }}">
+    <sc-if value="{{ isLoading }}">
+      <div style="display:flex;flex-direction:column;gap:16px" aria-busy="true" aria-label="Loading invitation">
+        <div style="{{ skelHero }}"></div>
+        <div style="{{ skelCard }}">
+          <div style="height:34px;width:72%;border-radius:8px;background:var(--rsvp-skel)"></div>
+          <div style="display:flex;flex-direction:column;gap:10px"><div style="height:14px;width:58%;border-radius:6px;background:var(--rsvp-skel)"></div><div style="height:14px;width:40%;border-radius:6px;background:var(--rsvp-skel)"></div></div>
+          <div style="display:flex;flex-direction:column;gap:10px"><div style="height:14px;width:66%;border-radius:6px;background:var(--rsvp-skel)"></div><div style="height:14px;width:50%;border-radius:6px;background:var(--rsvp-skel)"></div></div>
+          <div style="height:52px;border-radius:12px;background:var(--rsvp-skel)"></div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"><div style="height:64px;border-radius:12px;background:var(--rsvp-skel)"></div><div style="height:64px;border-radius:12px;background:var(--rsvp-skel)"></div><div style="height:64px;border-radius:12px;background:var(--rsvp-skel)"></div></div>
+          <div style="height:56px;border-radius:12px;background:var(--rsvp-skel)"></div>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ isUnavailable }}">
+      <div style="{{ unavailStyle }}">
+        <div style="width:48px;height:48px;border-radius:50%;border:2px solid var(--rsvp-border);display:grid;place-items:center;font:600 22px/1 var(--rsvp-font-body);color:var(--rsvp-muted)">?</div>
+        <h1 style="margin:0;font-family:var(--rsvp-font-heading);font-weight:var(--rsvp-heading-weight);font-size:calc(28px * var(--rsvp-scale));line-height:1.15;text-wrap:balance">This RSVP page isn't available</h1>
+        <p style="margin:0;color:var(--rsvp-muted);text-wrap:pretty">The link may be mistyped, or the host has closed replies for this event. If you think this is a mistake, contact the person who invited you.</p>
+      </div>
+    </sc-if>
+    <sc-if value="{{ isEvent }}" hint-placeholder-val="{{ true }}">
+      <div style="{{ heroStyle }}">
+        <sc-if value="{{ hasHero }}"><img src="{{ ev.heroUrl }}" alt="{{ ev.heroAlt }}" style="{{ heroImgStyle }}"></sc-if><sc-if value="{{ noHero }}" hint-placeholder-val="{{ true }}"><div style="text-align:center;font:500 11px/1.6 'IBM Plex Mono',monospace;letter-spacing:.04em;color:var(--rsvp-muted);padding:16px">invitation image<br>Canva export · text baked in</div></sc-if>
+      </div>
+      <main style="{{ cardStyle }}">
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <h1 style="{{ titleStyle }}">{{ ev.title }}</h1>
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="display:grid;grid-template-columns:64px minmax(0,1fr);gap:12px;align-items:baseline">
+              <span style="font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--rsvp-muted)">When</span>
+              <div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:700">{{ ev.date }}</span><span style="color:var(--rsvp-muted)">{{ ev.time }}</span></div>
+            </div>
+            <div style="display:grid;grid-template-columns:64px minmax(0,1fr);gap:12px;align-items:baseline">
+              <span style="font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--rsvp-muted)">Where</span>
+              <div style="display:flex;flex-direction:column;gap:2px;align-items:flex-start">
+                <span style="font-weight:700">{{ ev.venue }}</span>
+                <span style="color:var(--rsvp-muted)">{{ ev.address }}</span>
+                <a href="https://maps.google.com/?q={{ ev.address }}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;min-height:44px;color:var(--rsvp-text);font-weight:700;text-decoration:underline;text-decoration-color:var(--rsvp-accent);text-decoration-thickness:2px;text-underline-offset:4px" style-focus="outline:3px solid var(--rsvp-accent);outline-offset:2px;border-radius:4px">Open in Maps ↗</a>
+              </div>
+            </div>
+          </div>
+          <sc-if value="{{ ev.message }}" hint-placeholder-val="{{ true }}"><p style="margin:0;text-wrap:pretty">{{ ev.message }}</p></sc-if>
+        </div>
+        <div style="height:2px;width:56px;background:var(--rsvp-accent);border-radius:2px"></div>
+        <sc-if value="{{ showForm }}" hint-placeholder-val="{{ true }}">
+          <form style="display:flex;flex-direction:column;gap:26px" onSubmit="{{ onSubmit }}" noValidate="{{ true }}">
+            <sc-if value="{{ errorCount }}">
+              <div role="alert" style="display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:{{ fieldR }};border:2px solid var(--rsvp-error);color:var(--rsvp-text);font-weight:600"><span style="color:var(--rsvp-error);font-weight:800">!</span><span>{{ errorSummary }}</span></div>
+            </sc-if>
+            <label style="display:flex;flex-direction:column;gap:8px">
+              <span style="font-weight:700">Your name</span>
+              <input style="{{ nameInputStyle }}" value="{{ v.name }}" onChange="{{ onName }}" placeholder="First and last name" autoComplete="name" disabled="{{ submitting }}" aria-invalid="{{ v.nameErr }}">
+              <sc-if value="{{ v.nameErr }}"><span style="color:var(--rsvp-error);font-weight:700;font-size:15px">Add your name so the host knows who's replying.</span></sc-if>
+            </label>
+            <fieldset style="border:0;padding:0;margin:0;min-width:0;display:flex;flex-direction:column;gap:12px">
+              <legend style="padding:0;margin:0 0 12px;font-family:var(--rsvp-font-heading);font-weight:var(--rsvp-heading-weight);font-size:calc(24px * var(--rsvp-scale));line-height:1.15">{{ ev.question }}</legend>
+              <div role="radiogroup" aria-label="{{ ev.question }}" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+                <sc-for list="{{ choices }}" as="c" hint-placeholder-count="3">
+                  <button type="button" role="radio" aria-checked="{{ c.checked }}" onClick="{{ c.onClick }}" disabled="{{ submitting }}" style="{{ c.style }}" style-focus="outline:3px solid var(--rsvp-accent);outline-offset:3px">
+                    <span style="font-size:18px;line-height:1">{{ c.glyph }}</span><span>{{ c.label }}</span>
+                  </button>
+                </sc-for>
+              </div>
+              <sc-if value="{{ v.choiceErr }}"><span style="color:var(--rsvp-error);font-weight:700;font-size:15px">Choose Yes, Maybe or No.</span></sc-if>
+            </fieldset>
+            <sc-if value="{{ notesOn }}" hint-placeholder-val="{{ true }}">
+              <label style="display:flex;flex-direction:column;gap:8px">
+                <span style="display:flex;gap:8px;align-items:baseline;flex-wrap:wrap"><span style="font-weight:700">{{ ev.notesLabel }}</span><span style="font-size:13px;font-weight:600;color:var(--rsvp-muted)">{{ notesTag }}</span></span>
+                <textarea style="{{ notesStyle }}" value="{{ v.notes }}" onChange="{{ onNotes }}" rows="3" disabled="{{ submitting }}" placeholder="{{ ev.notesHint }}" aria-invalid="{{ v.notesErr }}"></textarea>
+                <sc-if value="{{ v.notesErr }}"><span style="color:var(--rsvp-error);font-weight:700;font-size:15px">This one's required. Write "none" if it doesn't apply.</span></sc-if>
+              </label>
+            </sc-if>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <button type="submit" style="{{ submitStyle }}" disabled="{{ submitting }}" aria-busy="{{ submitting }}" style-focus="outline:3px solid var(--rsvp-accent);outline-offset:3px">
+                <sc-if value="{{ submitting }}">{{ spinner }}<span>Sending…</span></sc-if>
+                <sc-if value="{{ notSubmitting }}" hint-placeholder-val="{{ true }}"><span>{{ ev.button }}</span></sc-if>
+              </button>
+              <span style="text-align:center;font-size:14px;color:var(--rsvp-muted)">Only the host sees your reply.</span>
+            </div>
+          </form>
+        </sc-if>
+        <sc-if value="{{ isSuccess }}">
+          <div role="status" style="display:flex;flex-direction:column;gap:22px">
+            <div style="width:56px;height:56px;border-radius:50%;background:var(--rsvp-primary);color:var(--rsvp-on-primary);display:grid;place-items:center;font-size:26px;font-weight:800">✓</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <h2 style="margin:0;font-family:var(--rsvp-font-heading);font-weight:var(--rsvp-heading-weight);font-size:calc(30px * var(--rsvp-scale));line-height:1.1;text-wrap:balance">{{ ev.confirmation }}</h2>
+              <p style="margin:0;color:var(--rsvp-muted)">Reply saved for <strong style="color:var(--rsvp-text)">{{ shownName }}</strong>: <strong style="color:var(--rsvp-text)">{{ choiceLabel }}</strong></p>
+            </div>
+            <sc-if value="{{ showCalendar }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;flex-direction:column;gap:12px;padding-top:20px;border-top:2px solid var(--rsvp-accent)">
+                <span style="font-weight:700">Add to calendar</span>
+                <div style="display:grid;grid-template-columns:1fr;gap:8px">
+                  <a href="{{ cal.google }}" target="_blank" rel="noopener" style="{{ secondaryStyle }}" style-focus="outline:3px solid var(--rsvp-accent);outline-offset:2px">Google Calendar</a>
+                  <a href="{{ cal.ics }}" download="{{ cal.icsName }}" style="{{ secondaryStyle }}" style-focus="outline:3px solid var(--rsvp-accent);outline-offset:2px">Apple Calendar (.ics)</a>
+                  <a href="{{ cal.outlook }}" target="_blank" rel="noopener" style="{{ secondaryStyle }}" style-focus="outline:3px solid var(--rsvp-accent);outline-offset:2px">Outlook</a>
+                </div>
+              </div>
+            </sc-if>
+            <button type="button" onClick="{{ onEdit }}" style="align-self:flex-start;min-height:44px;padding:0;background:none;border:0;color:var(--rsvp-text);font:inherit;font-weight:700;text-decoration:underline;text-decoration-color:var(--rsvp-accent);text-decoration-thickness:2px;text-underline-offset:4px;cursor:pointer">Change my reply</button>
+          </div>
+        </sc-if>
+      </main>
+    </sc-if>
+  </div>
+  <sc-if value="{{ showChrome }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;bottom:8px;left:50%;width:134px;height:5px;margin-left:-67px;border-radius:3px;background:var(--rsvp-status,var(--rsvp-text));opacity:.8;z-index:10"></div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:375,&quot;height&quot;:1500},&quot;event&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;birthday&quot;,&quot;christmas&quot;,&quot;wedding&quot;],&quot;default&quot;:&quot;birthday&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;state&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;loading&quot;,&quot;idle&quot;,&quot;selected&quot;,&quot;errors&quot;,&quot;submitting&quot;,&quot;success&quot;,&quot;unavailable&quot;],&quot;default&quot;:&quot;idle&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;device&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;mobile&quot;,&quot;desktop&quot;],&quot;default&quot;:&quot;mobile&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;layout&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;card&quot;,&quot;poster&quot;],&quot;default&quot;:&quot;card&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;background&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;solid&quot;,&quot;gradient&quot;,&quot;image&quot;],&quot;default&quot;:&quot;gradient&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;card&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;solid&quot;,&quot;glass&quot;,&quot;outline&quot;,&quot;none&quot;],&quot;default&quot;:&quot;solid&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;button&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;solid&quot;,&quot;outline&quot;,&quot;pill&quot;],&quot;default&quot;:&quot;pill&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;notes&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;off&quot;,&quot;optional&quot;,&quot;required&quot;],&quot;default&quot;:&quot;optional&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;width&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:375,&quot;tsType&quot;:&quot;number&quot;}}">
+const EVENTS = {
+  birthday: { title: "Maya turns 6!", date: "Saturday 14 November 2026", time: "2:00 – 5:00 pm", venue: "Jumpin' Jungle Play Centre", address: "48 Harbour Road, Brighton BN2 1TR", message: "Bouncy castle, pizza and a very big cake. Grown-ups get coffee. Socks on, please!", question: "Will you be joining us?", button: "Send my RSVP", confirmation: "Thank you! Can't wait to see you there", notesLabel: "Who's coming?", notesHint: "e.g. Priya + her dad, Sam. Nut allergy.", heroAlt: "Maya's birthday invitation with balloons" },
+  christmas: { title: "The Studio Christmas Party", date: "Friday 11 December 2026", time: "7:00 pm – midnight", venue: "The Larder House", address: "12 Wharf Street, Leeds LS2 7EQ", message: "Mulled wine on arrival, dinner at eight, dancing till late. Festive jumpers strongly encouraged.", question: "Can you make it?", button: "Send reply", confirmation: "Lovely. See you on the 11th!", notesLabel: "Anything we should know?", notesHint: "Dietary needs, plus-one…", heroAlt: "Christmas party invitation" },
+  wedding: { title: "Eleanor & James", date: "Saturday 5 June 2027", time: "2:30 – 11:00 pm", venue: "Holloway Hall", address: "Lower Street, Chipping Norton OX7 5AA", message: "We would be delighted if you could join us. Ceremony at half past two, followed by dinner and dancing.", question: "Will you attend?", button: "Reply", confirmation: "Thank you. We look forward to celebrating with you.", notesLabel: "Dietary requirements", notesHint: "Optional", heroAlt: "Eleanor and James wedding invitation" }
+};
+const LABELS = { yes: "Yes", maybe: "Maybe", no: "No" };
+class Component extends DCLogic {
+  state = {};
+  componentDidUpdate(prev) {
+    if (prev.state !== this.props.state || prev.event !== this.props.event || prev.reply !== this.props.reply) this.setState({ st: undefined, name: undefined, notes: undefined, choice: undefined, nameErr: undefined, notesErr: undefined, choiceErr: undefined, touched: undefined });
+  }
+  componentDidMount() { this.onResize = () => this.setState({ vw: window.innerWidth }); window.addEventListener("resize", this.onResize); this.onResize(); }
+  componentWillUnmount() { clearTimeout(this.t); window.removeEventListener("resize", this.onResize); }
+  preset() {
+    const s = this.props.state || "idle";
+    const req = (this.props.notes || "optional") === "required";
+    const p = { st: s, name: "", notes: "", choice: null, nameErr: false, notesErr: false, choiceErr: false };
+    if (s === "selected") Object.assign(p, { st: "idle", name: "Priya Shah", choice: "yes" });
+    if (s === "errors") Object.assign(p, { st: "idle", choice: "yes", nameErr: true, notesErr: req });
+    if (s === "submitting") Object.assign(p, { name: "Priya Shah", choice: "yes", notes: "Priya + her dad, Sam" });
+    if (s === "success") Object.assign(p, { name: "Priya Shah", choice: "yes" });
+    if (this.props.reply) Object.assign(p, { name: this.props.reply.name || "", choice: this.props.reply.choice || null, notes: this.props.reply.notes || "" });
+    return p;
+  }
+  val() {
+    const o = { ...this.preset() };
+    for (const k in this.state) if (this.state[k] !== undefined && k !== "vw") o[k] = this.state[k];
+    return o;
+  }
+  renderVals() {
+    const P = this.props, v = this.val();
+    const ev = { ...(EVENTS[P.event] || EVENTS.birthday) };
+    ["title", "message", "question", "confirmation", "notesLabel", "venue", "address"].forEach((k) => { if (P[k] != null) ev[k] = P[k]; });
+    if (P.buttonText != null) ev.button = P.buttonText;
+    if (P.data) Object.assign(ev, P.data);
+    const fluid = !!P.fluid;
+    const mobile = fluid ? (this.state.vw || 400) < 720 : P.device !== "desktop";
+    const poster = P.layout === "poster";
+    const card = P.card || "solid", btn = P.button || "solid";
+    const notesMode = P.notes || "optional";
+    const R = "var(--rsvp-radius)";
+    const fieldR = btn === "pill" ? "18px" : "calc(var(--rsvp-radius) * 0.55)";
+    const st = v.st;
+    const width = fluid ? "100%" : (P.width || (mobile ? 375 : 1280));
+    const rootStyle = { position: "relative", overflow: "hidden", width, minHeight: fluid ? "100dvh" : mobile ? 812 : 900, background: "var(--rsvp-background)", color: "var(--rsvp-text)", fontFamily: "var(--rsvp-font-body)", fontSize: "calc(17px * var(--rsvp-scale))", lineHeight: 1.5, boxSizing: "border-box", isolation: "isolate" };
+    const centered = st === "loading" || st === "unavailable";
+    const shellStyle = { position: "relative", zIndex: 1, boxSizing: "border-box", display: "flex", flexDirection: "column" };
+    const chrome = !fluid && P.chrome !== false && mobile;
+    if (mobile) Object.assign(shellStyle, { padding: poster && !centered ? "0 0 calc(40px + env(safe-area-inset-bottom))" : (chrome ? "59px" : "max(16px, env(safe-area-inset-top))") + " max(16px, env(safe-area-inset-right)) calc(40px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left))", gap: poster ? 0 : 16 });
+    if (mobile && fluid) shellStyle.maxWidth = 600, shellStyle.margin = "0 auto";
+    else Object.assign(shellStyle, poster && !centered ? { padding: "0 0 120px" } : { width: 560, margin: "0 auto", padding: "64px 0 120px", gap: 20 });
+    const heroStyle = { display: "grid", placeItems: "center", boxSizing: "border-box", overflow: "hidden", background: "repeating-linear-gradient(135deg, color-mix(in oklab, var(--rsvp-text) 7%, transparent) 0 10px, transparent 10px 20px), var(--rsvp-hero-tint)" };
+    const hasHero = !!ev.heroUrl;
+    if (poster) Object.assign(heroStyle, { width: "100%", height: fluid ? (mobile ? "88svh" : "92vh") : mobile ? 700 : 820 });
+    else Object.assign(heroStyle, { width: "100%", borderRadius: R, boxShadow: "0 12px 40px -16px rgba(0,0,0,.35)" }, hasHero ? {} : { aspectRatio: "4 / 5" });
+    const heroImgStyle = poster ? { width: "100%", height: "100%", objectFit: "cover", display: "block" } : { width: "100%", height: "auto", display: "block" };
+    const cardStyle = { position: "relative", zIndex: 2, boxSizing: "border-box", display: "flex", flexDirection: "column", gap: mobile ? 28 : 36, padding: mobile ? "30px 22px 32px" : "48px 56px 52px", borderRadius: R };
+    const cs = {
+      solid: { background: "var(--rsvp-surface)", boxShadow: "0 1px 2px rgba(0,0,0,.06), 0 16px 48px -16px rgba(0,0,0,.28)" },
+      glass: { background: "var(--rsvp-surface)", backdropFilter: "blur(22px) saturate(1.3)", WebkitBackdropFilter: "blur(22px) saturate(1.3)", border: "1px solid color-mix(in oklab, var(--rsvp-text) 24%, transparent)", boxShadow: "0 24px 64px -24px rgba(0,0,0,.6)" },
+      outline: { background: "var(--rsvp-surface)", border: "1px solid var(--rsvp-text)", outline: "1px solid var(--rsvp-text)", outlineOffset: "-7px" },
+      none: { background: "transparent", paddingLeft: mobile ? 6 : 0, paddingRight: mobile ? 6 : 0 }
+    };
+    Object.assign(cardStyle, cs[card]);
+    const hideHero = !!P.data && !hasHero;
+    if (hideHero) heroStyle.display = "none";
+    if (poster) Object.assign(cardStyle, mobile ? { margin: hideHero ? `${chrome ? 59 : 24}px 12px 0` : "-88px 12px 0" } : { width: 640, margin: hideHero ? "64px auto 0" : "-200px auto 0" });
+    const titleStyle = { margin: 0, fontFamily: "var(--rsvp-font-heading)", fontWeight: "var(--rsvp-heading-weight)", fontSize: `calc(${mobile ? 38 : 54}px * var(--rsvp-scale))`, lineHeight: 1.02, letterSpacing: "-0.01em", textWrap: "balance" };
+    const inputBase = { boxSizing: "border-box", width: "100%", minHeight: 52, padding: "12px 16px", font: "inherit", fontSize: "max(16px, 1em)", color: "var(--rsvp-text)", background: "var(--rsvp-field)", border: "1.5px solid var(--rsvp-border)", borderRadius: fieldR, outline: "none" };
+    const focusRing = { boxShadow: "0 0 0 3px var(--rsvp-accent)" };
+    const errB = { border: "2px solid var(--rsvp-error)" };
+    const nameInputStyle = { ...inputBase, ...(v.nameErr ? errB : {}) };
+    const notesStyle = { ...inputBase, resize: "vertical", minHeight: 96, ...(v.notesErr ? errB : {}), ...(P.state === "selected" && !v.touched ? focusRing : {}) };
+    const set = (o) => this.setState({ ...o, touched: true });
+    const choices = ["yes", "maybe", "no"].map((k) => {
+      const on = v.choice === k;
+      const s = { minHeight: mobile ? 68 : 76, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, padding: "8px 4px", font: "inherit", fontWeight: 800, fontSize: "max(16px, 1em)", cursor: "pointer", borderRadius: btn === "pill" ? 999 : fieldR, border: "1.5px solid var(--rsvp-border)", background: "var(--rsvp-field)", color: "var(--rsvp-text)", transition: "background .15s, border-color .15s" };
+      if (on && btn === "outline") Object.assign(s, { border: "2px solid var(--rsvp-primary)", background: "color-mix(in oklab, var(--rsvp-primary) 10%, var(--rsvp-surface))", boxShadow: "inset 0 0 0 1px var(--rsvp-primary)" });
+      else if (on) Object.assign(s, { border: "1.5px solid var(--rsvp-primary)", background: "var(--rsvp-primary)", color: "var(--rsvp-on-primary)" });
+      if (v.choiceErr) s.border = "2px solid var(--rsvp-error)";
+      return { key: k, label: LABELS[k], glyph: on ? "✓" : { yes: "○", maybe: "○", no: "○" }[k], checked: on, style: s, onClick: () => set({ choice: k, choiceErr: false }) };
+    });
+    const submitStyle = { boxSizing: "border-box", width: "100%", minHeight: 58, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, font: "inherit", fontWeight: 800, fontSize: "max(17px, 1.02em)", letterSpacing: btn === "outline" ? ".04em" : 0, cursor: "pointer", border: "2px solid var(--rsvp-primary)" };
+    if (btn === "outline") Object.assign(submitStyle, { background: "transparent", color: "var(--rsvp-primary)", borderRadius: fieldR, textTransform: "uppercase", fontSize: 15 });
+    else Object.assign(submitStyle, { background: "var(--rsvp-primary)", color: "var(--rsvp-on-primary)", borderRadius: btn === "pill" ? 999 : fieldR });
+    if (st === "submitting") submitStyle.opacity = 0.85;
+    const secondaryStyle = { boxSizing: "border-box", minHeight: 50, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, color: "var(--rsvp-text)", textDecoration: "none", border: "1.5px solid var(--rsvp-border)", background: "var(--rsvp-field)", borderRadius: btn === "pill" ? 999 : fieldR };
+    const errs = [v.nameErr && "your name", v.choiceErr && "a reply", v.notesErr && "the notes field"].filter(Boolean);
+    const skelCard = { display: "flex", flexDirection: "column", gap: 24, padding: "30px 22px", borderRadius: 20, background: "var(--rsvp-surface)" };
+    const unavailStyle = { display: "flex", flexDirection: "column", gap: 16, padding: mobile ? "32px 24px" : "48px", marginTop: mobile ? 120 : 140, borderRadius: R, background: "var(--rsvp-surface)", border: "1px solid var(--rsvp-border)" };
+    return {
+      ev, v, rootStyle, shellStyle, heroStyle, cardStyle, titleStyle, nameInputStyle, notesStyle, choices, submitStyle, secondaryStyle, fieldR, skelCard, unavailStyle,
+      skelHero: { width: "100%", aspectRatio: "4 / 5", borderRadius: 20, background: "var(--rsvp-skel)" },
+      isMobile: mobile, showChrome: chrome, showBgLabel: !fluid && !P.data, isImage: P.background === "image",
+      hasHero, noHero: !hasHero, heroImgStyle, cal: P.cal || { google: "#", outlook: "#", ics: "#", icsName: "event.ics" },
+      isLoading: st === "loading", isUnavailable: st === "unavailable",
+      isEvent: !centered, showForm: st === "idle" || st === "submitting", isSuccess: st === "success",
+      submitting: st === "submitting", notSubmitting: st !== "submitting",
+      notesOn: notesMode !== "off", notesTag: notesMode === "required" ? "Required" : "Optional",
+      errorCount: errs.length, errorSummary: `Please add ${errs.join(" and ")}.`,
+      shownName: v.name || "Priya Shah", choiceLabel: LABELS[v.choice] || "Yes", showCalendar: v.choice !== "no",
+      spinner: React.createElement("span", { style: { width: 18, height: 18, boxSizing: "border-box", border: "2.5px solid currentColor", borderRightColor: "transparent", borderRadius: "50%", display: "inline-block", animation: "rsvpspin .8s linear infinite" } }),
+      onName: (e) => set({ name: e.target.value, nameErr: false }),
+      onNotes: (e) => set({ notes: e.target.value, notesErr: false }),
+      onEdit: () => set({ st: "idle" }),
+      onSubmit: (e) => {
+        e.preventDefault();
+        const nameErr = !v.name.trim(), choiceErr = !v.choice, notesErr = notesMode === "required" && !v.notes.trim();
+        if (nameErr || choiceErr || notesErr) return set({ nameErr, choiceErr, notesErr });
+        set({ st: "submitting" });
+        clearTimeout(this.t);
+        const reply = { name: v.name.trim(), choice: v.choice, notes: notesMode === "off" ? "" : v.notes.trim() };
+        this.t = setTimeout(() => { this.setState({ st: "success" }); if (P.onReply) P.onReply(reply); }, 900);
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

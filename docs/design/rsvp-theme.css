@@ -1,0 +1,128 @@
+/* RSVP public page — theme tokens (Tailwind CSS v4)
+   Each event theme is only a set of values for these properties.
+   Angular: bind the event's theme to the page root, e.g.
+   <main [attr.data-theme]="event.themeId" [style]="event.themeVars"> */
+
+@import "tailwindcss";
+
+@theme inline {
+  --color-rsvp-primary: var(--rsvp-primary);
+  --color-rsvp-on-primary: var(--rsvp-on-primary);
+  --color-rsvp-accent: var(--rsvp-accent);
+  --color-rsvp-text: var(--rsvp-text);
+  --color-rsvp-muted: var(--rsvp-muted);
+  --color-rsvp-surface: var(--rsvp-surface);
+  --color-rsvp-field: var(--rsvp-field);
+  --color-rsvp-border: var(--rsvp-border);
+  --color-rsvp-error: var(--rsvp-error);
+  --radius-rsvp: var(--rsvp-radius);
+  --font-rsvp-heading: var(--rsvp-font-heading);
+  --font-rsvp-body: var(--rsvp-font-body);
+}
+
+/* Required tokens */
+:root {
+  --rsvp-primary: #1c1c1a;          /* buttons, selected choice */
+  --rsvp-accent: #2f6feb;           /* highlights, dividers, focus ring (≥3:1 on surface) */
+  --rsvp-text: #1c1c1a;             /* body + headings (≥4.5:1 on surface) */
+  --rsvp-surface: #ffffff;          /* card fill — may be translucent for glass */
+  --rsvp-background: #f3f2ef;       /* solid color OR any gradient value */
+  --rsvp-radius: 16px;              /* none 0 · sm 6px · lg 16px · xl 24px */
+  --rsvp-font-heading: "DM Serif Display", Georgia, serif;
+  --rsvp-font-body: "DM Sans", system-ui, sans-serif;
+
+  /* Supporting tokens (derived by the theme editor, overridable) */
+  --rsvp-on-primary: #ffffff;       /* label on primary (≥4.5:1) */
+  --rsvp-muted: #5a5a55;            /* secondary text (≥4.5:1 on surface) */
+  --rsvp-field: #ffffff;            /* input + unselected choice fill */
+  --rsvp-border: #8a8a84;           /* input borders (≥3:1 on surface) */
+  --rsvp-error: #b3261e;
+  --rsvp-heading-weight: 400;
+  --rsvp-scale: 1;                  /* sm .94 · md 1 · lg 1.1 */
+  --rsvp-bg-image: none;            /* url(...) when background = image */
+  --rsvp-overlay: rgba(0, 0, 0, 0); /* dark overlay over the image, 0–.8 */
+  --rsvp-blur: 0px;                 /* optional image blur, 0–12px */
+  --rsvp-hero-tint: #e7e5df;        /* hero placeholder while image loads */
+}
+
+/* 1 — Kid's birthday · card · gradient · playful · pill */
+[data-theme="birthday"] {
+  --rsvp-primary: #5b2bd6;
+  --rsvp-on-primary: #ffffff;
+  --rsvp-accent: #e5530c;
+  --rsvp-text: #2b1a40;
+  --rsvp-muted: #5e4f70;
+  --rsvp-surface: #ffffff;
+  --rsvp-field: #f8f5ff;
+  --rsvp-border: #8e7ca8;
+  --rsvp-error: #c0262d;
+  --rsvp-background: linear-gradient(160deg, #ffd66b 0%, #ff9fbf 55%, #c9a7ff 100%);
+  --rsvp-radius: 24px;
+  --rsvp-font-heading: "Baloo 2", system-ui, sans-serif;
+  --rsvp-font-body: "Nunito", system-ui, sans-serif;
+  --rsvp-heading-weight: 800;
+  --rsvp-scale: 1.04;
+  --rsvp-hero-tint: #ffe9a8;
+}
+
+/* 2 — Christmas party · card · image + overlay · glass */
+[data-theme="christmas"] {
+  --rsvp-primary: #c42b32;
+  --rsvp-on-primary: #ffffff;
+  --rsvp-accent: #e9c46a;
+  --rsvp-text: #f8f4ea;
+  --rsvp-muted: #d9d2c0;
+  --rsvp-surface: rgba(12, 34, 24, 0.66);
+  --rsvp-field: rgba(255, 255, 255, 0.08);
+  --rsvp-border: rgba(248, 244, 234, 0.5);
+  --rsvp-error: #ffa69c;
+  --rsvp-background: #0e261b;
+  --rsvp-bg-image: url("/uploads/xmas-lights.jpg");
+  --rsvp-overlay: rgba(5, 18, 12, 0.55);
+  --rsvp-blur: 3px;
+  --rsvp-radius: 16px;
+  --rsvp-font-heading: "DM Serif Display", Georgia, serif;
+  --rsvp-font-body: "DM Sans", system-ui, sans-serif;
+  --rsvp-heading-weight: 400;
+  --rsvp-scale: 1;
+  --rsvp-hero-tint: #17382a;
+}
+
+/* 3 — Wedding · poster · ivory/black · serif · outline card · sharp */
+[data-theme="wedding"] {
+  --rsvp-primary: #161412;
+  --rsvp-on-primary: #fbf8f1;
+  --rsvp-accent: #8f6f3f;
+  --rsvp-text: #161412;
+  --rsvp-muted: #57514a;
+  --rsvp-surface: #fbf8f1;
+  --rsvp-field: transparent;
+  --rsvp-border: #161412;
+  --rsvp-error: #a3221b;
+  --rsvp-background: #f1ebdf;
+  --rsvp-radius: 0px;
+  --rsvp-font-heading: "Cormorant Garamond", Georgia, serif;
+  --rsvp-font-body: "Jost", system-ui, sans-serif;
+  --rsvp-heading-weight: 500;
+  --rsvp-scale: 1.1;
+  --rsvp-hero-tint: #e6dfd1;
+}
+
+/* Font pairings (heading / body) — the six curated options
+   playful   Baloo 2 / Nunito
+   festive   DM Serif Display / DM Sans
+   elegant   Cormorant Garamond / Jost
+   classic   Libre Baskerville / Source Sans 3
+   modern    Space Grotesk / Work Sans
+   warm      Bricolage Grotesque / Figtree */
+
+/* Page-level rules the components rely on */
+.rsvp-page {
+  background: var(--rsvp-background);
+  color: var(--rsvp-text);
+  font-family: var(--rsvp-font-body);
+  font-size: calc(16px * var(--rsvp-scale));
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+.rsvp-page :focus-visible { outline: 3px solid var(--rsvp-accent); outline-offset: 2px; }
+.rsvp-page input, .rsvp-page textarea { font-size: max(16px, 1em); } /* no iOS zoom-on-focus */

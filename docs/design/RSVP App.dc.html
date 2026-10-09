@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&family=DM+Serif+Display&family=DM+Sans:wght@400;500;700&family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@400;500;600&family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@400;600;700&family=Space+Grotesk:wght@500;700&family=Work+Sans:wght@400;500;600&family=Bricolage+Grotesque:wght@600;800&family=Figtree:wght@400;600;700&display=swap"><style>html,body{margin:0;background:#f6f6f4;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#1c1c1a;-webkit-text-size-adjust:100%}*{box-sizing:border-box}a{color:#1c1c1a}a:hover{color:#2f6feb}button:disabled{cursor:not-allowed}</style></helmet>
+<div style="min-height:100dvh">
+  <sc-if value="{{ isPublic }}">
+    <div style="{{ pubVars }}">
+      <dc-import name="RSVP Page" fluid="{{ true }}" data="{{ pubData }}" state="{{ pubState }}" layout="{{ pubLook.layout }}" background="{{ pubLook.bg }}" card="{{ pubLook.card }}" button="{{ pubLook.button }}" notes="{{ pubNotes }}" reply="{{ myReply }}" cal="{{ pubCal }}" on-reply="{{ onReply }}" hint-size="100%,100dvh"></dc-import>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isLogin }}">
+    <div style="min-height:100dvh;display:grid;place-items:center;padding:24px">
+      <form onSubmit="{{ onLogin }}" noValidate="{{ true }}" style="width:100%;max-width:360px;display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;align-items:center;gap:10px"><span style="width:22px;height:22px;border-radius:5px;background:#1c1c1a"></span><span style="font-weight:600;font-size:16px">RSVP</span></div>
+        <div style="display:flex;flex-direction:column;gap:18px;padding:28px;background:#fff;border:1px solid #e4e3df;border-radius:10px">
+          <h1 style="margin:0;font:600 20px/1.2 'IBM Plex Sans',sans-serif">Sign in</h1>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">Email<input type="email" autoComplete="username" value="{{ login.email }}" onChange="{{ onLoginEmail }}" style="width:100%;height:44px;padding:0 12px;border:1px solid #c9c8c3;border-radius:6px;font:inherit;font-size:16px;font-weight:400;color:#1c1c1a;background:#fff" style-focus="outline:2px solid #2f6feb;outline-offset:1px"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">Password<input type="password" autoComplete="current-password" value="{{ login.password }}" onChange="{{ onLoginPassword }}" style="width:100%;height:44px;padding:0 12px;border:1px solid #c9c8c3;border-radius:6px;font:inherit;font-size:16px;font-weight:400;color:#1c1c1a;background:#fff" style-focus="outline:2px solid #2f6feb;outline-offset:1px"></label>
+          <sc-if value="{{ login.error }}"><span role="alert" style="font-size:13px;color:#8f2a22">{{ login.error }}</span></sc-if>
+          <button type="submit" style="height:44px;border:0;border-radius:6px;background:#1c1c1a;color:#fff;font:600 15px 'IBM Plex Sans',sans-serif;cursor:pointer" style-hover="background:#3a3a37" style-focus="outline:2px solid #2f6feb;outline-offset:2px">Sign in</button>
+        </div>
+        <span style="font-size:12px;color:#62625d;text-align:center">Prototype: any email and password signs in.</span>
+      </form>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isAdmin }}">
+    <header style="position:sticky;top:0;z-index:20;height:56px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 max(16px, env(safe-area-inset-left));background:#fff;border-bottom:1px solid #e4e3df">
+      <a href="#/" style="display:flex;align-items:center;gap:10px;text-decoration:none;min-height:44px"><span style="width:20px;height:20px;border-radius:5px;background:#1c1c1a"></span><span style="font-weight:600">RSVP</span></a>
+      <div style="display:flex;align-items:center;gap:12px;font-size:14px;color:#62625d;min-width:0">
+        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ userEmail }}</span>
+        <button type="button" onClick="{{ onSignOut }}" style="flex:none;height:36px;padding:0 12px;border:1px solid #e4e3df;border-radius:6px;background:#fff;font:inherit;color:#1c1c1a;cursor:pointer" style-hover="border-color:#c9c8c3" style-focus="outline:2px solid #2f6feb;outline-offset:1px">Sign out</button>
+      </div>
+    </header>
+
+    <sc-if value="{{ isDash }}">
+      <main style="max-width:1120px;margin:0 auto;padding:28px 16px 64px;display:flex;flex-direction:column;gap:20px;font-size:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+          <h1 style="margin:0;font:600 24px/1.2 'IBM Plex Sans',sans-serif">Events</h1>
+          <button type="button" onClick="{{ onNewEvent }}" style="height:44px;padding:0 16px;border:0;border-radius:6px;background:#1c1c1a;color:#fff;font:600 14px 'IBM Plex Sans',sans-serif;cursor:pointer" style-hover="background:#3a3a37" style-focus="outline:2px solid #2f6feb;outline-offset:2px">+ New event</button>
+        </div>
+        <sc-if value="{{ noEvents }}">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:72px 24px;background:#fff;border:1px dashed #c9c8c3;border-radius:10px;text-align:center">
+            <h2 style="margin:0;font:600 17px 'IBM Plex Sans',sans-serif">No events yet</h2>
+            <p style="margin:0;max-width:360px;color:#62625d">Create an event to get a link you can share with guests.</p>
+            <button type="button" onClick="{{ onNewEvent }}" style="margin-top:8px;height:44px;padding:0 16px;border:0;border-radius:6px;background:#1c1c1a;color:#fff;font:600 14px 'IBM Plex Sans',sans-serif;cursor:pointer" style-focus="outline:2px solid #2f6feb;outline-offset:2px">+ New event</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ dashTable }}">
+          <div style="background:#fff;border:1px solid #e4e3df;border-radius:10px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:minmax(0,2.4fr) 140px 52px 56px 48px 56px 60px 270px;gap:12px;align-items:center;padding:10px 20px;border-bottom:1px solid #e4e3df;font-size:12px;font-weight:500;color:#62625d">
+              <span>Event</span><span>Date</span><span style="text-align:right">Yes</span><span style="text-align:right">Maybe</span><span style="text-align:right">No</span><span style="text-align:right">Total</span><span>Active</span><span></span>
+            </div>
+            <sc-for list="{{ eventRows }}" as="e" hint-placeholder-count="3">
+              <div style="display:grid;grid-template-columns:minmax(0,2.4fr) 140px 52px 56px 48px 56px 60px 270px;gap:12px;align-items:center;padding:12px 20px;border-bottom:1px solid #efeeea" style-hover="background:#fafaf8">
+                <a href="{{ e.editHref }}" style="display:flex;flex-direction:column;gap:2px;min-width:0;text-decoration:none"><span style="{{ e.titleStyle }}">{{ e.title }}</span><span style="font:12px 'IBM Plex Mono',monospace;color:#62625d">/{{ e.slug }}</span></a>
+                <span style="{{ e.dateStyle }}">{{ e.dateShort }}</span>
+                <span style="text-align:right;font:500 14px 'IBM Plex Mono',monospace">{{ e.yes }}</span>
+                <span style="text-align:right;font:500 14px 'IBM Plex Mono',monospace">{{ e.maybe }}</span>
+                <span style="text-align:right;font:500 14px 'IBM Plex Mono',monospace">{{ e.no }}</span>
+                <span style="text-align:right;font:600 14px 'IBM Plex Mono',monospace">{{ e.total }}</span>
+                <button type="button" role="switch" aria-checked="{{ e.active }}" aria-label="{{ e.switchLabel }}" onClick="{{ e.toggle }}" style="width:44px;height:44px;padding:0;border:0;background:none;display:grid;place-items:center;cursor:pointer" style-focus="outline:2px solid #2f6feb;border-radius:8px"><span style="{{ e.track }}"><span style="{{ e.knob }}"></span></span></button>
+                <div style="display:flex;gap:6px;justify-content:flex-end">
+                  <button type="button" onClick="{{ e.copy }}" style="height:36px;min-width:88px;padding:0 10px;border:1px solid #e4e3df;border-radius:6px;background:#fff;font:inherit;font-size:13px;color:#1c1c1a;cursor:pointer" style-hover="border-color:#c9c8c3" style-focus="outline:2px solid #2f6feb;outline-offset:1px">{{ e.copyLabel }}</button>
+                  <a href="{{ e.listHref }}" style="height:36px;display:inline-flex;align-items:center;padding:0 10px;border:1px solid #e4e3df;border-radius:6px;background:#fff;font-size:13px;text-decoration:none" style-hover="border-color:#c9c8c3" style-focus="outline:2px solid #2f6feb;outline-offset:1px">View RSVPs</a>
+                  <a href="{{ e.editHref }}" style="height:36px;display:inline-flex;align-items:center;padding:0 10px;border:1px solid #e4e3df;border-radius:6px;background:#fff;font-size:13px;text-decoration:none" style-hover="border-color:#c9c8c3" style-focus="outline:2px solid #2f6feb;outline-offset:1px">Edit</a>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ dashCards }}">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{ eventRows }}" as="e" hint-placeholder-count="3">
+              <div style="display:flex;flex-direction:column;gap:10px;padding:14px 16px 10px;background:#fff;border:1px solid #e4e3df;border-radius:10px">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+                  <a href="{{ e.editHref }}" style="display:flex;flex-direction:column;gap:2px;min-width:0;text-decoration:none"><span style="{{ e.titleStyle }}">{{ e.title }}</span><span style="font:12px 'IBM Plex Mono',monospace;color:#62625d">/{{ e.slug }} · {{ e.dateShort }}</span></a>
+                  <button type="button" role="switch" aria-checked="{{ e.active }}" aria-label="{{ e.switchLabel }}" onClick="{{ e.toggle }}" style="flex:none;width:44px;height:44px;margin:-8px -8px 0 0;padding:0;border:0;background:none;display:grid;place-items:center;cursor:pointer"><span style="{{ e.track }}"><span style="{{ e.knob }}"></span></span></button>
+                </div>
+                <span style="font:500 13px 'IBM Plex Mono',monospace">{{ e.summary }}</span>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+                  <button type="button" onClick="{{ e.copy }}" style="height:44px;border:1px solid #e4e3df;border-radius:6px;background:#fff;font:inherit;font-size:13px;color:#1c1c1a">{{ e.copyLabel }}</button>
+                  <a href="{{ e.listHref }}" style="height:44px;display:grid;place-items:center;border:1px solid #e4e3df;border-radius:6px;font-size:13px;text-decoration:none">RSVPs</a>
+                  <a href="{{ e.editHref }}" style="height:44px;display:grid;place-items:center;border:1px solid #e4e3df;border-radius:6px;font-size:13px;text-decoration:none">Edit</a>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </main>
+    </sc-if>
+
+    <sc-if value="{{ isEditor }}">
+      <div style="background:#fff;border-bottom:1px solid #e4e3df">
+        <div style="max-width:1280px;margin:0 auto;padding:16px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 16px">
+          <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+            <a href="#/" onClick="{{ onBack }}" style="font-size:13px;color:#62625d;text-decoration:none">← Events</a>
+            <div style="display:flex;align-items:center;gap:10px;min-width:0"><h1 style="margin:0;font:600 22px/1.2 'IBM Plex Sans',sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ draftTitle }}</h1><span style="{{ activePill }}">{{ activeLabel }}</span></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="font-size:13px;color:#62625d">{{ saveStatus }}</span>
+            <a href="{{ draftListHref }}" style="height:40px;display:inline-flex;align-items:center;padding:0 12px;border:1px solid #e4e3df;border-radius:6px;font-size:14px;text-decoration:none">RSVPs</a>
+            <a href="{{ draftPublicHref }}" target="_blank" rel="noopener" style="height:40px;display:inline-flex;align-items:center;padding:0 12px;border:1px solid #e4e3df;border-radius:6px;font-size:14px;text-decoration:none">View page ↗</a>
+            <button type="button" onClick="{{ onSave }}" disabled="{{ notDirty }}" style="{{ saveStyle }}" style-focus="outline:2px solid #2f6feb;outline-offset:2px">Save changes</button>
+          </div>
+        </div>
+      </div>
+      <sc-if value="{{ narrow }}">
+        <div style="position:sticky;top:56px;z-index:15;display:flex;justify-content:center;padding:10px 16px;background:#f6f6f4;border-bottom:1px solid #e4e3df">
+          <div style="display:flex;width:100%;max-width:360px;padding:3px;gap:2px;background:#ebeae6;border-radius:8px">
+            <sc-for list="{{ mobileModes }}" as="o" hint-placeholder-count="2"><button type="button" aria-pressed="{{ o.on }}" onClick="{{ o.onClick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for>
+          </div>
+        </div>
+      </sc-if>
+      <div style="{{ editorGrid }}">
+        <sc-if value="{{ showForm }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;min-width:0;font-size:14px">
+            <nav role="tablist" style="display:flex;gap:2px;border-bottom:1px solid #e4e3df;margin-bottom:24px;overflow-x:auto;overflow-y:hidden">
+              <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4"><button type="button" role="tab" aria-selected="{{ t.on }}" onClick="{{ t.onClick }}" style="{{ t.style }}" style-focus="outline:2px solid #2f6feb;outline-offset:-2px">{{ t.label }}</button></sc-for>
+            </nav>
+
+            <sc-if value="{{ tabDetails }}">
+              <div style="display:flex;flex-direction:column;gap:20px;max-width:620px">
+                <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Title<input value="{{ d.title }}" onChange="{{ on.title }}" style="{{ inputStyle }}" style-focus="outline:2px solid #2f6feb;outline-offset:1px"><sc-if value="{{ errs.title }}"><span style="font-weight:400;font-size:13px;color:#8f2a22">{{ errs.title }}</span></sc-if></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Link
+                  <div style="display:flex;align-items:stretch;height:44px;border:1px solid #c9c8c3;border-radius:6px;overflow:hidden;background:#fff"><span style="display:flex;align-items:center;padding:0 10px;background:#f6f6f4;border-right:1px solid #e4e3df;font:13px 'IBM Plex Mono',monospace;color:#62625d">/e/</span><input value="{{ d.slug }}" onChange="{{ onSlug }}" style="flex:1;min-width:0;border:0;padding:0 10px;font:15px 'IBM Plex Mono',monospace;color:#1c1c1a" style-focus="outline:2px solid #2f6feb;outline-offset:-2px"></div>
+                  <span style="font-weight:400;font-size:13px;color:#62625d;word-break:break-all">Guests will open <span style="font-family:'IBM Plex Mono',monospace;color:#1c1c1a">{{ draftUrl }}</span></span>
+                  <sc-if value="{{ errs.slug }}"><span style="font-weight:400;font-size:13px;color:#8f2a22">{{ errs.slug }}</span></sc-if>
+                </label>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px">
+                  <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Date<input type="date" value="{{ d.date }}" onChange="{{ on.date }}" style="{{ inputStyle }}"></label>
+                  <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Starts<input type="time" value="{{ d.start }}" onChange="{{ on.start }}" style="{{ inputStyle }}"></label>
+                  <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Ends<input type="time" value="{{ d.end }}" onChange="{{ on.end }}" style="{{ inputStyle }}"></label>
+                </div>
+                <sc-if value="{{ errs.time }}"><span style="margin-top:-12px;font-size:13px;color:#8f2a22">{{ errs.time }}</span></sc-if>
+                <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Time zone<select value="{{ d.tz }}" onChange="{{ on.tz }}" style="{{ inputStyle }}"><sc-for list="{{ zones }}" as="z" hint-placeholder-count="6"><option value="{{ z }}">{{ z }}</option></sc-for></select></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Location name<input value="{{ d.venue }}" onChange="{{ on.venue }}" style="{{ inputStyle }}" style-focus="outline:2px solid #2f6feb;outline-offset:1px"></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Address<input value="{{ d.address }}" onChange="{{ on.address }}" style="{{ inputStyle }}" style-focus="outline:2px solid #2f6feb;outline-offset:1px"><span style="font-weight:400;font-size:13px;color:#62625d">Used for the "Open in Maps" link.</span></label>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ tabWording }}">
+              <div style="display:flex;flex-direction:column;gap:20px;max-width:620px">
+                <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Message<textarea rows="3" value="{{ d.message }}" onChange="{{ on.message }}" style="{{ textareaStyle }}" style-focus="outline:2px solid #2f6feb;outline-offset:1px"></textarea><span style="font-weight:400;font-size:13px;color:#62625d">Optional. Shown under the location.</span></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">RSVP question<input value="{{ d.question }}" onChange="{{ on.question }}" style="{{ inputStyle }}" style-focus="outline:2px solid #2f6feb;outline-offset:1px"></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Button text<input value="{{ d.buttonText }}" onChange="{{ on.buttonText }}" style="{{ inputStyle }}" style-focus="outline:2px solid #2f6feb;outline-offset:1px"></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Confirmation message<input value="{{ d.confirmation }}" onChange="{{ on.confirmation }}" style="{{ inputStyle }}" style-focus="outline:2px solid #2f6feb;outline-offset:1px"><span style="font-weight:400;font-size:13px;color:#62625d">Shown after a guest replies. Switch the preview to "Sent" to check it.</span></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Notes label<input value="{{ d.notesLabel }}" onChange="{{ on.notesLabel }}" style="{{ inputStyle }}" style-focus="outline:2px solid #2f6feb;outline-offset:1px"></label>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ tabRsvp }}">
+              <div style="display:flex;flex-direction:column;max-width:620px;background:#fff;border:1px solid #e4e3df;border-radius:10px">
+                <sc-for list="{{ switches }}" as="s" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:24px;padding:14px 16px 14px 20px;border-bottom:1px solid #efeeea">
+                    <div style="display:flex;flex-direction:column;gap:2px"><span style="{{ s.labelStyle }}">{{ s.label }}</span><span style="font-size:13px;color:#62625d">{{ s.hint }}</span></div>
+                    <button type="button" role="switch" aria-checked="{{ s.on }}" aria-label="{{ s.label }}" disabled="{{ s.disabled }}" onClick="{{ s.toggle }}" style="width:44px;height:44px;flex:none;padding:0;border:0;background:none;display:grid;place-items:center;cursor:pointer" style-focus="outline:2px solid #2f6feb;border-radius:8px"><span style="{{ s.track }}"><span style="{{ s.knob }}"></span></span></button>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ tabLook }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;flex-direction:column;gap:30px;max-width:640px">
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <span style="font-weight:600">Start from a preset</span>
+                  <div style="display:flex;flex-wrap:wrap;gap:6px">
+                    <sc-for list="{{ presets }}" as="p" hint-placeholder-count="4"><button type="button" onClick="{{ p.onClick }}" style="height:36px;display:inline-flex;align-items:center;gap:8px;padding:0 12px 0 8px;border:1px solid #e4e3df;border-radius:18px;background:#fff;font:inherit;font-size:13px;color:#1c1c1a;cursor:pointer" style-hover="border-color:#c9c8c3" style-focus="outline:2px solid #2f6feb;outline-offset:1px"><span style="{{ p.dot }}"></span>{{ p.label }}</button></sc-for>
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <span style="font-weight:600">Layout</span>
+                  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">
+                    <sc-for list="{{ layouts }}" as="o" hint-placeholder-count="2">
+                      <button type="button" aria-pressed="{{ o.on }}" onClick="{{ o.onClick }}" style="{{ o.style }}" style-focus="outline:2px solid #2f6feb;outline-offset:2px">
+                        <span style="{{ o.thumb }}"><span style="{{ o.thumbHero }}"></span><span style="{{ o.thumbCard }}"></span></span>
+                        <span style="display:flex;flex-direction:column;gap:2px;text-align:left"><span style="font-weight:600">{{ o.label }}</span><span style="font-size:13px;color:#62625d">{{ o.hint }}</span></span>
+                      </button>
+                    </sc-for>
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <span style="font-weight:600">Colors</span>
+                  <div style="display:flex;flex-direction:column;background:#fff;border:1px solid #e4e3df;border-radius:10px">
+                    <sc-for list="{{ colors }}" as="c" hint-placeholder-count="4">
+                      <div style="display:flex;flex-direction:column;gap:8px;padding:12px 14px;border-bottom:1px solid #efeeea">
+                        <div style="display:grid;grid-template-columns:40px minmax(0,1fr) 104px;gap:12px;align-items:center">
+                          <input type="color" value="{{ c.value6 }}" onChange="{{ c.onChange }}" aria-label="{{ c.label }} color picker" style="width:40px;height:40px;padding:0;border:1px solid rgba(0,0,0,.15);border-radius:6px;background:none;cursor:pointer">
+                          <span style="display:flex;flex-direction:column;min-width:0"><span style="font-weight:500">{{ c.label }}</span><span style="font-size:12px;color:#62625d">{{ c.hint }}</span></span>
+                          <input value="{{ c.value }}" onChange="{{ c.onChange }}" aria-label="{{ c.label }} hex" style="width:100%;height:40px;padding:0 10px;border:1px solid #c9c8c3;border-radius:6px;font:14px 'IBM Plex Mono',monospace;color:#1c1c1a;background:#fff" style-focus="outline:2px solid #2f6feb;outline-offset:1px">
+                        </div>
+                        <div style="display:flex;justify-content:space-between;gap:8px;padding-left:52px;font-size:12px"><span style="color:#62625d">{{ c.what }}</span><span style="{{ c.ratioStyle }}">{{ c.ratio }}</span></div>
+                        <sc-if value="{{ c.warn }}"><div role="alert" style="display:flex;gap:8px;align-items:flex-start;margin-left:52px;padding:8px 10px;border-radius:6px;background:#fbefd5;color:#6b4500;font-size:13px"><span style="font-weight:700">!</span><span>{{ c.warn }}</span></div></sc-if>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:12px">
+                  <span style="font-weight:600">Background</span>
+                  <div style="display:inline-flex;align-self:flex-start;padding:3px;gap:2px;background:#ebeae6;border-radius:8px"><sc-for list="{{ bgTypes }}" as="o" hint-placeholder-count="3"><button type="button" aria-pressed="{{ o.on }}" onClick="{{ o.onClick }}" style="{{ o.style }}" style-focus="outline:2px solid #2f6feb">{{ o.label }}</button></sc-for></div>
+                  <sc-if value="{{ bgShowColors }}" hint-placeholder-val="{{ true }}">
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+                      <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#62625d">{{ bgLabel1 }}<div style="display:flex;gap:8px;align-items:center"><input type="color" value="{{ look.g1 }}" onChange="{{ lk.g1 }}" style="width:40px;height:40px;padding:0;border:1px solid rgba(0,0,0,.15);border-radius:6px;background:none;cursor:pointer"><input value="{{ look.g1 }}" onChange="{{ lk.g1 }}" style="flex:1;min-width:0;height:40px;padding:0 10px;border:1px solid #c9c8c3;border-radius:6px;font:14px 'IBM Plex Mono',monospace"></div></label>
+                      <sc-if value="{{ bgGradient }}"><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#62625d">To<div style="display:flex;gap:8px;align-items:center"><input type="color" value="{{ look.g2 }}" onChange="{{ lk.g2 }}" style="width:40px;height:40px;padding:0;border:1px solid rgba(0,0,0,.15);border-radius:6px;background:none;cursor:pointer"><input value="{{ look.g2 }}" onChange="{{ lk.g2 }}" style="flex:1;min-width:0;height:40px;padding:0 10px;border:1px solid #c9c8c3;border-radius:6px;font:14px 'IBM Plex Mono',monospace"></div></label></sc-if>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ bgImage }}">
+                    <div style="display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;align-items:start;padding:14px;background:#fff;border:1px solid #e4e3df;border-radius:10px">
+                      <div style="{{ bgThumb }}"></div>
+                      <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+                        <div style="display:flex;gap:6px;flex-wrap:wrap">
+                          <label style="height:36px;display:inline-flex;align-items:center;padding:0 12px;border:1px solid #c9c8c3;border-radius:6px;background:#fff;font-size:13px;cursor:pointer">{{ bgUploadLabel }}<input type="file" accept="image/*" onChange="{{ onBgFile }}" style="position:absolute;width:1px;height:1px;opacity:0"></label>
+                          <sc-if value="{{ look.bgImage }}"><button type="button" onClick="{{ onBgRemove }}" style="height:36px;padding:0 12px;border:1px solid #e4e3df;border-radius:6px;background:#fff;font:inherit;font-size:13px;cursor:pointer">Remove</button></sc-if>
+                        </div>
+                        <label style="display:grid;grid-template-columns:64px 1fr 44px;gap:10px;align-items:center;font-size:13px">Overlay<input type="range" min="0" max="80" value="{{ look.overlay }}" onChange="{{ lkNum.overlay }}" style="accent-color:#1c1c1a"><span style="font-family:'IBM Plex Mono',monospace">{{ look.overlay }}%</span></label>
+                        <label style="display:grid;grid-template-columns:64px 1fr 44px;gap:10px;align-items:center;font-size:13px">Blur<input type="range" min="0" max="12" value="{{ look.blur }}" onChange="{{ lkNum.blur }}" style="accent-color:#1c1c1a"><span style="font-family:'IBM Plex Mono',monospace">{{ look.blur }}px</span></label>
+                        <span style="font-size:12px;color:#62625d">The form always sits on the card surface, so it stays readable whatever the photo.</span>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <span style="font-weight:600">Invitation image</span>
+                  <div style="display:grid;grid-template-columns:96px minmax(0,1fr);gap:16px;padding:14px;background:#fff;border:1px solid #e4e3df;border-radius:10px">
+                    <div style="{{ heroThumb }}"><sc-if value="{{ noHeroImg }}"><span style="font:10px 'IBM Plex Mono',monospace;color:#4a4a46">none</span></sc-if></div>
+                    <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+                      <div style="display:flex;gap:6px;flex-wrap:wrap">
+                        <label style="height:36px;display:inline-flex;align-items:center;padding:0 12px;border:1px solid #c9c8c3;border-radius:6px;background:#fff;font-size:13px;cursor:pointer">{{ heroUploadLabel }}<input type="file" accept="image/*" onChange="{{ onHeroFile }}" style="position:absolute;width:1px;height:1px;opacity:0"></label>
+                        <sc-if value="{{ d.hero }}"><button type="button" onClick="{{ onHeroRemove }}" style="height:36px;padding:0 12px;border:1px solid #e4e3df;border-radius:6px;background:#fff;font:inherit;font-size:13px;cursor:pointer">Remove</button></sc-if>
+                      </div>
+                      <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">Alt text<input value="{{ d.heroAlt }}" onChange="{{ on.heroAlt }}" style="{{ inputStyle }}" style-focus="outline:2px solid #2f6feb;outline-offset:1px"><span style="font-weight:400;color:#62625d">If the image has text baked in, summarise it here for screen readers.</span></label>
+                      <sc-if value="{{ altWarn }}"><div role="alert" style="display:flex;gap:8px;padding:8px 10px;border-radius:6px;background:#fbefd5;color:#6b4500;font-size:13px"><span style="font-weight:700">!</span><span>Add alt text so screen-reader users get the invitation too.</span></div></sc-if>
+                    </div>
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <span style="font-weight:600">Fonts</span>
+                  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px">
+                    <sc-for list="{{ fonts }}" as="f" hint-placeholder-count="6"><button type="button" aria-pressed="{{ f.on }}" onClick="{{ f.onClick }}" style="{{ f.style }}" style-focus="outline:2px solid #2f6feb;outline-offset:2px"><span style="{{ f.sample }}">{{ f.name }}</span><span style="font-size:12px;color:#62625d">{{ f.sub }}</span></button></sc-for>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:auto 1fr;gap:12px 16px;align-items:center">
+                  <span style="font-weight:600">Text size</span>
+                  <div style="display:inline-flex;justify-self:start;padding:3px;gap:2px;background:#ebeae6;border-radius:8px"><sc-for list="{{ scales }}" as="o" hint-placeholder-count="3"><button type="button" aria-pressed="{{ o.on }}" onClick="{{ o.onClick }}" style="{{ o.style }}" style-focus="outline:2px solid #2f6feb">{{ o.label }}</button></sc-for></div>
+                  <span style="font-weight:600">Card</span>
+                  <div style="display:inline-flex;justify-self:start;padding:3px;gap:2px;background:#ebeae6;border-radius:8px"><sc-for list="{{ cards }}" as="o" hint-placeholder-count="4"><button type="button" aria-pressed="{{ o.on }}" onClick="{{ o.onClick }}" style="{{ o.style }}" style-focus="outline:2px solid #2f6feb">{{ o.label }}</button></sc-for></div>
+                  <span style="font-weight:600">Corners</span>
+                  <div style="display:inline-flex;justify-self:start;padding:3px;gap:2px;background:#ebeae6;border-radius:8px"><sc-for list="{{ radii }}" as="o" hint-placeholder-count="4"><button type="button" aria-pressed="{{ o.on }}" onClick="{{ o.onClick }}" style="{{ o.style }}" style-focus="outline:2px solid #2f6feb">{{ o.label }}</button></sc-for></div>
+                  <span style="font-weight:600">Buttons</span>
+                  <div style="display:inline-flex;justify-self:start;padding:3px;gap:2px;background:#ebeae6;border-radius:8px"><sc-for list="{{ buttons }}" as="o" hint-placeholder-count="3"><button type="button" aria-pressed="{{ o.on }}" onClick="{{ o.onClick }}" style="{{ o.style }}" style-focus="outline:2px solid #2f6feb">{{ o.label }}</button></sc-for></div>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+        <sc-if value="{{ showPreview }}" hint-placeholder-val="{{ true }}">
+          <aside style="{{ previewAside }}">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+              <span style="font-weight:600;font-size:14px">Preview</span>
+              <div style="display:inline-flex;padding:3px;gap:2px;background:#ebeae6;border-radius:8px"><sc-for list="{{ pvStates }}" as="o" hint-placeholder-count="3"><button type="button" aria-pressed="{{ o.on }}" onClick="{{ o.onClick }}" style="{{ o.style }}" style-focus="outline:2px solid #2f6feb">{{ o.label }}</button></sc-for></div>
+            </div>
+            <div style="{{ phoneFrame }}">
+              <div style="{{ phoneScroll }}">
+                <div style="{{ previewVars }}">
+                  <dc-import name="RSVP Page" chrome="{{ false }}" data="{{ draftData }}" state="{{ pvState }}" layout="{{ look.layout }}" background="{{ look.bg }}" card="{{ look.card }}" button="{{ look.button }}" notes="{{ draftNotes }}" width="{{ pvWidth }}" cal="{{ draftCal }}" hint-size="375px,1400px"></dc-import>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isList }}">
+      <main style="max-width:1120px;margin:0 auto;padding:24px 16px 64px;display:flex;flex-direction:column;gap:18px;font-size:14px">
+        <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px">
+          <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+            <a href="#/" style="font-size:13px;color:#62625d;text-decoration:none">← Events</a>
+            <h1 style="margin:0;font:600 24px/1.2 'IBM Plex Sans',sans-serif">{{ listEvent.title }}</h1>
+            <span style="font:500 15px 'IBM Plex Mono',monospace">{{ summary }}</span>
+          </div>
+          <div style="display:flex;gap:8px">
+            <a href="{{ listEditHref }}" style="height:44px;display:inline-flex;align-items:center;padding:0 14px;border:1px solid #e4e3df;border-radius:6px;background:#fff;font-size:14px;text-decoration:none">Edit event</a>
+            <button type="button" onClick="{{ onCopyList }}" style="height:44px;padding:0 14px;border:1px solid #e4e3df;border-radius:6px;background:#fff;font:inherit;cursor:pointer" style-focus="outline:2px solid #2f6feb;outline-offset:1px">{{ copyListLabel }}</button>
+            <button type="button" onClick="{{ onExport }}" disabled="{{ noReplies }}" style="height:44px;padding:0 14px;border:0;border-radius:6px;background:#1c1c1a;color:#fff;font:600 14px 'IBM Plex Sans',sans-serif;cursor:pointer" style-focus="outline:2px solid #2f6feb;outline-offset:2px">Export CSV</button>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px">
+          <div role="group" aria-label="Filter by response" style="flex:0 1 auto;min-width:0;display:flex;gap:6px;overflow-x:auto;overflow-y:hidden;max-width:100%">
+            <sc-for list="{{ chips }}" as="c" hint-placeholder-count="4"><button type="button" aria-pressed="{{ c.on }}" onClick="{{ c.onClick }}" style="{{ c.style }}" style-focus="outline:2px solid #2f6feb;outline-offset:1px">{{ c.label }} <span style="font-family:'IBM Plex Mono',monospace;opacity:.75">{{ c.count }}</span></button></sc-for>
+          </div>
+          <input type="search" placeholder="Search guests" value="{{ search }}" onChange="{{ onSearch }}" aria-label="Search guests by name" style="flex:1 1 220px;max-width:320px;height:44px;padding:0 12px;border:1px solid #c9c8c3;border-radius:6px;font:inherit;font-size:16px;background:#fff" style-focus="outline:2px solid #2f6feb;outline-offset:1px">
+        </div>
+        <sc-if value="{{ listTable }}">
+          <div style="background:#fff;border:1px solid #e4e3df;border-radius:10px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:minmax(0,1.3fr) 100px minmax(0,2fr) 150px 72px;gap:16px;padding:10px 20px;border-bottom:1px solid #e4e3df;font-size:12px;font-weight:500;color:#62625d"><span>Guest name</span><span>Response</span><span>Notes</span><span>Submitted</span><span></span></div>
+            <sc-for list="{{ rows }}" as="r" hint-placeholder-count="8">
+              <div style="display:grid;grid-template-columns:minmax(0,1.3fr) 100px minmax(0,2fr) 150px 72px;gap:16px;align-items:center;padding:12px 20px;border-bottom:1px solid #efeeea" style-hover="background:#fafaf8">
+                <span style="font-weight:500">{{ r.name }}</span>
+                <span><span style="{{ r.badge }}">{{ r.label }}</span></span>
+                <span style="{{ r.notesStyle }}">{{ r.notesShown }}</span>
+                <span style="font:13px 'IBM Plex Mono',monospace;color:#62625d">{{ r.when }}</span>
+                <button type="button" onClick="{{ r.onDelete }}" aria-label="{{ r.deleteLabel }}" style="height:36px;padding:0 10px;border:1px solid transparent;border-radius:6px;background:none;font:inherit;font-size:13px;color:#8f2a22;cursor:pointer" style-hover="border-color:#e8c9c5;background:#fbf3f2" style-focus="outline:2px solid #2f6feb">Delete</button>
+              </div>
+            </sc-for>
+            <sc-if value="{{ emptyMsg }}"><div style="padding:40px;text-align:center;color:#62625d">{{ emptyMsg }}</div></sc-if>
+          </div>
+        </sc-if>
+        <sc-if value="{{ listCards }}">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <sc-for list="{{ rows }}" as="r" hint-placeholder-count="5">
+              <div style="display:flex;flex-direction:column;gap:6px;padding:12px 14px 4px;background:#fff;border:1px solid #e4e3df;border-radius:10px">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-weight:600;font-size:15px">{{ r.name }}</span><span style="{{ r.badge }}">{{ r.label }}</span></div>
+                <span style="{{ r.notesStyle }}">{{ r.notesShown }}</span>
+                <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:12px 'IBM Plex Mono',monospace;color:#62625d">{{ r.when }}</span><button type="button" onClick="{{ r.onDelete }}" aria-label="{{ r.deleteLabel }}" style="height:44px;padding:0 4px 0 12px;border:0;background:none;font:inherit;font-size:14px;color:#8f2a22;cursor:pointer">Delete</button></div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ emptyMsg }}"><div style="padding:32px;text-align:center;color:#62625d;background:#fff;border:1px solid #e4e3df;border-radius:10px">{{ emptyMsg }}</div></sc-if>
+          </div>
+        </sc-if>
+      </main>
+    </sc-if>
+  </sc-if>
+
+  <sc-if value="{{ dialog }}">
+    <div onClick="{{ onDialogBackdrop }}" style="position:fixed;inset:0;z-index:50;background:rgba(28,28,26,.45);display:grid;place-items:center;padding:16px">
+      <div role="dialog" aria-modal="true" aria-labelledby="dlg-t" onClick="{{ stop }}" style="width:100%;max-width:420px;display:flex;flex-direction:column;gap:14px;padding:24px;background:#fff;border-radius:12px;box-shadow:0 24px 60px rgba(0,0,0,.25);font-size:14px">
+        <h2 id="dlg-t" style="margin:0;font:600 18px/1.3 'IBM Plex Sans',sans-serif">{{ dialog.title }}</h2>
+        <p style="margin:0;color:#62625d">{{ dialog.body }}</p>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px">
+          <button type="button" onClick="{{ onDialogCancel }}" style="height:44px;padding:0 16px;border:1px solid #e4e3df;border-radius:6px;background:#fff;font:inherit;cursor:pointer" style-focus="outline:2px solid #2f6feb;outline-offset:1px">Cancel</button>
+          <button type="button" onClick="{{ onDialogConfirm }}" ref="{{ dialogRef }}" style="{{ dialogBtn }}" style-focus="outline:2px solid #2f6feb;outline-offset:2px">{{ dialog.confirm }}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ toast }}">
+    <div role="status" style="position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:60;padding:10px 16px;border-radius:8px;background:#1c1c1a;color:#fff;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.2)">{{ toast }}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const KEY = "rsvp-app-v1";
+const ZONES = ["Europe/London", "Europe/Dublin", "Europe/Paris", "Europe/Berlin", "America/New_York", "America/Chicago", "America/Los_Angeles", "Asia/Dubai", "Asia/Singapore", "Australia/Sydney"];
+const FONTS = [
+  { id: "playful", name: "Playful", h: "'Baloo 2'", b: "'Nunito'", w: 800, sub: "Baloo 2 / Nunito" },
+  { id: "festive", name: "Festive", h: "'DM Serif Display'", b: "'DM Sans'", w: 400, sub: "DM Serif / DM Sans" },
+  { id: "elegant", name: "Elegant", h: "'Cormorant Garamond'", b: "'Jost'", w: 500, sub: "Cormorant / Jost" },
+  { id: "classic", name: "Classic", h: "'Libre Baskerville'", b: "'Source Sans 3'", w: 700, sub: "Baskerville / Source Sans" },
+  { id: "modern", name: "Modern", h: "'Space Grotesk'", b: "'Work Sans'", w: 700, sub: "Space Grotesk / Work Sans" },
+  { id: "warm", name: "Warm", h: "'Bricolage Grotesque'", b: "'Figtree'", w: 800, sub: "Bricolage / Figtree" }
+];
+const PRESETS = {
+  birthday: { label: "Birthday", look: { layout: "card", bg: "gradient", g1: "#ffd66b", g2: "#ff9fbf", overlay: 55, blur: 3, font: "playful", scale: "lg", card: "solid", radius: "xl", button: "pill", primary: "#5b2bd6", accent: "#e5530c", text: "#2b1a40", surface: "#ffffff" } },
+  christmas: { label: "Christmas", look: { layout: "card", bg: "image", g1: "#0e261b", g2: "#2d5a40", overlay: 55, blur: 3, font: "festive", scale: "md", card: "glass", radius: "lg", button: "solid", primary: "#c42b32", accent: "#e9c46a", text: "#f8f4ea", surface: "#0c2218" } },
+  wedding: { label: "Wedding", look: { layout: "poster", bg: "solid", g1: "#f1ebdf", g2: "#e6dfd1", overlay: 40, blur: 0, font: "elegant", scale: "lg", card: "outline", radius: "none", button: "outline", primary: "#161412", accent: "#8f6f3f", text: "#161412", surface: "#fbf8f1" } },
+  neutral: { label: "Plain", look: { layout: "card", bg: "solid", g1: "#f1f0ec", g2: "#dcdad3", overlay: 40, blur: 0, font: "modern", scale: "md", card: "solid", radius: "lg", button: "solid", primary: "#1c1c1a", accent: "#2f6feb", text: "#1c1c1a", surface: "#ffffff" } }
+};
+const BADGE = { yes: ["Yes", "#e3f1e7", "#1e5e33"], maybe: ["Maybe", "#fbefd5", "#6b4500"], no: ["No", "#f5e3e1", "#8f2a22"] };
+const isHex = (h) => /^#[0-9a-f]{6}$/i.test(h || "");
+function lum(hex) { if (!isHex(hex)) return null; const n = parseInt(hex.slice(1), 16); return [16, 8, 0].map((s) => { const c = ((n >> s) & 255) / 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }).reduce((a, c, i) => a + c * [0.2126, 0.7152, 0.0722][i], 0); }
+function ratio(a, b) { const x = lum(a), y = lum(b); if (x == null || y == null) return null; return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+const onPrimaryFor = (p) => (ratio("#ffffff", p) || 0) >= (ratio("#161412", p) || 0) ? "#ffffff" : "#161412";
+const slugify = (s) => s.toLowerCase().normalize("NFKD").replace(/[^\w\s-]/g, "").trim().replace(/[\s_]+/g, "-").replace(/-+/g, "-").slice(0, 48);
+function fmtTime(t) { if (!t) return ""; const [h, m] = t.split(":").map(Number); return `${((h + 11) % 12) + 1}:${String(m).padStart(2, "0")} ${h < 12 ? "am" : "pm"}`; }
+const fmtDate = (d, opts) => { try { return new Date(d + "T12:00:00").toLocaleDateString("en-GB", opts); } catch (e) { return d; } };
+const fmtWhen = (iso) => new Date(iso).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+const segStyle = (on, grow) => ({ flex: grow ? 1 : "none", height: grow ? 38 : 32, padding: "0 12px", border: 0, borderRadius: 6, font: "inherit", fontSize: 13, fontWeight: on ? 600 : 400, cursor: "pointer", background: on ? "#fff" : "transparent", color: on ? "#1c1c1a" : "#4a4a46", boxShadow: on ? "0 1px 2px rgba(0,0,0,.12)" : "none" });
+const sw = (on, dis) => ({ track: { position: "relative", display: "block", width: 36, height: 22, borderRadius: 11, background: on ? "#1c1c1a" : "#c9c8c3", opacity: dis ? 0.4 : 1, transition: "background .15s" }, knob: { position: "absolute", top: 3, left: on ? 17 : 3, width: 16, height: 16, borderRadius: 8, background: "#fff", boxShadow: "0 1px 2px rgba(0,0,0,.2)", transition: "left .15s" } });
+function calLinks(ev) {
+  const z = (d, t) => `${d.replace(/-/g, "")}T${(t || "00:00").replace(":", "")}00`;
+  const s = z(ev.date, ev.start), e = z(ev.date, ev.end || ev.start);
+  const loc = [ev.venue, ev.address].filter(Boolean).join(", ");
+  const enc = encodeURIComponent;
+  const google = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${enc(ev.title)}&dates=${s}/${e}&ctz=${enc(ev.tz)}&location=${enc(loc)}&details=${enc(ev.message || "")}`;
+  const outlook = `https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent&subject=${enc(ev.title)}&startdt=${ev.date}T${ev.start}:00&enddt=${ev.date}T${ev.end || ev.start}:00&location=${enc(loc)}&body=${enc(ev.message || "")}`;
+  const esc = (x) => String(x || "").replace(/([,;\\])/g, "\\$1").replace(/\n/g, "\\n");
+  const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//RSVP//EN", "BEGIN:VEVENT", `UID:${ev.id}@rsvp`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").slice(0, 15)}Z`, `DTSTART;TZID=${ev.tz}:${s}`, `DTEND;TZID=${ev.tz}:${e}`, `SUMMARY:${esc(ev.title)}`, `LOCATION:${esc(loc)}`, `DESCRIPTION:${esc(ev.message)}`, "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+  return { google, outlook, ics: "data:text/calendar;charset=utf-8," + enc(ics), icsName: (ev.slug || "event") + ".ics" };
+}
+function themeVars(L, extra) {
+  const F = FONTS.find((f) => f.id === L.font) || FONTS[0];
+  const glass = L.card === "glass";
+  const dark = (lum(L.surface) ?? 1) < 0.2;
+  const fallbackImg = `repeating-linear-gradient(135deg, color-mix(in oklab, ${L.accent} 14%, transparent) 0 14px, transparent 14px 28px), radial-gradient(120% 80% at 30% 20%, ${L.g2} 0%, ${L.g1} 70%)`;
+  return Object.assign({
+    "--rsvp-primary": L.primary, "--rsvp-on-primary": onPrimaryFor(L.primary), "--rsvp-accent": L.accent, "--rsvp-text": L.text,
+    "--rsvp-muted": `color-mix(in oklab, ${L.text} 76%, ${L.surface})`,
+    "--rsvp-surface": glass && isHex(L.surface) ? L.surface + (dark ? "A8" : "C4") : L.surface,
+    "--rsvp-field": glass ? `color-mix(in oklab, ${L.text} 8%, transparent)` : `color-mix(in oklab, ${L.primary} 4%, ${L.surface})`,
+    "--rsvp-border": `color-mix(in oklab, ${L.text} 52%, ${L.surface})`, "--rsvp-error": dark ? "#ffa69c" : "#b3261e",
+    "--rsvp-background": L.bg === "gradient" ? `linear-gradient(160deg, ${L.g1} 0%, ${L.g2} 100%)` : L.g1,
+    "--rsvp-bg-image": L.bgImage ? `url("${L.bgImage}")` : fallbackImg,
+    "--rsvp-overlay": `rgba(0,0,0,${(L.overlay || 0) / 100})`, "--rsvp-blur": `${L.blur || 0}px`,
+    "--rsvp-radius": { none: "0px", sm: "6px", lg: "16px", xl: "24px" }[L.radius] || "16px",
+    "--rsvp-font-heading": `${F.h}, Georgia, serif`, "--rsvp-font-body": `${F.b}, system-ui, sans-serif`, "--rsvp-heading-weight": F.w,
+    "--rsvp-scale": { sm: 0.94, md: 1, lg: 1.06 }[L.scale] || 1,
+    "--rsvp-hero-tint": `color-mix(in oklab, ${L.accent} 30%, ${L.surface})`, "--rsvp-skel": `color-mix(in oklab, ${L.text} 12%, ${L.surface})`
+  }, extra || {});
+}
+const NEUTRAL_VARS = themeVars(PRESETS.neutral.look, { "--rsvp-skel": "#e6e5e0" });
+function seed() {
+  const ev = (id, slug, title, date, start, end, venue, address, message, question, buttonText, confirmation, notesLabel, preset, o) => Object.assign({ id, slug, title, date, start, end, tz: "Europe/London", venue, address, message, question, buttonText, confirmation, notesLabel, active: true, notesOn: true, notesReq: false, hero: "", heroAlt: "", look: { ...PRESETS[preset].look, bgImage: "" } }, o || {});
+  const events = [
+    ev("maya", "maya-6", "Maya turns 6!", "2026-11-14", "14:00", "17:00", "Jumpin' Jungle Play Centre", "48 Harbour Road, Brighton BN2 1TR", "Bouncy castle, pizza and a very big cake. Grown-ups get coffee. Socks on, please!", "Will you be joining us?", "Send my RSVP", "Thank you! Can't wait to see you there", "Who's coming?", "birthday", { notesReq: true, heroAlt: "Maya's birthday invitation with balloons" }),
+    ev("xmas", "studio-xmas", "The Studio Christmas Party", "2026-12-11", "19:00", "23:59", "The Larder House", "12 Wharf Street, Leeds LS2 7EQ", "Mulled wine on arrival, dinner at eight, dancing till late. Festive jumpers strongly encouraged.", "Can you make it?", "Send reply", "Lovely. See you on the 11th!", "Anything we should know?", "christmas", { notesOn: false }),
+    ev("wed", "eleanor-and-james", "Eleanor & James", "2027-06-05", "14:30", "23:00", "Holloway Hall", "Lower Street, Chipping Norton OX7 5AA", "We would be delighted if you could join us. Ceremony at half past two, followed by dinner and dancing.", "Will you attend?", "Reply", "Thank you. We look forward to celebrating with you.", "Dietary requirements", "wedding"),
+    ev("picnic", "picnic-26", "Book club summer picnic", "2026-07-18", "12:00", "16:00", "Preston Park", "Preston Road, Brighton BN1 6SD", "", "Are you coming?", "Send", "Thanks, see you there.", "Bringing anything?", "neutral", { active: false })
+  ];
+  const NAMES = ["Priya Shah","Tom Becker","Aisha Rahman","Leo Martins","Sofia Rossi","Ben Okafor","Hannah Kim","Oliver Grant","Chloe Dubois","Sam Patel","Isla Murray","Noah Fischer","Zara Hussain","Jack O'Neill","Mei Chen","Ella Novak","Ravi Kumar","Grace Adeyemi","Finn Larsen","Amara Osei","Lucas Silva","Ruby Walsh","Theo Laurent","Nadia Petrova","Arjun Mehta","Lily Evans","Omar Haddad","Freya Lindqvist","Daniel Cho","Maya Brooks","Kofi Mensah"];
+  const NOTES = { 0: "Priya + her dad, Sam", 2: "Aisha and baby brother (2)", 3: "Leo, nut allergy", 5: "Ben + mum", 8: "Swimming till 2, sorry!", 9: "Sam + grandad", 13: "Jack + twin sister", 17: "Away that weekend", 20: "Lucas, gluten-free please", 24: "Arjun + Dad", 29: "Grandparents visiting" };
+  const rsvps = [];
+  const base = new Date("2026-10-01T09:00:00").getTime();
+  const add = (eventId, n, maybeIdx, noIdx, notes, offset) => { for (let i = 0; i < n; i++) { const j = (i + offset) % NAMES.length; rsvps.push({ id: `${eventId}-${i}`, eventId, name: NAMES[j], choice: maybeIdx.includes(i) ? "maybe" : noIdx.includes(i) ? "no" : "yes", notes: (notes && NOTES[i]) || "", at: new Date(base + (i * 97 + offset * 13) * 60000 * 7).toISOString() }); } };
+  add("maya", 31, [4, 13, 20, 27], [8, 17, 29], true, 0);
+  add("xmas", 14, [3, 9], [6], false, 5);
+  add("wed", 9, [2], [7], false, 11);
+  add("picnic", 18, [5, 11], [2, 8, 14, 16], false, 3);
+  return { events, rsvps, mine: {}, authed: null };
+}
+function load() { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.events) return s; } catch (e) {} return seed(); }
+function readImage(file, max) {
+  return new Promise((res, rej) => {
+    const fr = new FileReader();
+    fr.onerror = rej;
+    fr.onload = () => { const img = new Image(); img.onerror = rej; img.onload = () => { const k = Math.min(1, max / Math.max(img.width, img.height)); const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); res(c.toDataURL("image/jpeg", 0.84)); }; img.src = fr.result; };
+    fr.readAsDataURL(file);
+  });
+}
+class Component extends DCLogic {
+  constructor(p) {
+    super(p);
+    const db = load();
+    this.state = { db, route: this.parse(), vw: typeof window !== "undefined" ? window.innerWidth : 1280, login: { email: "", password: "", error: "" }, draft: null, draftId: null, tab: "details", pv: "idle", mPreview: false, filter: "all", search: "", dialog: null, toast: "", copied: null, pubLoading: true, errs: {} };
+  }
+  parse() { const h = (location.hash || "#/").slice(1) || "/"; return h.split("/").filter(Boolean); }
+  componentDidMount() {
+    this.onHash = () => this.setState({ route: this.parse(), search: "", filter: "all", mPreview: false }, () => this.enterRoute());
+    this.onResize = () => this.setState({ vw: window.innerWidth });
+    this.onKey = (e) => { if (e.key === "Escape" && this.state.dialog) this.setState({ dialog: null }); };
+    window.addEventListener("hashchange", this.onHash); window.addEventListener("resize", this.onResize); window.addEventListener("keydown", this.onKey);
+    this.enterRoute();
+  }
+  componentWillUnmount() { window.removeEventListener("hashchange", this.onHash); window.removeEventListener("resize", this.onResize); window.removeEventListener("keydown", this.onKey); clearTimeout(this.tt); clearTimeout(this.ct); clearTimeout(this.lt); }
+  componentDidUpdate(pp, ps) { if (ps.dialog !== this.state.dialog && this.state.dialog && this.dlgBtn) this.dlgBtn.focus(); }
+  enterRoute() {
+    const r = this.state.route;
+    if (r[0] === "e") { this.setState({ pubLoading: true }); clearTimeout(this.lt); this.lt = setTimeout(() => this.setState({ pubLoading: false }), 450); const ev = this.state.db.events.find((x) => x.slug === r[1]); document.title = ev ? ev.title : "RSVP"; return; }
+    document.title = "RSVP admin";
+    if (r[0] === "events" && r[2] === "edit") { const ev = this.state.db.events.find((x) => x.id === r[1]); if (ev && this.state.draftId !== ev.id) this.setState({ draft: JSON.parse(JSON.stringify(ev)), draftId: ev.id, tab: "details", pv: "idle", errs: {} }); }
+  }
+  persist(db) { try { localStorage.setItem(KEY, JSON.stringify(db)); return true; } catch (e) { this.flash("Couldn't save: storage is full. Try a smaller image."); return false; } }
+  setDb(fn, cb) { this.setState((s) => { const db = fn(s.db); this.persist(db); return { db }; }, cb); }
+  flash(msg) { clearTimeout(this.tt); this.setState({ toast: msg }); this.tt = setTimeout(() => this.setState({ toast: "" }), 2200); }
+  go(path) { location.hash = path; }
+  publicUrl(slug) { return location.href.split("#")[0] + "#/e/" + slug; }
+  copy(slug, id) { const url = this.publicUrl(slug); const done = () => { this.setState({ copied: id }); clearTimeout(this.ct); this.ct = setTimeout(() => this.setState({ copied: null }), 1600); }; if (navigator.clipboard) navigator.clipboard.writeText(url).then(done, done); else done(); }
+  counts(eventId) { const c = { yes: 0, maybe: 0, no: 0 }; this.state.db.rsvps.forEach((r) => { if (r.eventId === eventId) c[r.choice]++; }); return c; }
+  eventData(ev) {
+    const end = ev.end ? ` – ${fmtTime(ev.end)}` : "";
+    return { title: ev.title || "Untitled event", date: fmtDate(ev.date, { weekday: "long", day: "numeric", month: "long", year: "numeric" }), time: fmtTime(ev.start) + end, venue: ev.venue, address: ev.address, message: ev.message, question: ev.question || "Will you be joining us?", button: ev.buttonText || "Send", confirmation: ev.confirmation || "Thank you!", notesLabel: ev.notesLabel || "Notes", notesHint: "", heroUrl: ev.hero, heroAlt: ev.heroAlt || ev.title };
+  }
+  validate(d) {
+    const errs = {};
+    if (!d.title.trim()) errs.title = "Give the event a title.";
+    if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(d.slug)) errs.slug = "Use lowercase letters, numbers and single hyphens.";
+    else if (this.state.db.events.some((e) => e.slug === d.slug && e.id !== d.id)) errs.slug = "Another event already uses this link.";
+    if (d.end && d.start && d.end <= d.start) errs.time = "End time must be after the start time.";
+    return errs;
+  }
+  renderVals() {
+    const S = this.state, db = S.db, r = S.route;
+    const narrow = S.vw < 860;
+    const authed = !!db.authed;
+    const isPublic = r[0] === "e";
+    const adminRoute = !isPublic;
+    const isLogin = adminRoute && !authed;
+    const isAdmin = adminRoute && authed;
+    const isEditor = isAdmin && r[0] === "events" && r[2] === "edit" && !!S.draft && S.draftId === r[1];
+    const isList = isAdmin && r[0] === "events" && r[2] === "rsvps";
+    const listEv = isList ? db.events.find((e) => e.id === r[1]) : null;
+    const isDash = isAdmin && !isEditor && !(isList && listEv);
+    const out = { isPublic, isLogin, isAdmin, isEditor, isList: isList && !!listEv, isDash, narrow, toast: S.toast, userEmail: db.authed || "" };
+
+    // login
+    out.login = S.login;
+    out.onLoginEmail = (e) => this.setState({ login: { ...S.login, email: e.target.value, error: "" } });
+    out.onLoginPassword = (e) => this.setState({ login: { ...S.login, password: e.target.value, error: "" } });
+    out.onLogin = (e) => { e.preventDefault(); const { email, password } = S.login; if (!/^\S+@\S+\.\S+$/.test(email)) return this.setState({ login: { ...S.login, error: "Enter a valid email address." } }); if (!password) return this.setState({ login: { ...S.login, error: "Enter your password." } }); this.setDb((d) => ({ ...d, authed: email })); this.setState({ login: { email: "", password: "", error: "" } }); };
+    out.onSignOut = () => { this.setDb((d) => ({ ...d, authed: null })); this.go("/"); };
+
+    // public
+    if (isPublic) {
+      const ev = db.events.find((e) => e.slug === r[1]);
+      const ok = ev && ev.active;
+      const mineId = ev && db.mine[ev.id];
+      const mine = mineId && db.rsvps.find((x) => x.id === mineId);
+      out.pubVars = ok && !S.pubLoading ? themeVars(ev.look) : NEUTRAL_VARS;
+      out.pubLook = ok ? ev.look : PRESETS.neutral.look;
+      out.pubData = ok ? this.eventData(ev) : null;
+      out.pubState = S.pubLoading ? "loading" : !ok ? "unavailable" : mine ? "success" : "idle";
+      out.pubNotes = ok ? (!ev.notesOn ? "off" : ev.notesReq ? "required" : "optional") : "optional";
+      out.myReply = mine ? { name: mine.name, choice: mine.choice, notes: mine.notes } : null;
+      out.pubCal = ok ? calLinks(ev) : null;
+      out.onReply = (rep) => {
+        if (!ev) return;
+        this.setDb((d) => {
+          const existing = d.mine[ev.id] && d.rsvps.find((x) => x.id === d.mine[ev.id]);
+          if (existing) return { ...d, rsvps: d.rsvps.map((x) => x.id === existing.id ? { ...x, ...rep, at: new Date().toISOString() } : x) };
+          const id = "r" + Date.now().toString(36);
+          return { ...d, rsvps: [...d.rsvps, { id, eventId: ev.id, ...rep, at: new Date().toISOString() }], mine: { ...d.mine, [ev.id]: id } };
+        });
+      };
+    }
+
+    // dashboard
+    out.noEvents = db.events.length === 0;
+    out.dashTable = !narrow && !out.noEvents; out.dashCards = narrow && !out.noEvents;
+    const sorted = [...db.events].sort((a, b) => a.date.localeCompare(b.date));
+    out.eventRows = sorted.map((e) => { const c = this.counts(e.id); const t = sw(e.active); const past = e.date < new Date().toISOString().slice(0, 10); return { id: e.id, title: e.title || "Untitled event", slug: e.slug, active: e.active, yes: c.yes, maybe: c.maybe, no: c.no, total: c.yes + c.maybe + c.no, summary: `${c.yes} Yes · ${c.maybe} Maybe · ${c.no} No`, dateShort: fmtDate(e.date, { weekday: "short", day: "numeric", month: "short", year: "numeric" }), track: t.track, knob: t.knob, switchLabel: `Accepting replies for ${e.title}`, titleStyle: { fontWeight: 600, fontSize: 15, color: e.active ? "#1c1c1a" : "#62625d" }, dateStyle: { color: past ? "#8a8a84" : "#1c1c1a" }, editHref: `#/events/${e.id}/edit`, listHref: `#/events/${e.id}/rsvps`, copyLabel: S.copied === e.id ? "Copied ✓" : "Copy link", toggle: () => { this.setDb((d) => ({ ...d, events: d.events.map((x) => x.id === e.id ? { ...x, active: !x.active } : x) })); this.flash(e.active ? "Replies closed. The link now shows \u201cnot available\u201d." : "Replies open."); }, copy: () => this.copy(e.slug, e.id) }; });
+    out.onNewEvent = () => {
+      const id = "ev" + Date.now().toString(36);
+      let slug = "new-event", n = 2; while (db.events.some((e) => e.slug === slug)) slug = `new-event-${n++}`;
+      const date = new Date(Date.now() + 30 * 864e5).toISOString().slice(0, 10);
+      const ev = { id, slug, title: "New event", date, start: "18:00", end: "21:00", tz: "Europe/London", venue: "", address: "", message: "", question: "Will you be joining us?", buttonText: "Send my RSVP", confirmation: "Thank you! Can't wait to see you there", notesLabel: "Notes", active: false, notesOn: true, notesReq: false, hero: "", heroAlt: "", look: { ...PRESETS.neutral.look, bgImage: "" } };
+      this.setDb((d) => ({ ...d, events: [...d.events, ev] }), () => this.go(`/events/${id}/edit`));
+      this.flash("Event created. It stays inactive until you switch replies on.");
+    };
+
+    // editor
+    const d = S.draft || seed().events[0];
+    const saved = isEditor ? db.events.find((e) => e.id === d.id) : null;
+    const dirty = isEditor && saved && JSON.stringify(saved) !== JSON.stringify(d);
+    const L = d.look;
+    const upd = (o) => this.setState((s) => ({ draft: { ...s.draft, ...o } }));
+    const setLook = (o) => this.setState((s) => ({ draft: { ...s.draft, look: { ...s.draft.look, ...o } } }));
+    const on = {};
+    ["title", "date", "start", "end", "tz", "venue", "address", "message", "question", "buttonText", "confirmation", "notesLabel", "heroAlt"].forEach((k) => (on[k] = (e) => upd({ [k]: e.target.value })));
+    const lk = {}, lkNum = {};
+    ["g1", "g2"].forEach((k) => (lk[k] = (e) => setLook({ [k]: e.target.value })));
+    ["overlay", "blur"].forEach((k) => (lkNum[k] = (e) => setLook({ [k]: +e.target.value })));
+    const seg = (key, opts) => opts.map(([v, label]) => ({ label, on: L[key] === v, style: segStyle(L[key] === v), onClick: () => setLook({ [key]: v }) }));
+    const errs = S.errs || {};
+    Object.assign(out, {
+      d, on, lk, lkNum, look: L, errs, zones: ZONES,
+      draftTitle: d.title || "Untitled event", draftUrl: this.publicUrl(d.slug), draftPublicHref: `#/e/${saved ? saved.slug : d.slug}`, draftListHref: `#/events/${d.id}/rsvps`,
+      onSlug: (e) => upd({ slug: slugify(e.target.value.replace(/ /g, "-")) }),
+      activeLabel: d.active ? "Active" : "Inactive",
+      activePill: { flex: "none", display: "inline-flex", alignItems: "center", height: 22, padding: "0 8px", borderRadius: 11, fontSize: 12, fontWeight: 600, background: d.active ? "#e3f1e7" : "#ebeae6", color: d.active ? "#1e5e33" : "#4a4a46" },
+      saveStatus: dirty ? "Unsaved changes" : "All changes saved", notDirty: !dirty,
+      saveStyle: { height: 40, padding: "0 16px", border: 0, borderRadius: 6, background: dirty ? "#1c1c1a" : "#c9c8c3", color: "#fff", font: "600 14px 'IBM Plex Sans',sans-serif", cursor: dirty ? "pointer" : "not-allowed" },
+      onSave: () => { const e2 = this.validate(d); if (Object.keys(e2).length) { this.setState({ errs: e2, tab: "details", mPreview: false }); return this.flash("Fix the highlighted fields first."); } this.setState({ errs: {} }); this.setDb((x) => ({ ...x, events: x.events.map((ev) => ev.id === d.id ? JSON.parse(JSON.stringify(d)) : ev) }), () => this.flash("Saved")); },
+      onBack: (e) => { if (dirty) { e.preventDefault(); this.setState({ dialog: { title: "Discard unsaved changes?", body: "Your edits to this event haven't been saved.", confirm: "Discard", danger: true, run: () => { this.setState({ draft: null, draftId: null }); this.go("/"); } } }); } else this.setState({ draft: null, draftId: null }); },
+      inputStyle: { width: "100%", height: 44, padding: "0 12px", border: "1px solid #c9c8c3", borderRadius: 6, font: "inherit", fontSize: narrow ? 16 : 14, fontWeight: 400, color: "#1c1c1a", background: "#fff" },
+      textareaStyle: { width: "100%", padding: "10px 12px", border: "1px solid #c9c8c3", borderRadius: 6, font: "inherit", fontSize: narrow ? 16 : 14, fontWeight: 400, color: "#1c1c1a", background: "#fff", resize: "vertical" },
+      tabs: [["details", "Details"], ["wording", "Wording"], ["rsvp", "RSVP"], ["look", "Look"]].map(([k, label]) => ({ label, on: S.tab === k, onClick: () => this.setState({ tab: k }), style: { flex: "none", height: 44, padding: "0 14px", border: 0, borderBottom: S.tab === k ? "2px solid #1c1c1a" : "2px solid transparent", marginBottom: -1, background: "none", font: "inherit", fontSize: 14, fontWeight: S.tab === k ? 600 : 400, color: S.tab === k ? "#1c1c1a" : "#62625d", cursor: "pointer" } })),
+      tabDetails: S.tab === "details", tabWording: S.tab === "wording", tabRsvp: S.tab === "rsvp", tabLook: S.tab === "look",
+      switches: [
+        { label: "Accepting replies", hint: "When off, the link shows \u201cThis RSVP page isn't available\u201d.", on: d.active, toggle: () => upd({ active: !d.active }) },
+        { label: "Notes field", hint: "An extra text box under the reply choices.", on: d.notesOn, toggle: () => upd({ notesOn: !d.notesOn }) },
+        { label: "Notes required", hint: "Guests can't send without filling it in.", on: d.notesOn && d.notesReq, disabled: !d.notesOn, toggle: () => upd({ notesReq: !d.notesReq }) }
+      ].map((s) => ({ ...s, ...sw(s.on, s.disabled), labelStyle: { fontWeight: 500, color: s.disabled ? "#8a8a84" : "#1c1c1a" } })),
+      presets: Object.entries(PRESETS).map(([k, p]) => ({ label: p.label, dot: { width: 18, height: 18, borderRadius: 9, background: `linear-gradient(135deg, ${p.look.primary} 50%, ${p.look.accent} 50%)` }, onClick: () => setLook({ ...p.look, bgImage: L.bgImage }) })),
+      layouts: [["card", "Card", "Invite on top, details in a card"], ["poster", "Poster", "Invite fills the first screen"]].map(([v, label, hint]) => { const o = L.layout === v; return { label, hint, on: o, onClick: () => setLook({ layout: v }), style: { display: "flex", alignItems: "center", gap: 14, padding: 12, background: "#fff", border: o ? "2px solid #1c1c1a" : "1px solid #e4e3df", margin: o ? 0 : 1, borderRadius: 10, font: "inherit", fontSize: 14, color: "#1c1c1a", cursor: "pointer" }, thumb: { position: "relative", flex: "none", width: 44, height: 64, borderRadius: 4, background: "#ebeae6", overflow: "hidden" }, thumbHero: v === "card" ? { position: "absolute", left: 6, right: 6, top: 5, height: 22, borderRadius: 2, background: "#bdbcb6" } : { position: "absolute", left: 0, right: 0, top: 0, height: 40, background: "#bdbcb6" }, thumbCard: v === "card" ? { position: "absolute", left: 6, right: 6, top: 30, bottom: 5, borderRadius: 2, background: "#fff" } : { position: "absolute", left: 4, right: 4, top: 34, bottom: 0, borderRadius: "2px 2px 0 0", background: "#fff" } }; }),
+      bgTypes: seg("bg", [["solid", "Solid"], ["gradient", "Gradient"], ["image", "Image"]]),
+      bgGradient: L.bg === "gradient", bgImage: L.bg === "image", bgShowColors: L.bg !== "image", bgLabel1: L.bg === "gradient" ? "From" : "Color",
+      bgThumb: { height: 90, borderRadius: 6, background: L.bgImage ? `center/cover url("${L.bgImage}")` : `repeating-linear-gradient(135deg,rgba(0,0,0,.08) 0 8px,transparent 8px 16px),#d9d7d0` },
+      bgUploadLabel: L.bgImage ? "Replace photo" : "Upload photo",
+      onBgFile: (e) => { const f = e.target.files && e.target.files[0]; e.target.value = ""; if (f) readImage(f, 1600).then((url) => setLook({ bgImage: url }), () => this.flash("That file couldn't be read as an image.")); },
+      onBgRemove: () => setLook({ bgImage: "" }),
+      heroThumb: { width: 96, height: 120, borderRadius: 4, display: "grid", placeItems: "center", background: d.hero ? `center/cover url("${d.hero}")` : "repeating-linear-gradient(135deg,rgba(0,0,0,.07) 0 8px,transparent 8px 16px),#ebeae6" },
+      noHeroImg: !d.hero, heroUploadLabel: d.hero ? "Replace image" : "Upload image", altWarn: !!d.hero && !d.heroAlt.trim(),
+      onHeroFile: (e) => { const f = e.target.files && e.target.files[0]; e.target.value = ""; if (f) readImage(f, 1400).then((url) => upd({ hero: url }), () => this.flash("That file couldn't be read as an image.")); },
+      onHeroRemove: () => upd({ hero: "" }),
+      fonts: FONTS.map((f) => ({ ...f, on: L.font === f.id, onClick: () => setLook({ font: f.id }), sample: { fontFamily: f.h, fontWeight: f.w, fontSize: 20, lineHeight: 1.1 }, style: { display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 4, padding: "12px 12px 10px", background: "#fff", border: L.font === f.id ? "2px solid #1c1c1a" : "1px solid #e4e3df", margin: L.font === f.id ? 0 : 1, borderRadius: 8, cursor: "pointer", color: "#1c1c1a", textAlign: "left" } })),
+      scales: seg("scale", [["sm", "S"], ["md", "M"], ["lg", "L"]]),
+      cards: seg("card", [["solid", "Solid"], ["glass", "Glass"], ["outline", "Outline"], ["none", "None"]]),
+      radii: seg("radius", [["none", "None"], ["sm", "S"], ["lg", "L"], ["xl", "XL"]]),
+      buttons: seg("button", [["solid", "Solid"], ["outline", "Outline"], ["pill", "Pill"]])
+    });
+    // contrast — for "none" card the text sits on the background
+    const ground = L.card === "none" ? (L.bg === "image" ? null : L.g1) : L.surface;
+    const groundName = L.card === "none" ? "background" : "card";
+    const onP = onPrimaryFor(L.primary);
+    const checks = {
+      primary: [ratio(onP, L.primary), 4.5, `${onP === "#ffffff" ? "White" : "Dark"} label on primary`],
+      accent: [ground ? ratio(L.accent, ground) : null, 3, `Focus ring on ${groundName}`],
+      text: [ground ? ratio(L.text, ground) : null, 4.5, `Text on ${groundName}`],
+      surface: [ground ? ratio(L.primary, ground) : null, 3, `Selected reply on ${groundName}`]
+    };
+    out.colors = [["primary", "Primary", "Buttons, selected reply"], ["accent", "Accent", "Highlights, dividers, focus ring"], ["text", "Text", "Headings and body"], ["surface", "Surface", L.card === "glass" ? "Card fill, translucent for glass" : "Card fill"]].map(([k, label, hint]) => {
+      const [rt, min, what] = checks[k]; const valid = isHex(L[k]); const ok = rt != null && rt >= min;
+      const imgNone = !ground && L.card === "none";
+      return { label, hint, what, value: L[k], value6: valid ? L[k] : "#000000", onChange: (e) => setLook({ [k]: e.target.value.trim() }),
+        ratio: !valid ? "invalid hex" : imgNone ? "check on photo" : rt == null ? "—" : `${rt.toFixed(1)}:1 ${ok ? "· AA" : "· fails AA"}`,
+        ratioStyle: { fontFamily: "'IBM Plex Mono',monospace", fontWeight: 500, color: !valid || (!ok && !imgNone) ? "#8f2a22" : "#1e5e33" },
+        warn: !valid ? "Use a 6-digit hex like #5B2BD6." : imgNone && k === "text" ? "With no card, text sits directly on the photo. Pick a card style so the form stays readable." : rt == null || ok ? "" : `${what} is ${rt.toFixed(1)}:1; WCAG AA needs ${min}:1. ${k === "accent" ? "Darken the accent." : k === "text" ? "Darken the text or change the card fill." : k === "primary" ? "Pick a darker or lighter primary." : "Make primary and card more different."}` };
+    });
+    out.previewVars = themeVars(L, { width: narrow ? "100%" : 375, zoom: narrow ? 1 : 0.9227 });
+    out.draftData = this.eventData(d);
+    out.draftNotes = !d.notesOn ? "off" : d.notesReq ? "required" : "optional";
+    out.draftCal = calLinks(d);
+    out.pvState = d.active ? S.pv : "unavailable";
+    out.pvWidth = narrow ? "100%" : 375;
+    out.pvStates = [["idle", "Form"], ["errors", "Errors"], ["success", "Sent"]].map(([v, label]) => ({ label, on: S.pv === v, style: segStyle(S.pv === v), onClick: () => this.setState({ pv: v }) }));
+    out.mobileModes = [[false, "Edit"], [true, "Preview"]].map(([v, label]) => ({ label, on: S.mPreview === v, style: segStyle(S.mPreview === v, true), onClick: () => this.setState({ mPreview: v }) }));
+    out.showForm = !narrow || !S.mPreview;
+    out.showPreview = !narrow || S.mPreview;
+    out.editorGrid = narrow ? { padding: S.mPreview ? 0 : "20px 16px 64px" } : { maxWidth: 1280, margin: "0 auto", display: "grid", gridTemplateColumns: "minmax(0,1fr) 380px", gap: 40, padding: "0 16px 64px", alignItems: "start" };
+    out.previewAside = narrow ? { display: "flex", flexDirection: "column", gap: 0 } : { position: "sticky", top: 72, display: "flex", flexDirection: "column", gap: 12, paddingTop: 20 };
+    out.phoneFrame = narrow ? {} : { alignSelf: "center", width: 346, height: "min(720px, calc(100dvh - 160px))", borderRadius: 36, border: "8px solid #1c1c1a", overflow: "hidden", background: "#000", boxSizing: "content-box" };
+    out.phoneScroll = narrow ? {} : { width: 346, height: "100%", overflowY: "auto", overflowX: "hidden" };
+
+    // list
+    if (listEv) {
+      const all = db.rsvps.filter((x) => x.eventId === listEv.id).sort((a, b) => b.at.localeCompare(a.at));
+      const c = { yes: 0, maybe: 0, no: 0 }; all.forEach((x) => c[x.choice]++);
+      const q = S.search.trim().toLowerCase();
+      const filtered = all.filter((x) => (S.filter === "all" || x.choice === S.filter) && (!q || x.name.toLowerCase().includes(q)));
+      out.listEvent = listEv; out.listEditHref = `#/events/${listEv.id}/edit`;
+      out.summary = `${c.yes} Yes · ${c.maybe} Maybe · ${c.no} No`;
+      out.noReplies = all.length === 0;
+      out.listTable = !narrow; out.listCards = narrow;
+      out.copyListLabel = S.copied === "list" ? "Copied ✓" : "Copy link";
+      out.onCopyList = () => this.copy(listEv.slug, "list");
+      out.chips = [["all", "All", all.length], ["yes", "Yes", c.yes], ["maybe", "Maybe", c.maybe], ["no", "No", c.no]].map(([v, label, count]) => { const o = S.filter === v; return { label, count, on: o, onClick: () => this.setState({ filter: v }), style: { flex: "none", whiteSpace: "nowrap", height: 40, padding: "0 14px", borderRadius: 20, border: o ? "1px solid #1c1c1a" : "1px solid #d6d5d0", background: o ? "#1c1c1a" : "#fff", color: o ? "#fff" : "#1c1c1a", font: "inherit", fontSize: 14, fontWeight: 500, cursor: "pointer" } }; });
+      out.search = S.search; out.onSearch = (e) => this.setState({ search: e.target.value });
+      out.rows = filtered.map((x) => { const [label, bg, fg] = BADGE[x.choice]; return { ...x, label, when: fmtWhen(x.at), deleteLabel: `Delete ${x.name}'s reply`, badge: { flex: "none", display: "inline-flex", alignItems: "center", height: 24, padding: "0 9px", borderRadius: 12, background: bg, color: fg, fontSize: 12, fontWeight: 600 }, notesShown: x.notes || "—", notesStyle: { color: x.notes ? "#1c1c1a" : "#8a8a84", fontSize: 14, textWrap: "pretty" }, onDelete: () => this.setState({ dialog: { title: `Delete ${x.name}'s reply?`, body: "This removes it from the list and the counts. It can't be undone.", confirm: "Delete reply", danger: true, run: () => { this.setDb((dd) => ({ ...dd, rsvps: dd.rsvps.filter((y) => y.id !== x.id) })); this.flash("Reply deleted"); } } }) }; });
+      out.emptyMsg = all.length === 0 ? "No replies yet. Share the link to start collecting them." : filtered.length === 0 ? (q ? `No guests match \u201c${S.search}\u201d.` : "No replies in this group.") : "";
+      out.onExport = () => { const esc = (v) => `"${String(v).replace(/"/g, '""')}"`; const csv = ["Guest name,Response,Notes,Submitted", ...all.map((x) => [x.name, BADGE[x.choice][0], x.notes, x.at].map(esc).join(","))].join("\n"); const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" })); a.download = `${listEv.slug}-rsvps.csv`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); };
+    } else { out.listEvent = {}; out.rows = []; out.chips = []; }
+
+    // dialog
+    out.dialog = S.dialog;
+    out.dialogRef = (el) => (this.dlgBtn = el);
+    out.dialogBtn = { height: 44, padding: "0 16px", border: 0, borderRadius: 6, background: S.dialog && S.dialog.danger ? "#a3271f" : "#1c1c1a", color: "#fff", font: "600 14px 'IBM Plex Sans',sans-serif", cursor: "pointer" };
+    out.onDialogCancel = () => this.setState({ dialog: null });
+    out.onDialogBackdrop = () => this.setState({ dialog: null });
+    out.stop = (e) => e.stopPropagation();
+    out.onDialogConfirm = () => { const run = S.dialog && S.dialog.run; this.setState({ dialog: null }); if (run) run(); };
+    return out;
+  }
+}
+</script>
+</body>
+</html>

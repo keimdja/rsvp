@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><style>html,body{margin:0;padding:0;-webkit-text-size-adjust:100%}*{box-sizing:border-box}a{color:inherit}a:hover{opacity:.85}</style></helmet>
+<div style="{{ vars }}">
+  <dc-import name="RSVP Page" fluid="{{ true }}" event="{{ theme }}" state="{{ pageState }}" layout="{{ t.layout }}" background="{{ t.background }}" card="{{ t.card }}" button="{{ t.button }}" notes="{{ t.notes }}" reply="{{ reply }}" cal="{{ cal }}" on-reply="{{ onReply }}" hint-size="100%,100dvh"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;birthday&quot;,&quot;christmas&quot;,&quot;wedding&quot;],&quot;default&quot;:&quot;birthday&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;linkActive&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+const KEY = "rsvp-guest-v1";
+const THEMES = {
+  birthday: { layout: "card", background: "gradient", card: "solid", button: "pill", notes: "required", slug: "maya-6", ev: { title: "Maya turns 6!", date: "2026-11-14", start: "14:00", end: "17:00", tz: "Europe/London", loc: "Jumpin' Jungle Play Centre, 48 Harbour Road, Brighton BN2 1TR" },
+    vars: { "--rsvp-primary": "#5b2bd6", "--rsvp-on-primary": "#fff", "--rsvp-accent": "#e5530c", "--rsvp-text": "#2b1a40", "--rsvp-muted": "#5e4f70", "--rsvp-surface": "#fff", "--rsvp-field": "#f8f5ff", "--rsvp-border": "#8e7ca8", "--rsvp-error": "#c0262d", "--rsvp-background": "linear-gradient(160deg,#ffd66b 0%,#ff9fbf 55%,#c9a7ff 100%)", "--rsvp-radius": "24px", "--rsvp-font-heading": "'Baloo 2',system-ui,sans-serif", "--rsvp-font-body": "'Nunito',system-ui,sans-serif", "--rsvp-heading-weight": 800, "--rsvp-scale": 1.04, "--rsvp-hero-tint": "#ffe9a8", "--rsvp-skel": "#fff3cc" } },
+  christmas: { layout: "card", background: "image", card: "glass", button: "solid", notes: "off", slug: "studio-xmas", ev: { title: "The Studio Christmas Party", date: "2026-12-11", start: "19:00", end: "23:59", tz: "Europe/London", loc: "The Larder House, 12 Wharf Street, Leeds LS2 7EQ" },
+    vars: { "--rsvp-primary": "#c42b32", "--rsvp-on-primary": "#fff", "--rsvp-accent": "#e9c46a", "--rsvp-text": "#f8f4ea", "--rsvp-muted": "#d9d2c0", "--rsvp-surface": "rgba(12,34,24,.66)", "--rsvp-field": "rgba(255,255,255,.08)", "--rsvp-border": "rgba(248,244,234,.5)", "--rsvp-error": "#ffa69c", "--rsvp-background": "#0e261b", "--rsvp-bg-image": "repeating-linear-gradient(135deg,rgba(233,196,106,.10) 0 14px,transparent 14px 28px),radial-gradient(120% 80% at 30% 20%,#2d5a40 0%,#0e261b 70%)", "--rsvp-overlay": "rgba(5,18,12,.55)", "--rsvp-blur": "3px", "--rsvp-radius": "16px", "--rsvp-font-heading": "'DM Serif Display',Georgia,serif", "--rsvp-font-body": "'DM Sans',system-ui,sans-serif", "--rsvp-heading-weight": 400, "--rsvp-scale": 1, "--rsvp-hero-tint": "#17382a", "--rsvp-skel": "rgba(255,255,255,.12)" } },
+  wedding: { layout: "poster", background: "solid", card: "outline", button: "outline", notes: "optional", slug: "eleanor-and-james", ev: { title: "Eleanor & James", date: "2027-06-05", start: "14:30", end: "23:00", tz: "Europe/London", loc: "Holloway Hall, Lower Street, Chipping Norton OX7 5AA" },
+    vars: { "--rsvp-primary": "#161412", "--rsvp-on-primary": "#fbf8f1", "--rsvp-accent": "#8f6f3f", "--rsvp-text": "#161412", "--rsvp-muted": "#57514a", "--rsvp-surface": "#fbf8f1", "--rsvp-field": "transparent", "--rsvp-border": "#161412", "--rsvp-error": "#a3221b", "--rsvp-background": "#f1ebdf", "--rsvp-radius": "0px", "--rsvp-font-heading": "'Cormorant Garamond',Georgia,serif", "--rsvp-font-body": "'Jost',system-ui,sans-serif", "--rsvp-heading-weight": 500, "--rsvp-scale": 1.1, "--rsvp-hero-tint": "#e6dfd1", "--rsvp-skel": "#e6dfd1" } }
+};
+const NEUTRAL = { "--rsvp-primary": "#1c1c1a", "--rsvp-on-primary": "#fff", "--rsvp-accent": "#2f6feb", "--rsvp-text": "#1c1c1a", "--rsvp-muted": "#5a5a55", "--rsvp-surface": "#fff", "--rsvp-border": "#d6d5d0", "--rsvp-background": "#f1f0ec", "--rsvp-radius": "16px", "--rsvp-font-heading": "'DM Sans',system-ui,sans-serif", "--rsvp-font-body": "'DM Sans',system-ui,sans-serif", "--rsvp-heading-weight": 700, "--rsvp-scale": 1, "--rsvp-skel": "#e6e5e0" };
+function cal(t) {
+  const e = t.ev, enc = encodeURIComponent, z = (x) => `${e.date.replace(/-/g, "")}T${x.replace(":", "")}00`;
+  const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//RSVP//EN", "BEGIN:VEVENT", `UID:${t.slug}@rsvp`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").slice(0, 15)}Z`, `DTSTART;TZID=${e.tz}:${z(e.start)}`, `DTEND;TZID=${e.tz}:${z(e.end)}`, `SUMMARY:${e.title}`, `LOCATION:${e.loc.replace(/,/g, "\\,")}`, "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+  return {
+    google: `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${enc(e.title)}&dates=${z(e.start)}/${z(e.end)}&ctz=${enc(e.tz)}&location=${enc(e.loc)}`,
+    outlook: `https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent&subject=${enc(e.title)}&startdt=${e.date}T${e.start}:00&enddt=${e.date}T${e.end}:00&location=${enc(e.loc)}`,
+    ics: "data:text/calendar;charset=utf-8," + enc(ics), icsName: `${t.slug}.ics`
+  };
+}
+class Component extends DCLogic {
+  state = { loading: true, saved: {} };
+  componentDidMount() {
+    try { this.setState({ saved: JSON.parse(localStorage.getItem(KEY)) || {} }); } catch (e) {}
+    this.t = setTimeout(() => this.setState({ loading: false }), 500);
+  }
+  componentWillUnmount() { clearTimeout(this.t); }
+  renderVals() {
+    const theme = THEMES[this.props.theme] ? this.props.theme : "birthday";
+    const t = THEMES[theme];
+    const active = this.props.linkActive !== false;
+    const reply = this.state.saved[theme] || null;
+    if (typeof document !== "undefined") document.title = active ? t.ev.title : "RSVP";
+    return {
+      theme, t, reply, cal: cal(t),
+      vars: this.state.loading || !active ? NEUTRAL : t.vars,
+      pageState: this.state.loading ? "loading" : !active ? "unavailable" : reply ? "success" : "idle",
+      onReply: (r) => this.setState((s) => { const saved = { ...s.saved, [theme]: { ...r, at: new Date().toISOString() } }; try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {} return { saved }; })
+    };
+  }
+}
+</script>
+</body>
+</html>

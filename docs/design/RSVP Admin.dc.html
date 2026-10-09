@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&family=DM+Serif+Display&family=DM+Sans:wght@400;500;700&family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@400;500;600&family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@400;600;700&family=Space+Grotesk:wght@500;700&family=Work+Sans:wght@400;500;600&family=Bricolage+Grotesque:wght@600;800&family=Figtree:wght@400;600;700&display=swap"><style>body{margin:0;background:#ecebe7;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#1c1c1a}a{color:#1c1c1a}a:hover{color:#2f6feb}.dv-turn{padding:44px 48px 36px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 8px}.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}.dv-tname{font:600 15px/1.2 'IBM Plex Sans',system-ui,sans-serif;color:#1a1a1a}.dv-sub{margin:0 0 24px;max-width:760px;font:14px/1.55 'IBM Plex Sans',system-ui,sans-serif;color:rgba(0,0,0,.6)}.dv-opts{display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start}.dv-opt{flex:none;display:flex;flex-direction:column;gap:10px;scroll-margin-top:16px}.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 12px/1.3 'IBM Plex Sans',system-ui,sans-serif;color:rgba(0,0,0,.6)}.dv-card{max-width:100%;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}.dv-opt:target .dv-oid{background:#2a78d6;color:#fff}.dv-next{margin:26px 0 0;font:12px/1.5 'IBM Plex Sans',system-ui,sans-serif;color:rgba(0,0,0,.5)}</style></helmet>
+<section class="dv-turn" id="t0" style="background:#f6f5f2">
+  <div class="dv-thd"><span class="dv-tname" style="font-size:22px">RSVP · admin</span></div>
+  <p class="dv-sub" style="margin:0">One host, one neutral UI: warm grey ground, white surfaces, ink for primary actions, blue only for focus. IBM Plex Sans and Plex Mono (slugs, counts, times). Nothing here borrows from event themes, so the live preview is the only colourful thing on screen. Frames are interactive.</p>
+</section>
+<section class="dv-turn" id="t1">
+  <div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Login and dashboard</span></div>
+  <div class="dv-opts">
+    <div class="dv-opt" id="1a"><div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Login</div>
+      <div class="dv-card" style="width:1280px;height:720px;background:#f6f6f4;display:grid;place-items:center">
+        <form style="width:360px;display:flex;flex-direction:column;gap:20px">
+          <div style="display:flex;align-items:center;gap:10px"><span style="width:22px;height:22px;border-radius:5px;background:#1c1c1a"></span><span style="font:600 16px 'IBM Plex Sans',sans-serif">RSVP</span></div>
+          <div style="display:flex;flex-direction:column;gap:20px;padding:28px;background:#fff;border:1px solid #e4e3df;border-radius:10px">
+            <h1 style="margin:0;font:600 20px/1.2 'IBM Plex Sans',sans-serif">Sign in</h1>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">Email<input type="email" value="host@example.com" style="box-sizing:border-box;width:100%;height:44px;padding:0 12px;border:1px solid #c9c8c3;border-radius:6px;font:inherit;font-size:15px;font-weight:400;color:#1c1c1a;background:#fff" style-focus="outline:2px solid #2f6feb;outline-offset:1px"></label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">Password<input type="password" value="hunter22hunter" style="box-sizing:border-box;width:100%;height:44px;padding:0 12px;border:1px solid #c9c8c3;border-radius:6px;font:inherit;font-size:15px;font-weight:400;color:#1c1c1a;background:#fff" style-focus="outline:2px solid #2f6feb;outline-offset:1px"></label>
+            <button type="button" style="height:44px;border:0;border-radius:6px;background:#1c1c1a;color:#fff;font:600 15px 'IBM Plex Sans',sans-serif;cursor:pointer" style-hover="background:#3a3a37" style-focus="outline:2px solid #2f6feb;outline-offset:2px">Sign in</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="dv-opt" id="1b"><div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Dashboard</div>
+      <div class="dv-card" style="width:1280px;background:#f6f6f4;font-size:14px">
+        <header style="height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:#fff;border-bottom:1px solid #e4e3df">
+          <div style="display:flex;align-items:center;gap:10px"><span style="width:20px;height:20px;border-radius:5px;background:#1c1c1a"></span><span style="font-weight:600">RSVP</span></div>
+          <div style="display:flex;align-items:center;gap:16px;color:#62625d"><span>host@example.com</span><button type="button" style="height:36px;padding:0 12px;border:1px solid #e4e3df;border-radius:6px;background:#fff;font:inherit;color:#1c1c1a;cursor:pointer">Sign out</button></div>
+        </header>
+        <main style="max-width:1120px;margin:0 auto;padding:36px 32px 56px;display:flex;flex-direction:column;gap:20px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <h1 style="margin:0;font:600 24px/1.2 'IBM Plex Sans',sans-serif">Events</h1>
+            <button type="button" style="height:40px;padding:0 16px;border:0;border-radius:6px;background:#1c1c1a;color:#fff;font:600 14px 'IBM Plex Sans',sans-serif;cursor:pointer" style-hover="background:#3a3a37" style-focus="outline:2px solid #2f6feb;outline-offset:2px">+ New event</button>
+          </div>
+          <div style="background:#fff;border:1px solid #e4e3df;border-radius:10px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:minmax(0,2.4fr) 150px 56px 56px 56px 64px 72px 252px;gap:12px;align-items:center;padding:10px 20px;border-bottom:1px solid #e4e3df;font-size:12px;font-weight:500;color:#62625d">
+              <span>Event</span><span>Date</span><span style="text-align:right">Yes</span><span style="text-align:right">Maybe</span><span style="text-align:right">No</span><span style="text-align:right">Total</span><span>Active</span><span></span>
+            </div>
+            <sc-for list="{{ events }}" as="e" hint-placeholder-count="4">
+              <div style="display:grid;grid-template-columns:minmax(0,2.4fr) 150px 56px 56px 56px 64px 72px 252px;gap:12px;align-items:center;padding:14px 20px;border-bottom:1px solid #efeeea" style-hover="background:#fafaf8">
+                <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-weight:600;font-size:15px;color:{{ e.titleColor }}">{{ e.title }}</span><span style="font:12px 'IBM Plex Mono',monospace;color:#62625d">/{{ e.slug }}</span></div>
+                <span style="color:{{ e.dateColor }}">{{ e.date }}</span>
+                <span style="text-align:right;font:500 14px 'IBM Plex Mono',monospace">{{ e.yes }}</span>
+                <span style="text-align:right;font:500 14px 'IBM Plex Mono',monospace">{{ e.maybe }}</span>
+                <span style="text-align:right;font:500 14px 'IBM Plex Mono',monospace">{{ e.no }}</span>
+                <span style="text-align:right;font:600 14px 'IBM Plex Mono',monospace">{{ e.total }}</span>
+                <button type="button" role="switch" aria-checked="{{ e.active }}" aria-label="Active" onClick="{{ e.toggle }}" style="width:44px;height:44px;padding:0;border:0;background:none;display:grid;place-items:center;cursor:pointer" style-focus="outline:2px solid #2f6feb;outline-offset:0;border-radius:8px"><span style="{{ e.track }}"><span style="{{ e.knob }}"></span></span></button>
+                <div style="display:flex;gap:6px;justify-content:flex-end">
+                  <button type="button" onClick="{{ e.copy }}" style="height:34px;min-width:84px;padding:0 10px;border:1px solid #e4e3df;border-radius:6px;background:#fff;font:inherit;font-size:13px;color:#1c1c1a;cursor:pointer" style-hover="border-color:#c9c8c3" style-focus="outline:2px solid #2f6feb;outline-offset:1px">{{ e.copyLabel }}</button>
+                  <button type="button" style="height:34px;padding:0 10px;border:1px solid #e4e3df;border-radius:6px;background:#fff;font:inherit;font-size:13px;color:#1c1c1a;cursor:pointer" style-hover="border-color:#c9c8c3" style-focus="outline:2px solid #2f6feb;outline-offset:1px">View RSVPs</button>
+                  <button type="button" style="height:34px;padding:0 10px;border:1px solid #e4e3df;border-radius:6px;background:#fff;font:inherit;font-size:13px;color:#1c1c1a;cursor:pointer" style-hover="border-color:#c9c8c3" style-focus="outline:2px solid #2f6feb;outline-offset:1px">Edit</button>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </main>
+      </div>
+    </div>
+    <div class="dv-opt" id="1c"><div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Dashboard · empty</div>
+      <div class="dv-card" style="width:1280px;background:#f6f6f4;font-size:14px">
+        <header style="height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:#fff;border-bottom:1px solid #e4e3df">
+          <div style="display:flex;align-items:center;gap:10px"><span style="width:20px;height:20px;border-radius:5px;background:#1c1c1a"></span><span style="font-weight:600">RSVP</span></div>
+          <div style="display:flex;align-items:center;gap:16px;color:#62625d"><span>host@example.com</span><button type="button" style="height:36px;padding:0 12px;border:1px solid #e4e3df;border-radius:6px;background:#fff;font:inherit;color:#1c1c1a">Sign out</button></div>
+        </header>
+        <main style="max-width:1120px;margin:0 auto;padding:36px 32px 64px;display:flex;flex-direction:column;gap:20px">
+          <h1 style="margin:0;font:600 24px/1.2 'IBM Plex Sans',sans-serif">Events</h1>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:72px 24px;background:#fff;border:1px dashed #c9c8c3;border-radius:10px;text-align:center">
+            <h2 style="margin:0;font:600 17px 'IBM Plex Sans',sans-serif">No events yet</h2>
+            <p style="margin:0;max-width:360px;color:#62625d">Create an event to get a link and QR code you can share with guests.</p>
+            <button type="button" style="margin-top:8px;height:40px;padding:0 16px;border:0;border-radius:6px;background:#1c1c1a;color:#fff;font:600 14px 'IBM Plex Sans',sans-serif;cursor:pointer" style-focus="outline:2px solid #2f6feb;outline-offset:2px">+ New event</button>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="dv-turn" id="t2">
+  <div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Event editor</span></div>
+  <p class="dv-sub">The preview updates as you edit: Details, Wording, RSVP and Look all feed it. Contrast is checked live against WCAG AA; the default accent here fails on purpose so the warning shows. Try a darker accent like #E5530C.</p>
+  <div class="dv-opts">
+    <div class="dv-opt" id="2a"><div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>Desktop · form + live preview</div>
+      <div class="dv-card" style="width:1280px;background:#f6f6f4;font-size:14px">
+        <header style="height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:#fff;border-bottom:1px solid #e4e3df">
+          <div style="display:flex;align-items:center;gap:10px"><span style="width:20px;height:20px;border-radius:5px;background:#1c1c1a"></span><span style="font-weight:600">RSVP</span></div>
+          <div style="display:flex;align-items:center;gap:16px;color:#62625d"><span>host@example.com</span></div>
+        </header>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 32px;background:#fff;border-bottom:1px solid #e4e3df">
+          <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+            <a href="#" style="font-size:13px;color:#62625d;text-decoration:none">← Events</a>
+            <div style="display:flex;align-items:center;gap:10px"><h1 style="margin:0;font:600 22px/1.2 'IBM Plex Sans',sans-serif">{{ ed.title }}</h1><span style="{{ activePill }}">{{ activeLabel }}</span></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:13px;color:#62625d">Saved 2 min ago</span>
+            <a href="#" style="height:38px;display:inline-flex;align-items:center;padding:0 14px;border:1px solid #e4e3df;border-radius:6px;background:#fff;font-size:14px;text-decoration:none">View page ↗</a>
+            <button type="button" style="height:38px;padding:0 16px;border:0;border-radius:6px;background:#1c1c1a;color:#fff;font:600 14px 'IBM Plex Sans',sans-serif;cursor:pointer" style-focus="outline:2px solid #2f6feb;outline-offset:2px">Save changes</button>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:40px;padding:0 32px 48px;align-items:start">
+          <div style="display:flex;flex-direction:column;gap:0;min-width:0">
+            <nav role="tablist" style="display:flex;gap:4px;border-bottom:1px solid #e4e3df;margin-bottom:28px">
+              <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+                <button type="button" role="tab" aria-selected="{{ t.on }}" onClick="{{ t.onClick }}" style="{{ t.style }}" style-focus="outline:2px solid #2f6feb;outline-offset:-2px">{{ t.label }}</button>
+              </sc-for>
+            </nav>
+            <sc-if value="{{ tabDetails }}">
+              <div style="display:flex;flex-direction:column;gap:22px;max-width:620px">
+                <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Title<input value="{{ ed.title }}" onChange="{{ on.title }}" style="box-sizing:border-box;width:100%;height:40px;padding:0 12px;border:1px solid #c9c8c3;border-radius:6px;font:inherit;font-weight:400;color:#1c1c1a;background:#fff" style-focus="outline:2px solid #2f6feb;outline-offset:1px"></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Link
+                  <div style="display:flex;align-items:stretch;height:40px;border:1px solid #c9c8c3;border-radius:6px;overflow:hidden;background:#fff"><span style="display:flex;align-items:center;padding:0 10px;background:#f6f6f4;border-right:1px solid #e4e3df;font:13px 'IBM Plex Mono',monospace;color:#62625d">rsvp.page/</span><input value="{{ ed.slug }}" onChange="{{ on.slug }}" style="flex:1;min-width:0;border:0;padding:0 10px;font:13px 'IBM Plex Mono',monospace;color:#1c1c1a" style-focus="outline:2px solid #2f6feb;outline-offset:-2px"></div>
+                  <span style="font-weight:400;font-size:13px;color:#62625d">Guests will open <span style="font-family:'IBM Plex Mono',monospace;color:#1c1c1a">https://rsvp.page/{{ ed.slug }}</span></span>
+                </label>
+                <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:12px">
+                  <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Date<input type="date" value="2026-11-14" style="box-sizing:border-box;width:100%;height:40px;padding:0 10px;border:1px solid #c9c8c3;border-radius:6px;font:inherit;font-weight:400;color:#1c1c1a;background:#fff"></label>
+                  <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Starts<input type="time" value="14:00" style="box-sizing:border-box;width:100%;height:40px;padding:0 10px;border:1px solid #c9c8c3;border-radius:6px;font:inherit;font-weight:400;color:#1c1c1a;background:#fff"></label>
+                  <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Ends<input type="time" value="17:00" style="box-sizing:border-box;width:100%;height:40px;padding:0 10px;border:1px solid #c9c8c3;border-radius:6px;font:inherit;font-weight:400;color:#1c1c1a;background:#fff"></label>
+                </div>
+                <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Time zone<select style="box-sizing:border-box;width:100%;height:40px;padding:0 10px;border:1px solid #c9c8c3;border-radius:6px;font:inherit;font-weight:400;color:#1c1c1a;background:#fff"><option>Europe/London (GMT)</option><option>Europe/Paris (CET)</option><option>America/New_York (ET)</option></select></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Location name<input value="{{ ed.venue }}" onChange="{{ on.venue }}" style="box-sizing:border-box;width:100%;height:40px;padding:0 12px;border:1px solid #c9c8c3;border-radius:6px;font:inherit;font-weight:400;color:#1c1c1a;background:#fff" style-focus="outline:2px solid #2f6feb;outline-offset:1px"></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Address<input value="{{ ed.address }}" onChange="{{ on.address }}" style="box-sizing:border-box;width:100%;height:40px;padding:0 12px;border:1px solid #c9c8c3;border-radius:6px;font:inherit;font-weight:400;color:#1c1c1a;background:#fff" style-focus="outline:2px solid #2f6feb;outline-offset:1px"><span style="font-weight:400;font-size:13px;color:#62625d">Used for the "Open in Maps" link.</span></label>
+              </div>
+            </sc-if>
+            <sc-if value="{{ tabWording }}">
+              <div style="display:flex;flex-direction:column;gap:22px;max-width:620px">
+                <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Message<textarea rows="3" value="{{ ed.message }}" onChange="{{ on.message }}" style="box-sizing:border-box;width:100%;padding:10px 12px;border:1px solid #c9c8c3;border-radius:6px;font:inherit;font-weight:400;color:#1c1c1a;background:#fff;resize:vertical" style-focus="outline:2px solid #2f6feb;outline-offset:1px"></textarea><span style="font-weight:400;font-size:13px;color:#62625d">Optional. Shown under the location.</span></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">RSVP question<input value="{{ ed.question }}" onChange="{{ on.question }}" style="box-sizing:border-box;width:100%;height:40px;padding:0 12px;border:1px solid #c9c8c3;border-radius:6px;font:inherit;font-weight:400;color:#1c1c1a;background:#fff" style-focus="outline:2px solid #2f6feb;outline-offset:1px"></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Button text<input value="{{ ed.buttonText }}" onChange="{{ on.buttonText }}" style="box-sizing:border-box;width:100%;height:40px;padding:0 12px;border:1px solid #c9c8c3;border-radius:6px;font:inherit;font-weight:400;color:#1c1c1a;background:#fff" style-focus="outline:2px solid #2f6feb;outline-offset:1px"></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Confirmation message<input value="{{ ed.confirmation }}" onChange="{{ on.confirmation }}" style="box-sizing:border-box;width:100%;height:40px;padding:0 12px;border:1px solid #c9c8c3;border-radius:6px;font:inherit;font-weight:400;color:#1c1c1a;background:#fff" style-focus="outline:2px solid #2f6feb;outline-offset:1px"><span style="font-weight:400;font-size:13px;color:#62625d">Shown after a guest replies. Switch the preview to "Sent" to check it.</span></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-weight:500">Notes label<input value="{{ ed.notesLabel }}" onChange="{{ on.notesLabel }}" style="box-sizing:border-box;width:100%;height:40px;padding:0 12px;border:1px solid #c9c8c3;border-radius:6px;font:inherit;font-weight:400;color:#1c1c1a;background:#fff" style-focus="outline:2px solid #2f6feb;outline-offset:1px"></label>
+              </div>
+            </sc-if>
+            <sc-if value="{{ tabRsvp }}">
+              <div style="display:flex;flex-direction:column;max-width:620px;background:#fff;border:1px solid #e4e3df;border-radius:10px">
+                <sc-for list="{{ switches }}" as="s" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:24px;padding:16px 20px;border-bottom:1px solid #efeeea">
+                    <div style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:500;color:{{ s.labelColor }}">{{ s.label }}</span><span style="font-size:13px;color:#62625d">{{ s.hint }}</span></div>
+                    <button type="button" role="switch" aria-checked="{{ s.on }}" aria-label="{{ s.label }}" disabled="{{ s.disabled }}" onClick="{{ s.toggle }}" style="width:44px;height:44px;flex:none;padding:0;border:0;background:none;display:grid;place-items:center;cursor:pointer" style-focus="outline:2px solid #2f6feb;border-radius:8px"><span style="{{ s.track }}"><span style="{{ s.knob }}"></span></span></button>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ tabLook }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;flex-direction:column;gap:32px;max-width:640px">
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <span style="font-weight:600">Layout</span>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                    <sc-for list="{{ layouts }}" as="o" hint-placeholder-count="2">
+                      <button type="button" aria-pressed="{{ o.on }}" onClick="{{ o.onClick }}" style="{{ o.style }}" style-focus="outline:2px solid #2f6feb;outline-offset:2px">
+                        <span style="{{ o.thumb }}"><span style="{{ o.thumbHero }}"></span><span style="{{ o.thumbCard }}"></span></span>
+                        <span style="display:flex;flex-direction:column;gap:2px;text-align:left"><span style="font-weight:600">{{ o.label }}</span><span style="font-size:13px;color:#62625d">{{ o.hint }}</span></span>
+                      </button>
+                    </sc-for>
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <span style="font-weight:600">Colors</span>
+                  <div style="display:flex;flex-direction:column;background:#fff;border:1px solid #e4e3df;border-radius:10px">
+                    <sc-for list="{{ colors }}" as="c" hint-placeholder-count="4">
+                      <div style="display:flex;flex-direction:column;gap:8px;padding:12px 16px;border-bottom:1px solid #efeeea">
+                        <div style="display:grid;grid-template-columns:32px minmax(0,1fr) 120px 92px;gap:12px;align-items:center">
+                          <span style="{{ c.swatch }}"></span>
+                          <span style="display:flex;flex-direction:column"><span style="font-weight:500">{{ c.label }}</span><span style="font-size:12px;color:#62625d">{{ c.hint }}</span></span>
+                          <input value="{{ c.value }}" onChange="{{ c.onChange }}" aria-label="{{ c.label }} hex" style="box-sizing:border-box;width:100%;height:36px;padding:0 10px;border:1px solid #c9c8c3;border-radius:6px;font:13px 'IBM Plex Mono',monospace;color:#1c1c1a;background:#fff" style-focus="outline:2px solid #2f6feb;outline-offset:1px">
+                          <span style="{{ c.ratioStyle }}">{{ c.ratio }}</span>
+                        </div>
+                        <sc-if value="{{ c.warn }}"><div role="alert" style="display:flex;gap:8px;align-items:flex-start;margin-left:44px;padding:8px 10px;border-radius:6px;background:#fbefd5;color:#6b4500;font-size:13px"><span style="font-weight:700">!</span><span>{{ c.warn }}</span></div></sc-if>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <span style="font-weight:600">Background</span>
+                  <div style="display:inline-flex;align-self:flex-start;padding:3px;gap:2px;background:#ebeae6;border-radius:8px">
+                    <sc-for list="{{ bgTypes }}" as="o" hint-placeholder-count="3"><button type="button" aria-pressed="{{ o.on }}" onClick="{{ o.onClick }}" style="{{ o.style }}" style-focus="outline:2px solid #2f6feb">{{ o.label }}</button></sc-for>
+                  </div>
+                  <sc-if value="{{ bgGradient }}" hint-placeholder-val="{{ true }}">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                      <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#62625d">From<div style="display:flex;gap:8px;align-items:center"><span style="width:36px;height:36px;border-radius:6px;background:{{ look.g1 }};border:1px solid rgba(0,0,0,.1)"></span><input value="{{ look.g1 }}" onChange="{{ on.g1 }}" style="flex:1;min-width:0;height:36px;padding:0 10px;border:1px solid #c9c8c3;border-radius:6px;font:13px 'IBM Plex Mono',monospace"></div></label>
+                      <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#62625d">To<div style="display:flex;gap:8px;align-items:center"><span style="width:36px;height:36px;border-radius:6px;background:{{ look.g2 }};border:1px solid rgba(0,0,0,.1)"></span><input value="{{ look.g2 }}" onChange="{{ on.g2 }}" style="flex:1;min-width:0;height:36px;padding:0 10px;border:1px solid #c9c8c3;border-radius:6px;font:13px 'IBM Plex Mono',monospace"></div></label>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ bgSolid }}">
+                    <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#62625d;max-width:300px">Color<div style="display:flex;gap:8px;align-items:center"><span style="width:36px;height:36px;border-radius:6px;background:{{ look.g1 }};border:1px solid rgba(0,0,0,.1)"></span><input value="{{ look.g1 }}" onChange="{{ on.g1 }}" style="flex:1;min-width:0;height:36px;padding:0 10px;border:1px solid #c9c8c3;border-radius:6px;font:13px 'IBM Plex Mono',monospace"></div></label>
+                  </sc-if>
+                  <sc-if value="{{ bgImage }}">
+                    <div style="display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;align-items:start">
+                      <div style="height:90px;border-radius:6px;background:repeating-linear-gradient(135deg,rgba(0,0,0,.08) 0 8px,transparent 8px 16px),#d9d7d0;display:grid;place-items:center;font:11px 'IBM Plex Mono',monospace;color:#4a4a46">bg.jpg</div>
+                      <div style="display:flex;flex-direction:column;gap:12px">
+                        <label style="display:grid;grid-template-columns:80px 1fr 44px;gap:10px;align-items:center;font-size:13px">Overlay<input type="range" min="0" max="80" value="{{ look.overlay }}" onChange="{{ on.overlay }}" style="accent-color:#1c1c1a"><span style="font-family:'IBM Plex Mono',monospace">{{ look.overlay }}%</span></label>
+                        <label style="display:grid;grid-template-columns:80px 1fr 44px;gap:10px;align-items:center;font-size:13px">Blur<input type="range" min="0" max="12" value="{{ look.blur }}" onChange="{{ on.blur }}" style="accent-color:#1c1c1a"><span style="font-family:'IBM Plex Mono',monospace">{{ look.blur }}px</span></label>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <span style="font-weight:600">Invitation image</span>
+                  <div style="display:grid;grid-template-columns:96px minmax(0,1fr);gap:16px;padding:14px;background:#fff;border:1px solid #e4e3df;border-radius:10px">
+                    <div style="width:96px;height:120px;border-radius:4px;background:repeating-linear-gradient(135deg,rgba(0,0,0,.07) 0 8px,transparent 8px 16px),#ffe9a8;display:grid;place-items:center;font:10px 'IBM Plex Mono',monospace;color:#4a4a46">4:5</div>
+                    <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+                      <div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span style="font:13px 'IBM Plex Mono',monospace">maya-invite.png · 1080×1350</span><div style="display:flex;gap:6px"><button type="button" style="height:32px;padding:0 10px;border:1px solid #e4e3df;border-radius:6px;background:#fff;font:inherit;font-size:13px">Replace</button><button type="button" style="height:32px;padding:0 10px;border:1px solid #e4e3df;border-radius:6px;background:#fff;font:inherit;font-size:13px">Remove</button></div></div>
+                      <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">Alt text<input value="Maya's birthday invitation with balloons" style="box-sizing:border-box;width:100%;height:36px;padding:0 10px;border:1px solid #c9c8c3;border-radius:6px;font:inherit;font-weight:400;color:#1c1c1a"><span style="font-weight:400;color:#62625d">If the image has text baked in, summarise it here for screen readers.</span></label>
+                    </div>
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <span style="font-weight:600">Fonts</span>
+                  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+                    <sc-for list="{{ fonts }}" as="f" hint-placeholder-count="6">
+                      <button type="button" aria-pressed="{{ f.on }}" onClick="{{ f.onClick }}" style="{{ f.style }}" style-focus="outline:2px solid #2f6feb;outline-offset:2px"><span style="{{ f.sample }}">{{ f.name }}</span><span style="font-size:12px;color:#62625d">{{ f.sub }}</span></button>
+                    </sc-for>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:12px;margin-top:4px"><span style="font-size:13px;color:#62625d;width:72px">Text size</span><div style="display:inline-flex;padding:3px;gap:2px;background:#ebeae6;border-radius:8px"><sc-for list="{{ scales }}" as="o" hint-placeholder-count="3"><button type="button" aria-pressed="{{ o.on }}" onClick="{{ o.onClick }}" style="{{ o.style }}" style-focus="outline:2px solid #2f6feb">{{ o.label }}</button></sc-for></div></div>
+                </div>
+                <div style="display:grid;grid-template-columns:auto 1fr;gap:14px 16px;align-items:center">
+                  <span style="font-weight:600">Card</span>
+                  <div style="display:inline-flex;justify-self:start;padding:3px;gap:2px;background:#ebeae6;border-radius:8px"><sc-for list="{{ cards }}" as="o" hint-placeholder-count="4"><button type="button" aria-pressed="{{ o.on }}" onClick="{{ o.onClick }}" style="{{ o.style }}" style-focus="outline:2px solid #2f6feb">{{ o.label }}</button></sc-for></div>
+                  <span style="font-weight:600">Corners</span>
+                  <div style="display:inline-flex;justify-self:start;padding:3px;gap:2px;background:#ebeae6;border-radius:8px"><sc-for list="{{ radii }}" as="o" hint-placeholder-count="4"><button type="button" aria-pressed="{{ o.on }}" onClick="{{ o.onClick }}" style="{{ o.style }}" style-focus="outline:2px solid #2f6feb">{{ o.label }}</button></sc-for></div>
+                  <span style="font-weight:600">Buttons</span>
+                  <div style="display:inline-flex;justify-self:start;padding:3px;gap:2px;background:#ebeae6;border-radius:8px"><sc-for list="{{ buttons }}" as="o" hint-placeholder-count="3"><button type="button" aria-pressed="{{ o.on }}" onClick="{{ o.onClick }}" style="{{ o.style }}" style-focus="outline:2px solid #2f6feb">{{ o.label }}</button></sc-for></div>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+          <aside style="position:sticky;top:16px;display:flex;flex-direction:column;gap:12px;padding-top:20px">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <span style="font-weight:600">Preview</span>
+              <div style="display:inline-flex;padding:3px;gap:2px;background:#ebeae6;border-radius:8px"><sc-for list="{{ pvStates }}" as="o" hint-placeholder-count="3"><button type="button" aria-pressed="{{ o.on }}" onClick="{{ o.onClick }}" style="{{ o.style }}" style-focus="outline:2px solid #2f6feb">{{ o.label }}</button></sc-for></div>
+            </div>
+            <div style="align-self:center;width:346px;height:720px;border-radius:40px;border:8px solid #1c1c1a;overflow:hidden;background:#000;box-sizing:content-box">
+              <div style="width:346px;height:720px;overflow-y:auto;overflow-x:hidden">
+                <div style="{{ previewVars }}">
+                  <dc-import name="RSVP Page" event="birthday" state="{{ pvState }}" layout="{{ look.layout }}" background="{{ look.bg }}" card="{{ look.card }}" button="{{ look.button }}" notes="{{ notesMode }}" title="{{ ed.title }}" message="{{ ed.message }}" question="{{ ed.question }}" button-text="{{ ed.buttonText }}" confirmation="{{ ed.confirmation }}" notes-label="{{ ed.notesLabel }}" venue="{{ ed.venue }}" address="{{ ed.address }}" hint-size="375px,1600px"></dc-import>
+                </div>
+              </div>
+            </div>
+            <span style="text-align:center;font-size:12px;color:#62625d">Scroll inside the phone · 375 px at 92%</span>
+          </aside>
+        </div>
+      </div>
+    </div>
+    <div class="dv-opt" id="2b"><div class="dv-olabel"><a class="dv-oid" href="#2b">2b</a>Phone · editing</div>
+      <div style="position:relative;width:375px;height:812px;border-radius:44px;overflow:hidden;box-shadow:0 0 0 10px #1c1c1a,0 20px 50px rgba(0,0,0,.25);margin:10px;background:#f6f6f4;font-size:15px;display:flex;flex-direction:column">
+        <div style="height:47px;flex:none;display:flex;align-items:center;padding:4px 34px 0;font:600 15px -apple-system,system-ui,sans-serif;background:#fff">9:41</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 8px 6px 4px;background:#fff">
+          <a href="#" style="min-width:44px;height:44px;display:grid;place-items:center;text-decoration:none;font-size:20px">←</a>
+          <span style="flex:1;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Maya turns 6!</span>
+          <div style="display:inline-flex;padding:3px;gap:2px;background:#ebeae6;border-radius:8px"><span style="height:38px;padding:0 12px;display:flex;align-items:center;border-radius:6px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.1);font-weight:500;font-size:14px">Edit</span><span style="height:38px;padding:0 12px;display:flex;align-items:center;border-radius:6px;color:#62625d;font-size:14px">Preview</span></div>
+        </div>
+        <nav style="display:flex;gap:4px;padding:0 12px;background:#fff;border-bottom:1px solid #e4e3df;overflow-x:auto">
+          <span style="height:44px;display:flex;align-items:center;padding:0 12px;border-bottom:2px solid #1c1c1a;font-weight:600">Details</span><span style="height:44px;display:flex;align-items:center;padding:0 12px;color:#62625d">Wording</span><span style="height:44px;display:flex;align-items:center;padding:0 12px;color:#62625d">RSVP</span><span style="height:44px;display:flex;align-items:center;padding:0 12px;color:#62625d">Look</span>
+        </nav>
+        <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;gap:18px;padding:20px 16px">
+          <label style="display:flex;flex-direction:column;gap:6px;font-weight:500;font-size:14px">Title<input value="Maya turns 6!" style="box-sizing:border-box;width:100%;height:44px;padding:0 12px;border:1px solid #c9c8c3;border-radius:6px;font:inherit;font-size:16px;font-weight:400;background:#fff"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-weight:500;font-size:14px">Link<div style="display:flex;height:44px;border:1px solid #c9c8c3;border-radius:6px;overflow:hidden;background:#fff"><span style="display:flex;align-items:center;padding:0 8px;background:#f6f6f4;border-right:1px solid #e4e3df;font:13px 'IBM Plex Mono',monospace;color:#62625d">rsvp.page/</span><input value="maya-6" style="flex:1;min-width:0;border:0;padding:0 8px;font:15px 'IBM Plex Mono',monospace"></div></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-weight:500;font-size:14px">Date<input type="date" value="2026-11-14" style="box-sizing:border-box;width:100%;height:44px;padding:0 10px;border:1px solid #c9c8c3;border-radius:6px;font:inherit;font-size:16px;font-weight:400;background:#fff"></label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <label style="display:flex;flex-direction:column;gap:6px;font-weight:500;font-size:14px">Starts<input type="time" value="14:00" style="box-sizing:border-box;width:100%;height:44px;padding:0 10px;border:1px solid #c9c8c3;border-radius:6px;font:inherit;font-size:16px;font-weight:400;background:#fff"></label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-weight:500;font-size:14px">Ends<input type="time" value="17:00" style="box-sizing:border-box;width:100%;height:44px;padding:0 10px;border:1px solid #c9c8c3;border-radius:6px;font:inherit;font-size:16px;font-weight:400;background:#fff"></label>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:6px;font-weight:500;font-size:14px">Location name<input value="Jumpin' Jungle Play Centre" style="box-sizing:border-box;width:100%;height:44px;padding:0 12px;border:1px solid #c9c8c3;border-radius:6px;font:inherit;font-size:16px;font-weight:400;background:#fff"></label>
+        </div>
+        <div style="flex:none;display:flex;gap:10px;padding:12px 16px 38px;background:#fff;border-top:1px solid #e4e3df">
+          <button type="button" style="flex:1;height:48px;border:0;border-radius:8px;background:#1c1c1a;color:#fff;font:600 15px 'IBM Plex Sans',sans-serif">Save changes</button>
+        </div>
+        <div style="position:absolute;bottom:8px;left:50%;width:134px;height:5px;margin-left:-67px;border-radius:3px;background:#1c1c1a"></div>
+      </div>
+    </div>
+    <div class="dv-opt" id="2c"><div class="dv-olabel"><a class="dv-oid" href="#2c">2c</a>Phone · Preview toggled on</div>
+      <div style="position:relative;width:375px;height:812px;border-radius:44px;overflow:hidden;box-shadow:0 0 0 10px #1c1c1a,0 20px 50px rgba(0,0,0,.25);margin:10px;background:#f6f6f4;font-size:15px;display:flex;flex-direction:column">
+        <div style="height:47px;flex:none;display:flex;align-items:center;padding:4px 34px 0;font:600 15px -apple-system,system-ui,sans-serif;background:#fff">9:41</div>
+        <div style="flex:none;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 8px 6px 4px;background:#fff;border-bottom:1px solid #e4e3df">
+          <a href="#" style="min-width:44px;height:44px;display:grid;place-items:center;text-decoration:none;font-size:20px">←</a>
+          <span style="flex:1;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Maya turns 6!</span>
+          <div style="display:inline-flex;padding:3px;gap:2px;background:#ebeae6;border-radius:8px"><span style="height:38px;padding:0 12px;display:flex;align-items:center;border-radius:6px;color:#62625d;font-size:14px">Edit</span><span style="height:38px;padding:0 12px;display:flex;align-items:center;border-radius:6px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.1);font-weight:500;font-size:14px">Preview</span></div>
+        </div>
+        <div style="flex:1;overflow:hidden;--rsvp-primary:#5b2bd6;--rsvp-on-primary:#fff;--rsvp-accent:#e5530c;--rsvp-text:#2b1a40;--rsvp-muted:#5e4f70;--rsvp-surface:#fff;--rsvp-field:#f8f5ff;--rsvp-border:#8e7ca8;--rsvp-error:#c0262d;--rsvp-background:linear-gradient(160deg,#ffd66b 0%,#ff9fbf 55%,#c9a7ff 100%);--rsvp-radius:24px;--rsvp-font-heading:'Baloo 2',system-ui,sans-serif;--rsvp-font-body:'Nunito',system-ui,sans-serif;--rsvp-heading-weight:800;--rsvp-scale:1.04;--rsvp-hero-tint:#ffe9a8;--rsvp-status:transparent">
+          <div style="margin-top:-47px"><dc-import name="RSVP Page" event="birthday" layout="card" background="gradient" card="solid" button="pill" notes="required" hint-size="375px,1600px"></dc-import></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="dv-turn" id="t3">
+  <div class="dv-thd"><a class="dv-tid" href="#t3">3</a><span class="dv-tname">RSVP list</span></div>
+  <p class="dv-sub">Filter chips and search combine. Delete asks first. On a phone the table becomes one card per guest, keeping the same order of information.</p>
+  <div class="dv-opts">
+    <div class="dv-opt" id="3a"><div class="dv-olabel"><a class="dv-oid" href="#3a">3a</a>Desktop table</div>
+      <div class="dv-card" style="position:relative;width:1280px;background:#f6f6f4;font-size:14px">
+        <header style="height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:#fff;border-bottom:1px solid #e4e3df">
+          <div style="display:flex;align-items:center;gap:10px"><span style="width:20px;height:20px;border-radius:5px;background:#1c1c1a"></span><span style="font-weight:600">RSVP</span></div>
+          <span style="color:#62625d">host@example.com</span>
+        </header>
+        <main style="max-width:1120px;margin:0 auto;padding:28px 32px 48px;display:flex;flex-direction:column;gap:20px">
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <a href="#" style="font-size:13px;color:#62625d;text-decoration:none">← Events</a>
+              <h1 style="margin:0;font:600 24px/1.2 'IBM Plex Sans',sans-serif">Maya turns 6!</h1>
+              <span style="font:500 15px 'IBM Plex Mono',monospace">{{ summary }}</span>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button type="button" style="height:38px;padding:0 14px;border:1px solid #e4e3df;border-radius:6px;background:#fff;font:inherit;cursor:pointer" style-focus="outline:2px solid #2f6feb;outline-offset:1px">Copy link</button>
+              <button type="button" style="height:38px;padding:0 14px;border:0;border-radius:6px;background:#1c1c1a;color:#fff;font:600 14px 'IBM Plex Sans',sans-serif;cursor:pointer" style-focus="outline:2px solid #2f6feb;outline-offset:2px">Export CSV</button>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+            <div role="group" aria-label="Filter by response" style="display:flex;gap:6px">
+              <sc-for list="{{ chips }}" as="c" hint-placeholder-count="4"><button type="button" aria-pressed="{{ c.on }}" onClick="{{ c.onClick }}" style="{{ c.style }}" style-focus="outline:2px solid #2f6feb;outline-offset:1px">{{ c.label }} <span style="font-family:'IBM Plex Mono',monospace;opacity:.75">{{ c.count }}</span></button></sc-for>
+            </div>
+            <input type="search" placeholder="Search guests" value="{{ search }}" onChange="{{ onSearch }}" aria-label="Search guests by name" style="width:280px;height:38px;padding:0 12px;border:1px solid #c9c8c3;border-radius:6px;font:inherit;background:#fff" style-focus="outline:2px solid #2f6feb;outline-offset:1px">
+          </div>
+          <div style="background:#fff;border:1px solid #e4e3df;border-radius:10px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:minmax(0,1.3fr) 110px minmax(0,2fr) 150px 72px;gap:16px;padding:10px 20px;border-bottom:1px solid #e4e3df;font-size:12px;font-weight:500;color:#62625d"><span>Guest name</span><span>Response</span><span>Notes</span><span>Submitted</span><span></span></div>
+            <sc-for list="{{ rows }}" as="r" hint-placeholder-count="8">
+              <div style="display:grid;grid-template-columns:minmax(0,1.3fr) 110px minmax(0,2fr) 150px 72px;gap:16px;align-items:center;padding:12px 20px;border-bottom:1px solid #efeeea" style-hover="background:#fafaf8">
+                <span style="font-weight:500">{{ r.name }}</span>
+                <span><span style="{{ r.badge }}">{{ r.label }}</span></span>
+                <span style="color:{{ r.notesColor }};text-wrap:pretty">{{ r.notesShown }}</span>
+                <span style="font:13px 'IBM Plex Mono',monospace;color:#62625d">{{ r.when }}</span>
+                <button type="button" onClick="{{ r.onDelete }}" aria-label="Delete {{ r.name }}" style="height:32px;padding:0 10px;border:1px solid transparent;border-radius:6px;background:none;font:inherit;font-size:13px;color:#8f2a22;cursor:pointer" style-hover="border-color:#e8c9c5;background:#fbf3f2" style-focus="outline:2px solid #2f6feb">Delete</button>
+              </div>
+            </sc-for>
+            <sc-if value="{{ noRows }}"><div style="padding:40px;text-align:center;color:#62625d">No guests match "{{ search }}".</div></sc-if>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 20px;font-size:13px;color:#62625d"><span>{{ showing }}</span><sc-if value="{{ hasMore }}"><button type="button" onClick="{{ onShowAll }}" style="height:32px;padding:0 10px;border:1px solid #e4e3df;border-radius:6px;background:#fff;font:inherit;font-size:13px;color:#1c1c1a;cursor:pointer">Show all</button></sc-if></div>
+          </div>
+        </main>
+        <sc-if value="{{ confirming }}">
+          <div style="position:absolute;inset:0;background:rgba(28,28,26,.4);display:grid;place-items:center;z-index:5">
+            <div role="dialog" aria-modal="true" aria-labelledby="del-t" style="width:420px;display:flex;flex-direction:column;gap:14px;padding:24px;background:#fff;border-radius:12px;box-shadow:0 24px 60px rgba(0,0,0,.25)">
+              <h2 id="del-t" style="margin:0;font:600 18px 'IBM Plex Sans',sans-serif">Delete {{ confirmName }}'s reply?</h2>
+              <p style="margin:0;color:#62625d">This removes it from the list and the counts. It can't be undone.</p>
+              <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px">
+                <button type="button" onClick="{{ onCancel }}" style="height:40px;padding:0 16px;border:1px solid #e4e3df;border-radius:6px;background:#fff;font:inherit;cursor:pointer" style-focus="outline:2px solid #2f6feb;outline-offset:1px">Cancel</button>
+                <button type="button" onClick="{{ onConfirm }}" style="height:40px;padding:0 16px;border:0;border-radius:6px;background:#a3271f;color:#fff;font:600 14px 'IBM Plex Sans',sans-serif;cursor:pointer" style-focus="outline:2px solid #2f6feb;outline-offset:2px">Delete reply</button>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+    <div class="dv-opt" id="3b"><div class="dv-olabel"><a class="dv-oid" href="#3b">3b</a>Delete confirmation</div>
+      <div class="dv-card" style="width:560px;height:300px;background:rgba(28,28,26,.4);display:grid;place-items:center;font-size:14px">
+        <div role="dialog" style="width:420px;display:flex;flex-direction:column;gap:14px;padding:24px;background:#fff;border-radius:12px;box-shadow:0 24px 60px rgba(0,0,0,.25)">
+          <h2 style="margin:0;font:600 18px 'IBM Plex Sans',sans-serif">Delete Tom Becker's reply?</h2>
+          <p style="margin:0;color:#62625d">This removes it from the list and the counts. It can't be undone.</p>
+          <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px">
+            <button type="button" style="height:40px;padding:0 16px;border:1px solid #e4e3df;border-radius:6px;background:#fff;font:inherit">Cancel</button>
+            <button type="button" style="height:40px;padding:0 16px;border:0;border-radius:6px;background:#a3271f;color:#fff;font:600 14px 'IBM Plex Sans',sans-serif">Delete reply</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dv-opt" id="3c"><div class="dv-olabel"><a class="dv-oid" href="#3c">3c</a>Phone · cards</div>
+      <div style="position:relative;width:375px;height:812px;border-radius:44px;overflow:hidden;box-shadow:0 0 0 10px #1c1c1a,0 20px 50px rgba(0,0,0,.25);margin:10px;background:#f6f6f4;font-size:15px;display:flex;flex-direction:column">
+        <div style="height:47px;flex:none;display:flex;align-items:center;padding:4px 34px 0;font:600 15px -apple-system,system-ui,sans-serif;background:#fff">9:41</div>
+        <div style="flex:none;display:flex;flex-direction:column;gap:12px;padding:8px 16px 14px;background:#fff;border-bottom:1px solid #e4e3df">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><a href="#" style="min-width:44px;height:44px;margin-left:-12px;display:grid;place-items:center;text-decoration:none;font-size:20px">←</a><span style="flex:1;font-weight:600;font-size:17px">Maya turns 6!</span><button type="button" style="height:44px;padding:0 12px;border:1px solid #e4e3df;border-radius:8px;background:#fff;font:inherit;font-size:14px">Export CSV</button></div>
+          <span style="font:500 14px 'IBM Plex Mono',monospace">{{ summary }}</span>
+          <div style="display:flex;gap:6px;overflow-x:auto;margin:0 -16px;padding:0 16px">
+            <sc-for list="{{ chipsM }}" as="c" hint-placeholder-count="4"><button type="button" aria-pressed="{{ c.on }}" onClick="{{ c.onClick }}" style="{{ c.style }}">{{ c.label }} <span style="font-family:'IBM Plex Mono',monospace;opacity:.75">{{ c.count }}</span></button></sc-for>
+          </div>
+          <input type="search" placeholder="Search guests" value="{{ search }}" onChange="{{ onSearch }}" style="box-sizing:border-box;width:100%;height:44px;padding:0 12px;border:1px solid #c9c8c3;border-radius:8px;font:inherit;font-size:16px;background:#fff">
+        </div>
+        <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;gap:8px;padding:12px">
+          <sc-for list="{{ rowsM }}" as="r" hint-placeholder-count="5">
+            <div style="display:flex;flex-direction:column;gap:6px;padding:12px 14px 6px;background:#fff;border:1px solid #e4e3df;border-radius:10px">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-weight:600">{{ r.name }}</span><span style="{{ r.badge }}">{{ r.label }}</span></div>
+              <span style="color:{{ r.notesColor }};font-size:14px">{{ r.notesShown }}</span>
+              <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:12px 'IBM Plex Mono',monospace;color:#62625d">{{ r.when }}</span><button type="button" onClick="{{ r.onDelete }}" style="height:44px;padding:0 4px 0 12px;border:0;background:none;font:inherit;font-size:14px;color:#8f2a22">Delete</button></div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="position:absolute;bottom:8px;left:50%;width:134px;height:5px;margin-left:-67px;border-radius:3px;background:#1c1c1a"></div>
+      </div>
+    </div>
+  </div>
+  <p class="dv-next">Try next: "dashboard on a phone" · "a QR code panel on the dashboard" · "bulk select and delete"</p>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const FONTS = [
+  { id: "playful", name: "Playful", h: "'Baloo 2'", b: "'Nunito'", w: 800, sub: "Baloo 2 / Nunito" },
+  { id: "festive", name: "Festive", h: "'DM Serif Display'", b: "'DM Sans'", w: 400, sub: "DM Serif / DM Sans" },
+  { id: "elegant", name: "Elegant", h: "'Cormorant Garamond'", b: "'Jost'", w: 500, sub: "Cormorant / Jost" },
+  { id: "classic", name: "Classic", h: "'Libre Baskerville'", b: "'Source Sans 3'", w: 700, sub: "Baskerville / Source Sans" },
+  { id: "modern", name: "Modern", h: "'Space Grotesk'", b: "'Work Sans'", w: 700, sub: "Space Grotesk / Work Sans" },
+  { id: "warm", name: "Warm", h: "'Bricolage Grotesque'", b: "'Figtree'", w: 800, sub: "Bricolage / Figtree" }
+];
+const NAMES = ["Priya Shah","Tom Becker","Aisha Rahman","Leo Martins","Sofia Rossi","Ben Okafor","Hannah Kim","Oliver Grant","Chloe Dubois","Sam Patel","Isla Murray","Noah Fischer","Zara Hussain","Jack O'Neill","Mei Chen","Ella Novak","Ravi Kumar","Grace Adeyemi","Finn Larsen","Amara Osei","Lucas Silva","Ruby Walsh","Theo Laurent","Nadia Petrova","Arjun Mehta","Lily Evans","Omar Haddad","Freya Lindqvist","Daniel Cho","Maya Brooks","Kofi Mensah"];
+const NOTES = { 0: "Priya + her dad, Sam", 2: "Aisha and baby brother (2)", 3: "Leo, nut allergy", 5: "Ben + mum", 8: "Might be late, swimming till 2", 9: "Sam + grandad", 13: "Jack + twin sister", 17: "Away that weekend, sorry!", 20: "Lucas, gluten-free please", 24: "Arjun + Dad", 29: "Grandparents visiting" };
+const RESP = (i) => [4, 13, 20, 27].includes(i) ? "maybe" : [8, 17, 29].includes(i) ? "no" : "yes";
+const GUESTS = NAMES.map((n, i) => ({ id: i, name: n, r: RESP(i), notes: NOTES[i] || "", when: `${["12","12","13","13","14","15","15","16","17","18"][i % 10]} Oct · ${String(9 + (i * 7) % 12).padStart(2, "0")}:${String((i * 13) % 60).padStart(2, "0")}` }));
+const BADGE = { yes: ["Yes", "#e3f1e7", "#1e5e33"], maybe: ["Maybe", "#fbefd5", "#6b4500"], no: ["No", "#f5e3e1", "#8f2a22"] };
+function lum(hex) {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex || ""); if (!m) return null;
+  const n = parseInt(m[1], 16);
+  return [16, 8, 0].map((s) => { const c = ((n >> s) & 255) / 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }).reduce((a, c, i) => a + c * [0.2126, 0.7152, 0.0722][i], 0);
+}
+function ratio(a, b) { const x = lum(a), y = lum(b); if (x == null || y == null) return null; return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+const sw = (on, dis) => ({ track: { position: "relative", width: 36, height: 22, borderRadius: 11, background: on ? "#1c1c1a" : "#c9c8c3", opacity: dis ? 0.4 : 1, transition: "background .15s" }, knob: { position: "absolute", top: 3, left: on ? 17 : 3, width: 16, height: 16, borderRadius: 8, background: "#fff", boxShadow: "0 1px 2px rgba(0,0,0,.2)", transition: "left .15s" } });
+const segStyle = (on) => ({ height: 32, padding: "0 12px", border: 0, borderRadius: 6, font: "inherit", fontSize: 13, fontWeight: on ? 600 : 400, cursor: "pointer", background: on ? "#fff" : "transparent", color: on ? "#1c1c1a" : "#4a4a46", boxShadow: on ? "0 1px 2px rgba(0,0,0,.12)" : "none" });
+class Component extends DCLogic {
+  state = {
+    tab: "look", pv: "idle", filter: "all", search: "", showAll: false, confirm: null, deleted: [], copied: null,
+    events: [
+      { id: 1, title: "Maya turns 6!", slug: "maya-6", date: "Sat 14 Nov 2026", yes: 24, maybe: 4, no: 3, active: true },
+      { id: 2, title: "Studio Christmas Party", slug: "studio-xmas", date: "Fri 11 Dec 2026", yes: 38, maybe: 6, no: 5, active: true },
+      { id: 3, title: "Eleanor & James", slug: "eleanor-and-james", date: "Sat 5 Jun 2027", yes: 61, maybe: 9, no: 12, active: true },
+      { id: 4, title: "Book club summer picnic", slug: "picnic-26", date: "Sat 18 Jul 2026", yes: 12, maybe: 2, no: 4, active: false, past: true }
+    ],
+    ed: { title: "Maya turns 6!", slug: "maya-6", venue: "Jumpin' Jungle Play Centre", address: "48 Harbour Road, Brighton BN2 1TR", message: "Bouncy castle, pizza and a very big cake. Grown-ups get coffee. Socks on, please!", question: "Will you be joining us?", buttonText: "Send my RSVP", confirmation: "Thank you! Can't wait to see you there", notesLabel: "Who's coming?" },
+    rsvp: { active: true, notesOn: true, notesReq: true },
+    look: { layout: "card", bg: "gradient", g1: "#ffd66b", g2: "#ff9fbf", overlay: 55, blur: 3, font: "playful", scale: "lg", card: "solid", radius: "xl", button: "pill", primary: "#5b2bd6", accent: "#ffb547", text: "#2b1a40", surface: "#ffffff" }
+  };
+  componentWillUnmount() { clearTimeout(this.ct); }
+  setLook(o) { this.setState((s) => ({ look: { ...s.look, ...o } })); }
+  seg(key, opts) { const cur = this.state.look[key]; return opts.map(([v, label]) => ({ label, on: cur === v, style: segStyle(cur === v), onClick: () => this.setLook({ [key]: v }) })); }
+  renderVals() {
+    const S = this.state, L = S.look, ed = S.ed;
+    const on = {};
+    Object.keys(ed).forEach((k) => (on[k] = (e) => { const val = e.target.value; this.setState((s) => ({ ed: { ...s.ed, [k]: val } })); }));
+    ["g1", "g2"].forEach((k) => (on[k] = (e) => this.setLook({ [k]: e.target.value })));
+    on.overlay = (e) => this.setLook({ overlay: +e.target.value });
+    on.blur = (e) => this.setLook({ blur: +e.target.value });
+    const events = S.events.map((e) => { const t = sw(e.active); return { ...e, total: e.yes + e.maybe + e.no, track: t.track, knob: t.knob, titleColor: e.active ? "#1c1c1a" : "#62625d", dateColor: e.past ? "#8a8a84" : "#1c1c1a", copyLabel: S.copied === e.id ? "Copied ✓" : "Copy link", toggle: () => this.setState((s) => ({ events: s.events.map((x) => x.id === e.id ? { ...x, active: !x.active } : x) })), copy: () => { this.setState({ copied: e.id }); clearTimeout(this.ct); this.ct = setTimeout(() => this.setState({ copied: null }), 1500); } }; });
+    const tabs = [["details", "Details"], ["wording", "Wording"], ["rsvp", "RSVP"], ["look", "Look"]].map(([k, label]) => ({ label, on: S.tab === k, onClick: () => this.setState({ tab: k }), style: { height: 44, padding: "0 14px", border: 0, borderBottom: S.tab === k ? "2px solid #1c1c1a" : "2px solid transparent", marginBottom: -1, background: "none", font: "inherit", fontSize: 14, fontWeight: S.tab === k ? 600 : 400, color: S.tab === k ? "#1c1c1a" : "#62625d", cursor: "pointer" } }));
+    const R = S.rsvp;
+    const setR = (o) => this.setState((s) => ({ rsvp: { ...s.rsvp, ...o } }));
+    const switches = [
+      { label: "Accepting replies", hint: "When off, the link shows \"This RSVP page isn't available\".", on: R.active, toggle: () => setR({ active: !R.active }) },
+      { label: "Notes field", hint: "An extra text box under the reply choices.", on: R.notesOn, toggle: () => setR({ notesOn: !R.notesOn }) },
+      { label: "Notes required", hint: "Guests can't send without filling it in.", on: R.notesOn && R.notesReq, disabled: !R.notesOn, toggle: () => setR({ notesReq: !R.notesReq }) }
+    ].map((s) => ({ ...s, ...sw(s.on, s.disabled), labelColor: s.disabled ? "#8a8a84" : "#1c1c1a" }));
+    const glass = L.card === "glass";
+    const checks = {
+      primary: [ratio("#ffffff", L.primary), 4.5, "White label on primary"],
+      accent: [ratio(L.accent, L.surface), 3, "Focus ring on card"],
+      text: [ratio(L.text, L.surface), 4.5, "Text on card"],
+      surface: [ratio(L.primary, L.surface), 3, "Selected reply on card"]
+    };
+    const colors = [["primary", "Primary", "Buttons, selected reply"], ["accent", "Accent", "Highlights, dividers, focus ring"], ["text", "Text", "Headings and body"], ["surface", "Surface", glass ? "Card fill, shown at 70% for glass" : "Card fill"]].map(([k, label, hint]) => {
+      const [r, min, what] = checks[k];
+      const ok = r != null && r >= min;
+      return { label, hint, value: L[k], swatch: { width: 32, height: 32, borderRadius: 6, background: L[k], border: "1px solid rgba(0,0,0,.12)" }, onChange: (e) => this.setLook({ [k]: e.target.value }),
+        ratio: r == null ? "invalid" : `${r.toFixed(1)}:1 ${ok ? "AA" : "fail"}`,
+        ratioStyle: { font: "500 12px 'IBM Plex Mono',monospace", textAlign: "right", color: ok ? "#1e5e33" : "#8f2a22" },
+        warn: r == null ? "Use a 6-digit hex like #5B2BD6." : ok ? "" : `${what} is ${r.toFixed(1)}:1. It needs ${min}:1 for WCAG AA. ${k === "accent" ? "Try a darker accent such as #E5530C." : k === "text" ? "Darken the text or lighten the card." : "Pick a darker primary."}` };
+    });
+    const lay = (v, label, hint) => {
+      const o = L.layout === v;
+      return { label, hint, on: o, onClick: () => this.setLook({ layout: v }),
+        style: { display: "flex", alignItems: "center", gap: 14, padding: 12, background: "#fff", border: o ? "2px solid #1c1c1a" : "1px solid #e4e3df", margin: o ? 0 : 1, borderRadius: 10, font: "inherit", fontSize: 14, color: "#1c1c1a", cursor: "pointer" },
+        thumb: { position: "relative", flex: "none", width: 44, height: 64, borderRadius: 4, background: "#ebeae6", overflow: "hidden" },
+        thumbHero: v === "card" ? { position: "absolute", left: 6, right: 6, top: 5, height: 22, borderRadius: 2, background: "#bdbcb6" } : { position: "absolute", left: 0, right: 0, top: 0, height: 40, background: "#bdbcb6" },
+        thumbCard: v === "card" ? { position: "absolute", left: 6, right: 6, top: 30, bottom: 5, borderRadius: 2, background: "#fff" } : { position: "absolute", left: 4, right: 4, top: 34, bottom: 0, borderRadius: "2px 2px 0 0", background: "#fff" } };
+    };
+    const fonts = FONTS.map((f) => ({ ...f, on: L.font === f.id, onClick: () => this.setLook({ font: f.id }), sample: { fontFamily: f.h, fontWeight: f.w, fontSize: 20, lineHeight: 1.1 }, style: { display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 4, padding: "12px 12px 10px", background: "#fff", border: L.font === f.id ? "2px solid #1c1c1a" : "1px solid #e4e3df", margin: L.font === f.id ? 0 : 1, borderRadius: 8, cursor: "pointer", color: "#1c1c1a", textAlign: "left" } }));
+    const F = FONTS.find((f) => f.id === L.font) || FONTS[0];
+    const radius = { none: "0px", sm: "6px", lg: "16px", xl: "24px" }[L.radius];
+    const surface = glass && /^#[0-9a-f]{6}$/i.test(L.surface) ? L.surface + "B3" : L.surface;
+    const previewVars = { width: 375, zoom: 0.9227,
+      "--rsvp-primary": L.primary, "--rsvp-on-primary": "#ffffff", "--rsvp-accent": L.accent, "--rsvp-text": L.text,
+      "--rsvp-muted": `color-mix(in oklab, ${L.text} 75%, ${L.surface})`, "--rsvp-surface": surface,
+      "--rsvp-field": `color-mix(in oklab, ${L.primary} 4%, ${L.surface})`, "--rsvp-border": `color-mix(in oklab, ${L.text} 50%, ${L.surface})`, "--rsvp-error": "#c0262d",
+      "--rsvp-background": L.bg === "gradient" ? `linear-gradient(160deg, ${L.g1}, ${L.g2})` : L.bg === "solid" ? L.g1 : "#1d1a26",
+      "--rsvp-bg-image": "repeating-linear-gradient(135deg,rgba(255,255,255,.08) 0 14px,transparent 14px 28px),radial-gradient(120% 80% at 30% 20%,#5a4a7a 0%,#1d1a26 70%)",
+      "--rsvp-overlay": `rgba(0,0,0,${L.overlay / 100})`, "--rsvp-blur": `${L.blur}px`, "--rsvp-radius": radius,
+      "--rsvp-font-heading": `${F.h}, system-ui, sans-serif`, "--rsvp-font-body": `${F.b}, system-ui, sans-serif`, "--rsvp-heading-weight": F.w,
+      "--rsvp-scale": { sm: 0.94, md: 1, lg: 1.04 }[L.scale], "--rsvp-hero-tint": `color-mix(in oklab, ${L.accent} 35%, ${L.surface})`, "--rsvp-status": L.bg === "image" ? "#fff" : L.text, "--rsvp-skel": "#e6e5e0" };
+    const pvStates = [["idle", "Form"], ["errors", "Errors"], ["success", "Sent"]].map(([v, label]) => ({ label, on: S.pv === v, style: segStyle(S.pv === v), onClick: () => this.setState({ pv: v }) }));
+    const pvState = R.active ? S.pv : "unavailable";
+    const live = GUESTS.filter((g) => !S.deleted.includes(g.id));
+    const cnt = { yes: 0, maybe: 0, no: 0 }; live.forEach((g) => cnt[g.r]++);
+    const q = S.search.trim().toLowerCase();
+    const filtered = live.filter((g) => (S.filter === "all" || g.r === S.filter) && (!q || g.name.toLowerCase().includes(q)));
+    const toRow = (g) => { const [label, bg, fg] = BADGE[g.r]; return { ...g, label, badge: { display: "inline-flex", alignItems: "center", height: 24, padding: "0 9px", borderRadius: 12, background: bg, color: fg, fontSize: 12, fontWeight: 600 }, notesShown: g.notes || "—", notesColor: g.notes ? "#1c1c1a" : "#8a8a84", onDelete: () => this.setState({ confirm: g.id }) }; };
+    const limit = S.showAll ? 999 : 12;
+    const chipDefs = [["all", "All", live.length], ["yes", "Yes", cnt.yes], ["maybe", "Maybe", cnt.maybe], ["no", "No", cnt.no]];
+    const chip = (h) => chipDefs.map(([v, label, count]) => { const o = S.filter === v; return { label, count, on: o, onClick: () => this.setState({ filter: v, showAll: false }), style: { flex: "none", height: h, padding: "0 14px", borderRadius: h / 2, border: o ? "1px solid #1c1c1a" : "1px solid #d6d5d0", background: o ? "#1c1c1a" : "#fff", color: o ? "#fff" : "#1c1c1a", font: "inherit", fontSize: 14, fontWeight: 500, cursor: "pointer" } }; });
+    const cg = GUESTS.find((g) => g.id === S.confirm);
+    return {
+      events, tabs, ed, on, switches, colors, fonts, look: L, previewVars, pvStates, pvState,
+      tabDetails: S.tab === "details", tabWording: S.tab === "wording", tabRsvp: S.tab === "rsvp", tabLook: S.tab === "look",
+      activeLabel: R.active ? "Active" : "Inactive",
+      activePill: { display: "inline-flex", alignItems: "center", height: 22, padding: "0 8px", borderRadius: 11, fontSize: 12, fontWeight: 600, background: R.active ? "#e3f1e7" : "#ebeae6", color: R.active ? "#1e5e33" : "#4a4a46" },
+      notesMode: !R.notesOn ? "off" : R.notesReq ? "required" : "optional",
+      layouts: [lay("card", "Card", "Invite on top, details in a card"), lay("poster", "Poster", "Invite fills the first screen")],
+      bgTypes: this.seg("bg", [["solid", "Solid"], ["gradient", "Gradient"], ["image", "Image"]]),
+      bgGradient: L.bg === "gradient", bgSolid: L.bg === "solid", bgImage: L.bg === "image",
+      scales: this.seg("scale", [["sm", "S"], ["md", "M"], ["lg", "L"]]),
+      cards: this.seg("card", [["solid", "Solid"], ["glass", "Glass"], ["outline", "Outline"], ["none", "None"]]),
+      radii: this.seg("radius", [["none", "None"], ["sm", "S"], ["lg", "L"], ["xl", "XL"]]),
+      buttons: this.seg("button", [["solid", "Solid"], ["outline", "Outline"], ["pill", "Pill"]]),
+      summary: `${cnt.yes} Yes · ${cnt.maybe} Maybe · ${cnt.no} No`,
+      chips: chip(36), chipsM: chip(40),
+      search: S.search, onSearch: (e) => this.setState({ search: e.target.value }),
+      rows: filtered.slice(0, limit).map(toRow), rowsM: filtered.slice(0, 5).map(toRow),
+      noRows: filtered.length === 0, hasMore: filtered.length > limit,
+      showing: `Showing ${Math.min(limit, filtered.length)} of ${filtered.length}`,
+      onShowAll: () => this.setState({ showAll: true }),
+      confirming: !!cg, confirmName: cg ? cg.name : "",
+      onCancel: () => this.setState({ confirm: null }),
+      onConfirm: () => this.setState((s) => ({ deleted: [...s.deleted, s.confirm], confirm: null }))
+    };
+  }
+}
+</script>
+</body>
+</html>
