@@ -1,0 +1,29 @@
+# .github/workflows/keep-alive.yml
+# Free Supabase projects pause after a period without activity, which breaks every guest
+# link until the project is restored by hand. This calls the public read function twice a
+# week so the project stays awake. It only reads (an unknown slug returns an empty list)
+# and uses the same public repo variables as the deploy workflow.
+name: Keep Supabase awake
+
+on:
+  schedule:
+    - cron: '17 9 * * 1,4' # Mondays and Thursdays, 09:17 UTC
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Call get_public_event
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          curl --fail-with-body --silent --show-error --retry 3 --retry-all-errors \
+            --request POST "$SUPABASE_URL/rest/v1/rpc/get_public_event" \
+            --header "apikey: $SUPABASE_PUBLISHABLE_KEY" \
+            --header "Content-Type: application/json" \
+            --data '{"p_slug":"keep-alive-ping"}'
