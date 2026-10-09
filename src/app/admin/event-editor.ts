@@ -8,7 +8,7 @@ import {
   resource,
   signal,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { type EventRow, IMAGE_BUCKET, type PublicEvent, SUPABASE } from '../supabase';
 import { type EventTheme, resolveTheme } from '../theme';
 import { EventPreview } from './event-preview';
@@ -441,6 +441,26 @@ const themePaths = (theme: EventTheme) =>
                     </div>
                   }
                 </div>
+
+                <div
+                  class="panel mt-6 flex max-w-[620px] flex-wrap items-center justify-between gap-4 py-3.5 pr-4 pl-5"
+                >
+                  <div class="flex flex-col gap-0.5">
+                    <span class="font-medium">Delete event</span>
+                    <span class="hint"
+                      >Removes the event, all its replies and its images. The link stops
+                      working.</span
+                    >
+                  </div>
+                  <button
+                    type="button"
+                    class="btn btn-danger h-10"
+                    [disabled]="deleting()"
+                    (click)="deleteEvent()"
+                  >
+                    {{ deleting() ? 'Deleting…' : 'Delete event' }}
+                  </button>
+                </div>
               }
 
               @case ('look') {
@@ -482,6 +502,7 @@ export default class EventEditor {
   private readonly supabase = inject(SUPABASE);
   private readonly document = inject(DOCUMENT);
   private readonly ui = inject(AdminUi);
+  private readonly router = inject(Router);
 
   protected readonly tabs = TABS;
   protected readonly slugify = slugify;
@@ -523,6 +544,8 @@ export default class EventEditor {
   protected readonly mobilePreview = signal(false);
   protected readonly saving = signal(false);
   protected readonly errors = signal<Partial<Record<Field, string>>>({});
+  protected readonly deleting = signal(false);
+  private deleted = false;
 
   protected readonly dirty = computed(
     () => JSON.stringify(this.draft()) !== JSON.stringify(this.saved()),
@@ -628,9 +651,45 @@ export default class EventEditor {
     this.ui.toast('Saved');
   }
 
+  /**
+   * Deletes the event after confirmation. Replies go with it (on delete cascade);
+   * its images are removed from Storage afterwards.
+   */
+  protected async deleteEvent(): Promise<void> {
+    const title = this.saved()?.title || 'this event';
+    const { count } = await this.supabase
+      .from('rsvps')
+      .select('id', { count: 'exact', head: true })
+      .eq('event_id', this.id());
+    const replies = count === 1 ? '1 reply' : `${count ?? 0} replies`;
+    const confirmed = await this.ui.confirm({
+      title: `Delete ${title}?`,
+      body: `This permanently deletes the event and its ${replies}. Its link will show “not available”. It can't be undone.`,
+      confirm: 'Delete event',
+      danger: true,
+    });
+    if (!confirmed) return;
+
+    this.deleting.set(true);
+    const { error } = await this.supabase.from('events').delete().eq('id', this.id());
+    if (error) {
+      this.deleting.set(false);
+      this.ui.toast("Couldn't delete the event. Try again.");
+      return;
+    }
+
+    const bucket = this.supabase.storage.from(IMAGE_BUCKET);
+    const { data: files } = await bucket.list(this.id());
+    if (files?.length) await bucket.remove(files.map((f) => `${this.id()}/${f.name}`));
+
+    this.deleted = true;
+    this.ui.toast('Event deleted');
+    await this.router.navigateByUrl('/admin');
+  }
+
   /** Route guard: asks before leaving with unsaved changes. */
   async canLeave(): Promise<boolean> {
-    if (!this.dirty()) return true;
+    if (this.deleted || !this.dirty()) return true;
     const discard = await this.ui.confirm({
       title: 'Discard unsaved changes?',
       body: "Your edits to this event haven't been saved.",
@@ -643,7 +702,7 @@ export default class EventEditor {
   }
 
   protected warnBeforeUnload(event: BeforeUnloadEvent): void {
-    if (this.dirty()) event.preventDefault();
+    if (!this.deleted && this.dirty()) event.preventDefault();
   }
 
   /** Deletes earlier and session uploads that the kept theme no longer uses. */
