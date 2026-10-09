@@ -3,18 +3,19 @@ import { RouterLink, RouterOutlet } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Auth } from './auth';
 import { LanguageSwitch } from '../language-switch';
+import { Logo } from '../logo';
 import { AdminUi } from './ui';
 
 @Component({
   selector: 'app-admin-shell',
-  imports: [LanguageSwitch, RouterLink, RouterOutlet, TranslatePipe],
+  imports: [LanguageSwitch, Logo, RouterLink, RouterOutlet, TranslatePipe],
   host: { class: 'admin block min-h-dvh' },
   template: `
     <header
       class="sticky top-0 z-20 flex h-14 items-center justify-between gap-3 border-b border-line bg-white px-[max(16px,env(safe-area-inset-left))]"
     >
-      <a routerLink="/admin" class="flex min-h-11 items-center gap-2.5 font-semibold">
-        <span aria-hidden="true" class="size-5 rounded-[5px] bg-ink"></span>RSVP
+      <a routerLink="/admin" class="flex min-h-11 items-center">
+        <app-logo lockup [size]="24" />
       </a>
       <div class="flex min-w-0 items-center gap-3 text-muted">
         <span class="hidden truncate sm:inline">{{ auth.email() }}</span>

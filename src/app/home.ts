@@ -2,6 +2,7 @@ import { Component, DOCUMENT, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LanguageSwitch } from './language-switch';
+import { Logo } from './logo';
 import { DEFAULT_THEME, fontStylesheetUrl, loadStylesheet, NEUTRAL_STYLE } from './theme';
 
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -26,12 +27,13 @@ export function slugFromInput(value: string, basePath = '/'): string | null {
 /** Landing page at the site root: guests open their invitation, hosts go to sign in. */
 @Component({
   selector: 'app-home',
-  imports: [LanguageSwitch, RouterLink, TranslatePipe],
+  imports: [LanguageSwitch, Logo, RouterLink, TranslatePipe],
   host: { class: 'rsvp-page @container relative flow-root min-h-dvh', '[style]': 'style' },
   template: `
     <div
-      class="absolute top-[max(12px,env(safe-area-inset-top))] right-[max(12px,env(safe-area-inset-right))]"
+      class="absolute inset-x-[max(16px,env(safe-area-inset-left))] top-[max(12px,env(safe-area-inset-top))] flex items-center justify-between"
     >
+      <app-logo lockup [size]="24" />
       <app-language-switch appearance="guest" />
     </div>
     <main
