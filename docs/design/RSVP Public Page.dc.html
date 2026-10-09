@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&family=DM+Serif+Display&family=DM+Sans:wght@400;500;700&family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"><style>body{margin:0;background:#ecebe7;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#1c1c1a}a{color:#1c1c1a}a:hover{color:#2f6feb}.dv-turn{padding:44px 48px 36px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 8px}.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}.dv-tname{font:600 15px/1.2 'IBM Plex Sans',system-ui,sans-serif;color:#1a1a1a}.dv-sub{margin:0 0 24px;max-width:760px;font:14px/1.55 'IBM Plex Sans',system-ui,sans-serif;color:rgba(0,0,0,.6)}.dv-opts{display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start}.dv-opt{flex:none;display:flex;flex-direction:column;gap:10px;scroll-margin-top:16px}.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 12px/1.3 'IBM Plex Sans',system-ui,sans-serif;color:rgba(0,0,0,.6)}.dv-card{max-width:100%;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}.dv-opt:target .dv-oid{background:#2a78d6;color:#fff}.dv-next{margin:26px 0 0;font:12px/1.5 'IBM Plex Sans',system-ui,sans-serif;color:rgba(0,0,0,.5)}</style></helmet>
+<section class="dv-turn" id="t0" style="background:#f6f5f2">
+  <div class="dv-thd"><span class="dv-tname" style="font-size:22px">RSVP · public page</span></div>
+  <p class="dv-sub" style="margin-bottom:28px">One page template, themed entirely by CSS custom properties. Each frame below is the same component with a different token set plus four structural switches (layout, background type, card style, button style). Tokens ship in <a href="rsvp-theme.css">rsvp-theme.css</a> as <code>[data-theme]</code> blocks mapped into Tailwind v4 via <code>@theme inline</code>. Hero images are placeholders for the host's uploaded invite.</p>
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,380px));gap:24px">
+    <div style="display:flex;flex-direction:column;gap:16px;padding:22px;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:8px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-weight:600">Kid's birthday</span><code style="font:12px 'IBM Plex Mono',monospace;color:#5a5a55">data-theme="birthday"</code></div>
+      <div style="display:flex;gap:8px">
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px"><div style="height:40px;border-radius:6px;background:#5b2bd6"></div><span style="font:11px/1.3 'IBM Plex Mono',monospace;color:#5a5a55">primary<br>#5B2BD6</span></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px"><div style="height:40px;border-radius:6px;background:#e5530c"></div><span style="font:11px/1.3 'IBM Plex Mono',monospace;color:#5a5a55">accent<br>#E5530C</span></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px"><div style="height:40px;border-radius:6px;background:#2b1a40"></div><span style="font:11px/1.3 'IBM Plex Mono',monospace;color:#5a5a55">text<br>#2B1A40</span></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px"><div style="height:40px;border-radius:6px;background:#fff;border:1px solid #ddd"></div><span style="font:11px/1.3 'IBM Plex Mono',monospace;color:#5a5a55">surface<br>#FFFFFF</span></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px"><div style="height:40px;border-radius:6px;background:linear-gradient(160deg,#ffd66b,#ff9fbf 55%,#c9a7ff)"></div><span style="font:11px/1.3 'IBM Plex Mono',monospace;color:#5a5a55">bg<br>gradient</span></div>
+      </div>
+      <div style="font:600 26px/1 'Baloo 2',sans-serif">Baloo 2 <span style="font:400 15px 'Nunito',sans-serif;color:#5a5a55">/ Nunito · lg</span></div>
+      <div style="font:12px/1.7 'IBM Plex Mono',monospace;color:#5a5a55">layout card · card solid · radius xl 24px · button pill<br>text/surface 16:1 · on-primary 7.6:1 · ring 3.6:1</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;padding:22px;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:8px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-weight:600">Christmas party</span><code style="font:12px 'IBM Plex Mono',monospace;color:#5a5a55">data-theme="christmas"</code></div>
+      <div style="display:flex;gap:8px">
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px"><div style="height:40px;border-radius:6px;background:#c42b32"></div><span style="font:11px/1.3 'IBM Plex Mono',monospace;color:#5a5a55">primary<br>#C42B32</span></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px"><div style="height:40px;border-radius:6px;background:#e9c46a"></div><span style="font:11px/1.3 'IBM Plex Mono',monospace;color:#5a5a55">accent<br>#E9C46A</span></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px"><div style="height:40px;border-radius:6px;background:#f8f4ea;border:1px solid #ddd"></div><span style="font:11px/1.3 'IBM Plex Mono',monospace;color:#5a5a55">text<br>#F8F4EA</span></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px"><div style="height:40px;border-radius:6px;background:rgba(12,34,24,.66)"></div><span style="font:11px/1.3 'IBM Plex Mono',monospace;color:#5a5a55">surface<br>66% glass</span></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px"><div style="height:40px;border-radius:6px;background:repeating-linear-gradient(135deg,rgba(233,196,106,.2) 0 6px,transparent 6px 12px),#1d4431"></div><span style="font:11px/1.3 'IBM Plex Mono',monospace;color:#5a5a55">bg<br>image .55</span></div>
+      </div>
+      <div style="font:400 26px/1 'DM Serif Display',serif">DM Serif Display <span style="font:400 15px 'DM Sans',sans-serif;color:#5a5a55">/ DM Sans · md</span></div>
+      <div style="font:12px/1.7 'IBM Plex Mono',monospace;color:#5a5a55">layout card · card glass · radius lg 16px · button solid<br>text/surface ≈13:1 · on-primary 5.9:1 · ring ≈9:1</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;padding:22px;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:8px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-weight:600">Wedding</span><code style="font:12px 'IBM Plex Mono',monospace;color:#5a5a55">data-theme="wedding"</code></div>
+      <div style="display:flex;gap:8px">
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px"><div style="height:40px;border-radius:6px;background:#161412"></div><span style="font:11px/1.3 'IBM Plex Mono',monospace;color:#5a5a55">primary<br>#161412</span></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px"><div style="height:40px;border-radius:6px;background:#8f6f3f"></div><span style="font:11px/1.3 'IBM Plex Mono',monospace;color:#5a5a55">accent<br>#8F6F3F</span></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px"><div style="height:40px;border-radius:6px;background:#161412"></div><span style="font:11px/1.3 'IBM Plex Mono',monospace;color:#5a5a55">text<br>#161412</span></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px"><div style="height:40px;border-radius:6px;background:#fbf8f1;border:1px solid #ddd"></div><span style="font:11px/1.3 'IBM Plex Mono',monospace;color:#5a5a55">surface<br>#FBF8F1</span></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px"><div style="height:40px;border-radius:6px;background:#f1ebdf;border:1px solid #ddd"></div><span style="font:11px/1.3 'IBM Plex Mono',monospace;color:#5a5a55">bg<br>#F1EBDF</span></div>
+      </div>
+      <div style="font:500 28px/1 'Cormorant Garamond',serif">Cormorant Garamond <span style="font:400 15px 'Jost',sans-serif;color:#5a5a55">/ Jost · lg</span></div>
+      <div style="font:12px/1.7 'IBM Plex Mono',monospace;color:#5a5a55">layout poster · card outline · radius none · button outline<br>text/surface 17:1 · on-primary 17:1 · ring 4.6:1</div>
+    </div>
+  </div>
+</section>
+<section class="dv-turn" id="t1">
+  <div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Three themes · 375 px</span></div>
+  <p class="dv-sub">Same template, same fields. Card layout puts the invite on top and the details in a card; poster lets the invite fill the first screen and the card rises over it. The form always sits on a surface, so it stays legible over any background. Frames are interactive: pick a reply, submit empty to see validation.</p>
+  <div class="dv-opts">
+    <div class="dv-opt" id="1a"><div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Kid's birthday · card · gradient · pill · notes required</div>
+      <div style="width:375px;border-radius:44px;overflow:hidden;box-shadow:0 0 0 10px #1c1c1a,0 20px 50px rgba(0,0,0,.25);margin:10px;--rsvp-primary:#5b2bd6;--rsvp-on-primary:#fff;--rsvp-accent:#e5530c;--rsvp-text:#2b1a40;--rsvp-muted:#5e4f70;--rsvp-surface:#fff;--rsvp-field:#f8f5ff;--rsvp-border:#8e7ca8;--rsvp-error:#c0262d;--rsvp-background:linear-gradient(160deg,#ffd66b 0%,#ff9fbf 55%,#c9a7ff 100%);--rsvp-radius:24px;--rsvp-font-heading:'Baloo 2',system-ui,sans-serif;--rsvp-font-body:'Nunito',system-ui,sans-serif;--rsvp-heading-weight:800;--rsvp-scale:1.04;--rsvp-hero-tint:#ffe9a8;--rsvp-status:#2b1a40">
+        <dc-import name="RSVP Page" event="birthday" layout="card" background="gradient" card="solid" button="pill" notes="required" hint-size="375px,1700px"></dc-import>
+      </div>
+    </div>
+    <div class="dv-opt" id="1b"><div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Christmas · card · image + overlay · glass · notes off</div>
+      <div style="width:375px;border-radius:44px;overflow:hidden;box-shadow:0 0 0 10px #1c1c1a,0 20px 50px rgba(0,0,0,.25);margin:10px;--rsvp-primary:#c42b32;--rsvp-on-primary:#fff;--rsvp-accent:#e9c46a;--rsvp-text:#f8f4ea;--rsvp-muted:#d9d2c0;--rsvp-surface:rgba(12,34,24,.66);--rsvp-field:rgba(255,255,255,.08);--rsvp-border:rgba(248,244,234,.5);--rsvp-error:#ffa69c;--rsvp-background:#0e261b;--rsvp-bg-image:repeating-linear-gradient(135deg,rgba(233,196,106,.10) 0 14px,transparent 14px 28px),radial-gradient(120% 80% at 30% 20%,#2d5a40 0%,#0e261b 70%);--rsvp-overlay:rgba(5,18,12,.55);--rsvp-blur:3px;--rsvp-radius:16px;--rsvp-font-heading:'DM Serif Display',Georgia,serif;--rsvp-font-body:'DM Sans',system-ui,sans-serif;--rsvp-heading-weight:400;--rsvp-scale:1;--rsvp-hero-tint:#17382a;--rsvp-status:#f8f4ea">
+        <dc-import name="RSVP Page" event="christmas" layout="card" background="image" card="glass" button="solid" notes="off" hint-size="375px,1500px"></dc-import>
+      </div>
+    </div>
+    <div class="dv-opt" id="1c"><div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Wedding · poster · outline card · sharp · notes optional</div>
+      <div style="width:375px;border-radius:44px;overflow:hidden;box-shadow:0 0 0 10px #1c1c1a,0 20px 50px rgba(0,0,0,.25);margin:10px;--rsvp-primary:#161412;--rsvp-on-primary:#fbf8f1;--rsvp-accent:#8f6f3f;--rsvp-text:#161412;--rsvp-muted:#57514a;--rsvp-surface:#fbf8f1;--rsvp-field:transparent;--rsvp-border:#161412;--rsvp-error:#a3221b;--rsvp-background:#f1ebdf;--rsvp-radius:0px;--rsvp-font-heading:'Cormorant Garamond',Georgia,serif;--rsvp-font-body:'Jost',system-ui,sans-serif;--rsvp-heading-weight:500;--rsvp-scale:1.1;--rsvp-hero-tint:#e6dfd1;--rsvp-status:#161412">
+        <dc-import name="RSVP Page" event="wedding" layout="poster" background="solid" card="outline" button="outline" notes="optional" hint-size="375px,1900px"></dc-import>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="dv-turn" id="t2">
+  <div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Three themes · 1280 px</span></div>
+  <p class="dv-sub">Desktop keeps a single 560 px reading column for card layout (640 px for poster). Nothing new appears on desktop; the page just gets more air.</p>
+  <div class="dv-opts">
+    <div class="dv-opt" id="2a"><div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>Kid's birthday</div>
+      <div class="dv-card" style="width:1280px;--rsvp-primary:#5b2bd6;--rsvp-on-primary:#fff;--rsvp-accent:#e5530c;--rsvp-text:#2b1a40;--rsvp-muted:#5e4f70;--rsvp-surface:#fff;--rsvp-field:#f8f5ff;--rsvp-border:#8e7ca8;--rsvp-error:#c0262d;--rsvp-background:linear-gradient(160deg,#ffd66b 0%,#ff9fbf 55%,#c9a7ff 100%);--rsvp-radius:24px;--rsvp-font-heading:'Baloo 2',system-ui,sans-serif;--rsvp-font-body:'Nunito',system-ui,sans-serif;--rsvp-heading-weight:800;--rsvp-scale:1.04;--rsvp-hero-tint:#ffe9a8">
+        <div style="height:40px;display:flex;align-items:center;gap:14px;padding:0 16px;background:#e9e8e4;border-bottom:1px solid #d6d5d0"><div style="display:flex;gap:7px"><span style="width:11px;height:11px;border-radius:50%;background:#d0cfca"></span><span style="width:11px;height:11px;border-radius:50%;background:#d0cfca"></span><span style="width:11px;height:11px;border-radius:50%;background:#d0cfca"></span></div><div style="flex:1;max-width:480px;margin:0 auto;height:24px;border-radius:6px;background:#fff;display:flex;align-items:center;justify-content:center;font:12px 'IBM Plex Mono',monospace;color:#5a5a55">rsvp.page/maya-6</div></div>
+        <dc-import name="RSVP Page" event="birthday" device="desktop" layout="card" background="gradient" card="solid" button="pill" notes="required" hint-size="1280px,2100px"></dc-import>
+      </div>
+    </div>
+    <div class="dv-opt" id="2b"><div class="dv-olabel"><a class="dv-oid" href="#2b">2b</a>Christmas party</div>
+      <div class="dv-card" style="width:1280px;--rsvp-primary:#c42b32;--rsvp-on-primary:#fff;--rsvp-accent:#e9c46a;--rsvp-text:#f8f4ea;--rsvp-muted:#d9d2c0;--rsvp-surface:rgba(12,34,24,.66);--rsvp-field:rgba(255,255,255,.08);--rsvp-border:rgba(248,244,234,.5);--rsvp-error:#ffa69c;--rsvp-background:#0e261b;--rsvp-bg-image:repeating-linear-gradient(135deg,rgba(233,196,106,.10) 0 14px,transparent 14px 28px),radial-gradient(120% 80% at 30% 20%,#2d5a40 0%,#0e261b 70%);--rsvp-overlay:rgba(5,18,12,.55);--rsvp-blur:3px;--rsvp-radius:16px;--rsvp-font-heading:'DM Serif Display',Georgia,serif;--rsvp-font-body:'DM Sans',system-ui,sans-serif;--rsvp-heading-weight:400;--rsvp-scale:1;--rsvp-hero-tint:#17382a">
+        <div style="height:40px;display:flex;align-items:center;gap:14px;padding:0 16px;background:#e9e8e4;border-bottom:1px solid #d6d5d0"><div style="display:flex;gap:7px"><span style="width:11px;height:11px;border-radius:50%;background:#d0cfca"></span><span style="width:11px;height:11px;border-radius:50%;background:#d0cfca"></span><span style="width:11px;height:11px;border-radius:50%;background:#d0cfca"></span></div><div style="flex:1;max-width:480px;margin:0 auto;height:24px;border-radius:6px;background:#fff;display:flex;align-items:center;justify-content:center;font:12px 'IBM Plex Mono',monospace;color:#5a5a55">rsvp.page/studio-xmas</div></div>
+        <dc-import name="RSVP Page" event="christmas" device="desktop" layout="card" background="image" card="glass" button="solid" notes="off" hint-size="1280px,1900px"></dc-import>
+      </div>
+    </div>
+    <div class="dv-opt" id="2c"><div class="dv-olabel"><a class="dv-oid" href="#2c">2c</a>Wedding</div>
+      <div class="dv-card" style="width:1280px;--rsvp-primary:#161412;--rsvp-on-primary:#fbf8f1;--rsvp-accent:#8f6f3f;--rsvp-text:#161412;--rsvp-muted:#57514a;--rsvp-surface:#fbf8f1;--rsvp-field:transparent;--rsvp-border:#161412;--rsvp-error:#a3221b;--rsvp-background:#f1ebdf;--rsvp-radius:0px;--rsvp-font-heading:'Cormorant Garamond',Georgia,serif;--rsvp-font-body:'Jost',system-ui,sans-serif;--rsvp-heading-weight:500;--rsvp-scale:1.1;--rsvp-hero-tint:#e6dfd1">
+        <div style="height:40px;display:flex;align-items:center;gap:14px;padding:0 16px;background:#e9e8e4;border-bottom:1px solid #d6d5d0"><div style="display:flex;gap:7px"><span style="width:11px;height:11px;border-radius:50%;background:#d0cfca"></span><span style="width:11px;height:11px;border-radius:50%;background:#d0cfca"></span><span style="width:11px;height:11px;border-radius:50%;background:#d0cfca"></span></div><div style="flex:1;max-width:480px;margin:0 auto;height:24px;border-radius:6px;background:#fff;display:flex;align-items:center;justify-content:center;font:12px 'IBM Plex Mono',monospace;color:#5a5a55">rsvp.page/eleanor-and-james</div></div>
+        <dc-import name="RSVP Page" event="wedding" device="desktop" layout="poster" background="solid" card="outline" button="outline" notes="optional" hint-size="1280px,2200px"></dc-import>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="dv-turn" id="t3">
+  <div class="dv-thd"><a class="dv-tid" href="#t3">3</a><span class="dv-tname">Every state · Kid's birthday theme</span></div>
+  <p class="dv-sub">Loading and "not available" use a neutral token set: the theme arrives with the event data, so neither can know it. The focus ring (accent, 3 px) is shown on the notes field in 3c. The calendar block is hidden when the reply is No.</p>
+  <div class="dv-opts">
+    <div class="dv-opt" id="3a"><div class="dv-olabel"><a class="dv-oid" href="#3a">3a</a>Loading skeleton</div>
+      <div style="width:375px;border-radius:44px;overflow:hidden;box-shadow:0 0 0 10px #1c1c1a,0 20px 50px rgba(0,0,0,.25);margin:10px;--rsvp-primary:#1c1c1a;--rsvp-on-primary:#fff;--rsvp-accent:#2f6feb;--rsvp-text:#1c1c1a;--rsvp-muted:#5a5a55;--rsvp-surface:#fff;--rsvp-border:#d6d5d0;--rsvp-background:#f1f0ec;--rsvp-radius:16px;--rsvp-font-heading:'DM Sans',system-ui,sans-serif;--rsvp-font-body:'DM Sans',system-ui,sans-serif;--rsvp-heading-weight:700;--rsvp-scale:1;--rsvp-skel:#e6e5e0;--rsvp-status:#1c1c1a">
+        <dc-import name="RSVP Page" state="loading" hint-size="375px,1100px"></dc-import>
+      </div>
+    </div>
+    <div class="dv-opt" id="3b"><div class="dv-olabel"><a class="dv-oid" href="#3b">3b</a>Form idle</div>
+      <div style="width:375px;border-radius:44px;overflow:hidden;box-shadow:0 0 0 10px #1c1c1a,0 20px 50px rgba(0,0,0,.25);margin:10px;--rsvp-primary:#5b2bd6;--rsvp-on-primary:#fff;--rsvp-accent:#e5530c;--rsvp-text:#2b1a40;--rsvp-muted:#5e4f70;--rsvp-surface:#fff;--rsvp-field:#f8f5ff;--rsvp-border:#8e7ca8;--rsvp-error:#c0262d;--rsvp-background:linear-gradient(160deg,#ffd66b 0%,#ff9fbf 55%,#c9a7ff 100%);--rsvp-radius:24px;--rsvp-font-heading:'Baloo 2',system-ui,sans-serif;--rsvp-font-body:'Nunito',system-ui,sans-serif;--rsvp-heading-weight:800;--rsvp-scale:1.04;--rsvp-hero-tint:#ffe9a8;--rsvp-status:#2b1a40">
+        <dc-import name="RSVP Page" event="birthday" state="idle" layout="card" background="gradient" card="solid" button="pill" notes="required" hint-size="375px,1700px"></dc-import>
+      </div>
+    </div>
+    <div class="dv-opt" id="3c"><div class="dv-olabel"><a class="dv-oid" href="#3c">3c</a>Choice selected · focus on notes</div>
+      <div style="width:375px;border-radius:44px;overflow:hidden;box-shadow:0 0 0 10px #1c1c1a,0 20px 50px rgba(0,0,0,.25);margin:10px;--rsvp-primary:#5b2bd6;--rsvp-on-primary:#fff;--rsvp-accent:#e5530c;--rsvp-text:#2b1a40;--rsvp-muted:#5e4f70;--rsvp-surface:#fff;--rsvp-field:#f8f5ff;--rsvp-border:#8e7ca8;--rsvp-error:#c0262d;--rsvp-background:linear-gradient(160deg,#ffd66b 0%,#ff9fbf 55%,#c9a7ff 100%);--rsvp-radius:24px;--rsvp-font-heading:'Baloo 2',system-ui,sans-serif;--rsvp-font-body:'Nunito',system-ui,sans-serif;--rsvp-heading-weight:800;--rsvp-scale:1.04;--rsvp-hero-tint:#ffe9a8;--rsvp-status:#2b1a40">
+        <dc-import name="RSVP Page" event="birthday" state="selected" layout="card" background="gradient" card="solid" button="pill" notes="required" hint-size="375px,1700px"></dc-import>
+      </div>
+    </div>
+    <div class="dv-opt" id="3d"><div class="dv-olabel"><a class="dv-oid" href="#3d">3d</a>Validation errors</div>
+      <div style="width:375px;border-radius:44px;overflow:hidden;box-shadow:0 0 0 10px #1c1c1a,0 20px 50px rgba(0,0,0,.25);margin:10px;--rsvp-primary:#5b2bd6;--rsvp-on-primary:#fff;--rsvp-accent:#e5530c;--rsvp-text:#2b1a40;--rsvp-muted:#5e4f70;--rsvp-surface:#fff;--rsvp-field:#f8f5ff;--rsvp-border:#8e7ca8;--rsvp-error:#c0262d;--rsvp-background:linear-gradient(160deg,#ffd66b 0%,#ff9fbf 55%,#c9a7ff 100%);--rsvp-radius:24px;--rsvp-font-heading:'Baloo 2',system-ui,sans-serif;--rsvp-font-body:'Nunito',system-ui,sans-serif;--rsvp-heading-weight:800;--rsvp-scale:1.04;--rsvp-hero-tint:#ffe9a8;--rsvp-status:#2b1a40">
+        <dc-import name="RSVP Page" event="birthday" state="errors" layout="card" background="gradient" card="solid" button="pill" notes="required" hint-size="375px,1800px"></dc-import>
+      </div>
+    </div>
+    <div class="dv-opt" id="3e"><div class="dv-olabel"><a class="dv-oid" href="#3e">3e</a>Submitting</div>
+      <div style="width:375px;border-radius:44px;overflow:hidden;box-shadow:0 0 0 10px #1c1c1a,0 20px 50px rgba(0,0,0,.25);margin:10px;--rsvp-primary:#5b2bd6;--rsvp-on-primary:#fff;--rsvp-accent:#e5530c;--rsvp-text:#2b1a40;--rsvp-muted:#5e4f70;--rsvp-surface:#fff;--rsvp-field:#f8f5ff;--rsvp-border:#8e7ca8;--rsvp-error:#c0262d;--rsvp-background:linear-gradient(160deg,#ffd66b 0%,#ff9fbf 55%,#c9a7ff 100%);--rsvp-radius:24px;--rsvp-font-heading:'Baloo 2',system-ui,sans-serif;--rsvp-font-body:'Nunito',system-ui,sans-serif;--rsvp-heading-weight:800;--rsvp-scale:1.04;--rsvp-hero-tint:#ffe9a8;--rsvp-status:#2b1a40">
+        <dc-import name="RSVP Page" event="birthday" state="submitting" layout="card" background="gradient" card="solid" button="pill" notes="required" hint-size="375px,1700px"></dc-import>
+      </div>
+    </div>
+    <div class="dv-opt" id="3f"><div class="dv-olabel"><a class="dv-oid" href="#3f">3f</a>Success + add to calendar</div>
+      <div style="width:375px;border-radius:44px;overflow:hidden;box-shadow:0 0 0 10px #1c1c1a,0 20px 50px rgba(0,0,0,.25);margin:10px;--rsvp-primary:#5b2bd6;--rsvp-on-primary:#fff;--rsvp-accent:#e5530c;--rsvp-text:#2b1a40;--rsvp-muted:#5e4f70;--rsvp-surface:#fff;--rsvp-field:#f8f5ff;--rsvp-border:#8e7ca8;--rsvp-error:#c0262d;--rsvp-background:linear-gradient(160deg,#ffd66b 0%,#ff9fbf 55%,#c9a7ff 100%);--rsvp-radius:24px;--rsvp-font-heading:'Baloo 2',system-ui,sans-serif;--rsvp-font-body:'Nunito',system-ui,sans-serif;--rsvp-heading-weight:800;--rsvp-scale:1.04;--rsvp-hero-tint:#ffe9a8;--rsvp-status:#2b1a40">
+        <dc-import name="RSVP Page" event="birthday" state="success" layout="card" background="gradient" card="solid" button="pill" notes="required" hint-size="375px,1500px"></dc-import>
+      </div>
+    </div>
+    <div class="dv-opt" id="3g"><div class="dv-olabel"><a class="dv-oid" href="#3g">3g</a>Inactive or unknown link</div>
+      <div style="width:375px;border-radius:44px;overflow:hidden;box-shadow:0 0 0 10px #1c1c1a,0 20px 50px rgba(0,0,0,.25);margin:10px;--rsvp-primary:#1c1c1a;--rsvp-on-primary:#fff;--rsvp-accent:#2f6feb;--rsvp-text:#1c1c1a;--rsvp-muted:#5a5a55;--rsvp-surface:#fff;--rsvp-border:#d6d5d0;--rsvp-background:#f1f0ec;--rsvp-radius:16px;--rsvp-font-heading:'DM Sans',system-ui,sans-serif;--rsvp-font-body:'DM Sans',system-ui,sans-serif;--rsvp-heading-weight:700;--rsvp-scale:1;--rsvp-skel:#e6e5e0;--rsvp-status:#1c1c1a">
+        <dc-import name="RSVP Page" state="unavailable" hint-size="375px,812px"></dc-import>
+      </div>
+    </div>
+  </div>
+  <p class="dv-next">Try next: "show <a class="dv-oid" href="#1c">1c</a> with a glass card over a photo" · "a seventh font pairing" · "states for the wedding theme"</p>
+</section>
+</x-dc>
+</body>
+</html>
