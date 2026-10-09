@@ -3,10 +3,11 @@ import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Auth } from './auth';
 import { LanguageSwitch } from '../language-switch';
+import { Logo } from '../logo';
 
 @Component({
   selector: 'app-login',
-  imports: [LanguageSwitch, TranslatePipe],
+  imports: [LanguageSwitch, Logo, TranslatePipe],
   host: { class: 'admin grid min-h-dvh place-items-center p-6' },
   template: `
     <form
@@ -15,9 +16,7 @@ import { LanguageSwitch } from '../language-switch';
       (submit)="submit($event, email.value, password.value)"
     >
       <div class="flex items-center justify-between gap-3">
-        <div class="flex items-center gap-2.5 text-base font-semibold">
-          <span aria-hidden="true" class="size-[22px] rounded-[5px] bg-ink"></span>RSVP
-        </div>
+        <app-logo lockup [size]="28" />
         <app-language-switch />
       </div>
       <div class="panel flex flex-col gap-[18px] p-7">
