@@ -101,6 +101,15 @@ describe('themeToStyle', () => {
     expect(style['--rsvp-scale']).toBe('1.06');
   });
 
+  it('rounds fields and controls by button style', () => {
+    const pill = themeToStyle(resolveTheme({ button: { style: 'pill' } }), imageUrl);
+    expect(pill['--rsvp-field-radius']).toBe('18px');
+    expect(pill['--rsvp-control-radius']).toBe('999px');
+
+    const solid = themeToStyle(resolveTheme({ button: { style: 'solid' } }), imageUrl);
+    expect(solid['--rsvp-control-radius']).toBe(solid['--rsvp-field-radius']);
+  });
+
   it('picks dark text on light primaries', () => {
     const style = themeToStyle(resolveTheme({ colors: { primary: '#e9c46a' } }), imageUrl);
     expect(style['--rsvp-on-primary']).toBe('#161412');

@@ -215,8 +215,10 @@ export function themeToStyle(
   theme: EventTheme,
   imageUrl: (path: string) => string,
 ): Record<string, string> {
-  const { colors, background: bg, typography, card } = theme;
+  const { colors, background: bg, typography, card, button } = theme;
   const fonts = FONT_PAIRINGS[typography.pairing];
+  const pill = button.style === 'pill';
+  const fieldRadius = pill ? '18px' : 'calc(var(--rsvp-radius) * 0.55)';
   const glass = card.style === 'glass';
   const darkSurface = luminance(colors.surface) < 0.2;
 
@@ -249,6 +251,8 @@ export function themeToStyle(
     '--rsvp-overlay': `rgba(0, 0, 0, ${bg.overlay})`,
     '--rsvp-blur': `${bg.blur}px`,
     '--rsvp-radius': RADIUS_PX[card.radius],
+    '--rsvp-field-radius': fieldRadius, // inputs
+    '--rsvp-control-radius': pill ? '999px' : fieldRadius, // choices and buttons
     '--rsvp-font-heading': `"${fonts.heading}", Georgia, serif`,
     '--rsvp-font-body': `"${fonts.body}", system-ui, sans-serif`,
     '--rsvp-heading-weight': String(fonts.weight),
@@ -257,6 +261,9 @@ export function themeToStyle(
     '--rsvp-skel': `color-mix(in oklab, ${colors.text} 12%, ${colors.surface})`,
   };
 }
+
+/** Loading and "not available" screens: the event's theme isn't known yet. */
+export const NEUTRAL_STYLE = themeToStyle(DEFAULT_THEME, () => '');
 
 // ---------------------------------------------------------------------------
 // Fonts

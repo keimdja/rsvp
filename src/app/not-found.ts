@@ -1,32 +1,34 @@
-import { Component, DOCUMENT, inject } from '@angular/core';
-import { DEFAULT_THEME, fontStylesheetUrl, loadStylesheet, themeToStyle } from './theme';
+import { Component, DOCUMENT, inject, input } from '@angular/core';
+import { DEFAULT_THEME, fontStylesheetUrl, loadStylesheet, NEUTRAL_STYLE } from './theme';
 
-// The default theme never uses a background image, so no URL resolver is needed.
-const NEUTRAL_STYLE = themeToStyle(DEFAULT_THEME, () => '');
-
-/** Unknown, inactive and empty links all land here, in the neutral theme. */
+/** Unknown, inactive and empty links land here, in the neutral theme. */
 @Component({
   selector: 'app-not-found',
-  host: { class: 'rsvp-page grid min-h-dvh place-items-center', '[style]': 'style' },
+  host: { class: 'rsvp-page flow-root min-h-dvh', '[style]': 'style' },
   template: `
-    <main class="flex max-w-md flex-col items-center gap-4 px-4 text-center">
+    <main
+      class="mx-4 mt-30 flex max-w-[560px] flex-col gap-4 rounded-rsvp border border-rsvp-border bg-rsvp-surface px-6 py-8 md:mx-auto md:mt-35 md:p-12"
+    >
       <div
-        class="grid size-12 place-items-center rounded-full border-2 border-rsvp-border text-2xl font-semibold text-rsvp-muted"
         aria-hidden="true"
+        class="grid size-12 place-items-center rounded-full border-2 border-rsvp-border text-[22px] font-semibold text-rsvp-muted"
       >
         ?
       </div>
-      <h1 class="rsvp-heading text-[1.75em] leading-tight text-balance">
-        This RSVP page isn't available
+      <h1 class="rsvp-heading text-[calc(28px*var(--rsvp-scale))] leading-[1.15] text-balance">
+        {{ heading() }}
       </h1>
-      <p class="text-rsvp-muted text-pretty">
-        The link may be mistyped, or the host has closed replies for this event. If you think this
-        is a mistake, contact the person who invited you.
-      </p>
+      <p class="text-pretty text-rsvp-muted">{{ message() }}</p>
+      <ng-content />
     </main>
   `,
 })
 export default class NotFound {
+  readonly heading = input("This RSVP page isn't available");
+  readonly message = input(
+    'The link may be mistyped, or the host has closed replies for this event. If you think this is a mistake, contact the person who invited you.',
+  );
+
   protected readonly style = NEUTRAL_STYLE;
 
   constructor() {
