@@ -1,3 +1,9 @@
 import { Routes } from '@angular/router';
 
-export const routes: Routes = [];
+// Each entry is its own lazy chunk, so guests never download admin code.
+// 'admin' must come before ':slug' (the database also reserves the slug 'admin').
+export const routes: Routes = [
+  { path: 'admin', loadChildren: () => import('./admin/admin.routes') },
+  { path: ':slug', loadComponent: () => import('./guest/rsvp-page') },
+  { path: '**', title: 'RSVP', loadComponent: () => import('./not-found') },
+];

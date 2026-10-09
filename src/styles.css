@@ -1,1 +1,78 @@
-@import "tailwindcss";
+/* Scan only src/ for classes (not docs/design). */
+@import 'tailwindcss';
+@source './';
+
+/* Event theme tokens (docs/design/rsvp-theme.css). Values are set per event at runtime by
+   themeToStyle() in src/app/theme.ts, so templates use classes like bg-rsvp-primary. */
+@theme inline {
+  --color-rsvp-primary: var(--rsvp-primary);
+  --color-rsvp-on-primary: var(--rsvp-on-primary);
+  --color-rsvp-accent: var(--rsvp-accent);
+  --color-rsvp-text: var(--rsvp-text);
+  --color-rsvp-muted: var(--rsvp-muted);
+  --color-rsvp-surface: var(--rsvp-surface);
+  --color-rsvp-field: var(--rsvp-field);
+  --color-rsvp-border: var(--rsvp-border);
+  --color-rsvp-error: var(--rsvp-error);
+  --radius-rsvp: var(--rsvp-radius);
+  --font-rsvp-heading: var(--rsvp-font-heading);
+  --font-rsvp-body: var(--rsvp-font-body);
+}
+
+/* Admin tokens (docs/design/RSVP Admin.dc.html): one neutral UI that never borrows
+   event colors, so the live preview is the only colorful thing on screen. */
+@theme {
+  --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --color-ground: #f6f6f4;
+  --color-ink: #1c1c1a;
+  --color-muted: #62625d;
+  --color-line: #e4e3df;
+  --color-line-strong: #c9c8c3;
+  --color-track: #ebeae6;
+  --color-focus: #2f6feb;
+  --color-danger: #8f2a22;
+
+  /* Response badges: text on soft fill. */
+  --color-yes: #1e5e33;
+  --color-yes-soft: #e3f1e7;
+  --color-maybe: #6b4500;
+  --color-maybe-soft: #fbefd5;
+  --color-no: var(--color-danger);
+  --color-no-soft: #f5e3e1;
+}
+
+@utility rsvp-heading {
+  font-family: var(--rsvp-font-heading);
+  font-weight: var(--rsvp-heading-weight);
+}
+
+@layer components {
+  .rsvp-page {
+    background: var(--rsvp-background);
+    color: var(--rsvp-text);
+    font-family: var(--rsvp-font-body);
+    font-size: calc(16px * var(--rsvp-scale));
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+      env(safe-area-inset-left);
+  }
+  .rsvp-page :focus-visible {
+    outline: 3px solid var(--rsvp-accent);
+    outline-offset: 2px;
+  }
+  /* 16px minimum stops iOS from zooming on focus. */
+  .rsvp-page :is(input, textarea) {
+    font-size: max(16px, 1em);
+  }
+
+  .admin {
+    background: var(--color-ground);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+  }
+  .admin :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+}
