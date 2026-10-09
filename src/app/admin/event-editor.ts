@@ -178,11 +178,22 @@ const themePaths = (theme: EventTheme) =>
               <h1 class="truncate text-[22px] leading-tight font-semibold">
                 {{ d.title || ('common.untitled' | translate) }}
               </h1>
-              <span
-                class="badge h-[22px] px-2"
-                [class]="d.is_active ? 'bg-yes-soft text-yes' : 'bg-track text-[#4a4a46]'"
-              >
-                {{ (d.is_active ? 'admin.editor.active' : 'admin.editor.inactive') | translate }}
+              <!-- Same setting as "Accepting replies" in the RSVP tab, reachable from every tab. -->
+              <span class="flex shrink-0 items-center">
+                <button
+                  type="button"
+                  role="switch"
+                  class="switch -my-2.5"
+                  [attr.aria-checked]="d.is_active"
+                  [attr.aria-label]="'admin.editor.switches.accepting' | translate"
+                  (click)="update({ is_active: !d.is_active })"
+                ></button>
+                <span
+                  class="text-[13px] font-semibold"
+                  [class]="d.is_active ? 'text-yes' : 'text-muted'"
+                >
+                  {{ (d.is_active ? 'admin.editor.active' : 'admin.editor.inactive') | translate }}
+                </span>
               </span>
             </div>
           </div>

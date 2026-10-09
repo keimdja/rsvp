@@ -3,7 +3,6 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Invite } from '../guest/invite';
 import { RsvpConfirmation } from '../guest/rsvp-confirmation';
 import { type RsvpDraft, RsvpForm } from '../guest/rsvp-form';
-import NotFound from '../not-found';
 import type { PublicEvent } from '../supabase';
 import type { EventTheme } from '../theme';
 
@@ -18,7 +17,7 @@ const SAMPLE_REPLY: RsvpDraft = { guest_name: 'Priya Shah', response: 'yes', not
  */
 @Component({
   selector: 'app-event-preview',
-  imports: [Invite, NotFound, RsvpConfirmation, RsvpForm, TranslatePipe],
+  imports: [Invite, RsvpConfirmation, RsvpForm, TranslatePipe],
   host: { class: 'flex flex-col gap-3' },
   template: `
     <div class="flex items-center justify-between gap-2 px-4 wide:px-0">
@@ -32,6 +31,13 @@ const SAMPLE_REPLY: RsvpDraft = { guest_name: 'Priya Shah', response: 'yes', not
       </div>
     </div>
 
+    @if (!active()) {
+      <p role="status" class="warning mx-4 wide:mx-0">
+        <span aria-hidden="true" class="font-bold">!</span
+        >{{ 'admin.preview.inactive' | translate }}
+      </p>
+    }
+
     <div
       class="wide:box-content wide:h-[min(720px,calc(100dvh-160px))] wide:w-[346px] wide:self-center wide:overflow-hidden wide:rounded-[36px] wide:border-8 wide:border-ink wide:bg-black"
     >
@@ -39,27 +45,20 @@ const SAMPLE_REPLY: RsvpDraft = { guest_name: 'Priya Shah', response: 'yes', not
         <div
           class="wide:w-[375px] wide:[--rsvp-screen:calc(min(720px,100dvh-160px)/0.9227)] wide:[zoom:0.9227]"
         >
-          @if (!active()) {
-            <!-- Inactive events show guests the "not available" page. -->
-            <div inert><app-not-found /></div>
-          } @else {
-            <app-invite framed [event]="event()" [theme]="theme()">
-              @switch (state()) {
-                @case ('sent') {
-                  <app-rsvp-confirmation [event]="event()" [reply]="sample" [pageUrl]="pageUrl()" />
-                }
-                @default {
-                  <app-rsvp-form [event]="event()" [showErrors]="state() === 'errors'" />
-                }
+          <!-- Always the invite, even while replies are off: the host is still building it. -->
+          <app-invite framed [event]="event()" [theme]="theme()">
+            @switch (state()) {
+              @case ('sent') {
+                <app-rsvp-confirmation [event]="event()" [reply]="sample" [pageUrl]="pageUrl()" />
               }
-            </app-invite>
-          }
+              @default {
+                <app-rsvp-form [event]="event()" [showErrors]="state() === 'errors'" />
+              }
+            }
+          </app-invite>
         </div>
       </div>
     </div>
-    @if (!active()) {
-      <p class="hint px-4 text-center wide:px-0">{{ 'admin.preview.inactive' | translate }}</p>
-    }
   `,
 })
 export class EventPreview {

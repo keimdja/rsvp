@@ -317,7 +317,7 @@
     "preview": {
       "title": "Vista previa",
       "states": { "form": "Formulario", "errors": "Errores", "sent": "Enviada" },
-      "inactive": "Las respuestas están apagadas, así que los invitados ven \"no disponible\". Activa Aceptar respuestas en la pestaña RSVP."
+      "inactive": "Las respuestas están apagadas, así que los invitados ven “no disponible”. Activa Aceptar respuestas arriba y guarda cuando la invitación esté lista."
     }
   }
 }
