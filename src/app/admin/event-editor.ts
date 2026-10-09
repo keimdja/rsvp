@@ -297,6 +297,15 @@ const themePaths = (theme: EventTheme) =>
                     <span class="hint break-all">
                       Guests will open <span class="font-mono text-ink">{{ draftUrl() }}</span>
                     </span>
+                    @if (d.slug) {
+                      <span class="hint break-words">
+                        Invitation code:
+                        <strong class="font-mono font-medium text-ink">{{ d.slug }}</strong>
+                        (guests can also type this at
+                        <span class="font-mono text-ink break-all">{{ homeUrl }}</span
+                        >)
+                      </span>
+                    }
                     @if (errors().slug) {
                       <span class="field-error">{{ errors().slug }}</span>
                     }
@@ -507,6 +516,7 @@ export default class EventEditor {
   protected readonly tabs = TABS;
   protected readonly slugify = slugify;
   protected readonly basePath = this.ui.basePath();
+  protected readonly homeUrl = this.ui.eventUrl('');
   protected readonly wordingFields = [
     { key: 'rsvp_question', label: 'RSVP question', max: 200, hint: '' },
     { key: 'button_text', label: 'Button text', max: 40, hint: '' },
