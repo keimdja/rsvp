@@ -111,6 +111,24 @@ export const locationText = (event: Pick<CalendarEvent, 'location_name' | 'locat
 export const mapsUrl = (query: string) =>
   `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 
+/**
+ * Cleans up a pasted map link (Google Maps, Apple Maps, Waze, …): adds a missing
+ * https://, upgrades http, and rejects anything that isn't a web address. Matches the
+ * database check (https only, no spaces, at most 2000 characters).
+ */
+export function toMapLink(value: string): string | null {
+  const trimmed = value.trim();
+  if (!trimmed || /\s/.test(trimmed)) return null;
+  try {
+    const url = new URL(/^[a-z][a-z\d+.-]*:/i.test(trimmed) ? trimmed : `https://${trimmed}`);
+    if (url.protocol === 'http:') url.protocol = 'https:';
+    const ok = url.protocol === 'https:' && url.hostname.includes('.') && url.href.length <= 2000;
+    return ok ? url.href : null;
+  } catch {
+    return null;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Calendar links
 // ---------------------------------------------------------------------------

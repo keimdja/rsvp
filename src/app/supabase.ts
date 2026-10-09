@@ -30,5 +30,5 @@ export type RsvpRow = Public['Tables']['rsvps']['Row'];
 export type EventSummary = Public['Views']['event_summaries']['Row'];
 export type PublicEvent = WithNullable<
   Public['Functions']['get_public_event']['Returns'][number],
-  'description' | 'end_time' | 'location_name' | 'location_address'
+  'description' | 'end_time' | 'location_name' | 'location_address' | 'location_url'
 >;

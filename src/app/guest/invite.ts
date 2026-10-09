@@ -126,7 +126,7 @@ const LAYOUT = {
                 <span class="text-rsvp-muted">{{ when().time }}</span>
               </dd>
             </div>
-            @if (ev.location_name || ev.location_address) {
+            @if (ev.location_name || ev.location_address || ev.location_url) {
               <div class="grid grid-cols-[64px_minmax(0,1fr)] items-baseline gap-3">
                 <dt class="text-xs font-bold tracking-[0.09em] text-rsvp-muted uppercase">
                   {{ t('guest.where') }}
@@ -138,14 +138,14 @@ const LAYOUT = {
                   @if (ev.location_address) {
                     <span class="text-rsvp-muted">{{ ev.location_address }}</span>
                   }
+                  <!-- One non-wrapping run: one continuous underline; padding keeps a 44px target. -->
                   <a
-                    class="rsvp-link inline-flex min-h-11 items-center gap-1.5"
+                    class="rsvp-link inline-block py-2.5 whitespace-nowrap"
                     [href]="mapsHref()"
                     target="_blank"
                     rel="noopener"
+                    >{{ t('guest.openInMaps') }}&nbsp;<span aria-hidden="true">↗</span></a
                   >
-                    {{ t('guest.openInMaps') }} <span aria-hidden="true">↗</span>
-                  </a>
                 </dd>
               </div>
             }
@@ -156,7 +156,7 @@ const LAYOUT = {
           }
         </div>
 
-        <div aria-hidden="true" class="h-0.5 w-14 rounded-xs bg-rsvp-accent"></div>
+        <div aria-hidden="true" class="h-0.5 rounded-xs bg-rsvp-accent"></div>
 
         <ng-content />
       </div>
@@ -209,9 +209,10 @@ export class Invite {
     const { cardOverHero, cardNoHero, ...poster } = LAYOUT.poster;
     return { ...poster, card: `${poster.card} ${this.heroUrl() ? cardOverHero : cardNoHero}` };
   });
+  /** The host's own map link when given, else a map search for the address. */
   protected readonly mapsHref = computed(() => {
-    const { location_address, location_name } = this.event();
-    return mapsUrl(location_address || location_name || '');
+    const { location_url, location_address, location_name } = this.event();
+    return location_url || mapsUrl(location_address || location_name || '');
   });
 
   constructor() {

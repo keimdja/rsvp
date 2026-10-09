@@ -5,6 +5,7 @@ import {
   googleCalendarUrl,
   icsFile,
   outlookCalendarUrl,
+  toMapLink,
   zonedTimeToUtc,
 } from './calendar';
 
@@ -120,5 +121,35 @@ describe('icsFile', () => {
     }
     expect(long).not.toContain('�');
     expect(long.replace(/\r\n /g, '')).toContain(`SUMMARY:${'🎉 Fiesta de cumpleaños '.repeat(8)}`);
+  });
+});
+
+describe('toMapLink', () => {
+  it('accepts map links as pasted, adding https:// when missing', () => {
+    expect(toMapLink('https://maps.app.goo.gl/ppwpVww5QhdvueNY8')).toBe(
+      'https://maps.app.goo.gl/ppwpVww5QhdvueNY8',
+    );
+    expect(toMapLink('  maps.app.goo.gl/ppwpVww5QhdvueNY8 ')).toBe(
+      'https://maps.app.goo.gl/ppwpVww5QhdvueNY8',
+    );
+    expect(toMapLink('http://maps.apple.com/?q=Casa+Abuela')).toBe(
+      'https://maps.apple.com/?q=Casa+Abuela',
+    );
+    expect(toMapLink('https://waze.com/ul?ll=18.46,-66.1&navigate=yes')).toBe(
+      'https://waze.com/ul?ll=18.46,-66.1&navigate=yes',
+    );
+  });
+
+  it('rejects empty values, spaces, other schemes and non-addresses', () => {
+    for (const value of [
+      '',
+      '   ',
+      'casa abuela',
+      'javascript:alert(1)',
+      'ftp://maps.example',
+      'localhost',
+    ]) {
+      expect(toMapLink(value)).toBeNull();
+    }
   });
 });

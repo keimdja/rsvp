@@ -14,10 +14,16 @@
     "back": "← Events",
     "language": "Language",
     "untitled": "Untitled event",
-    "languages": { "en": "English", "es": "Español" }
+    "languages": {
+      "en": "English",
+      "es": "Español"
+    }
   },
-  "response": { "yes": "Yes", "maybe": "Maybe", "no": "No" },
-
+  "response": {
+    "yes": "Yes",
+    "maybe": "Maybe",
+    "no": "No"
+  },
   "home": {
     "title": "Open your invitation",
     "intro": "Paste the link you were sent, or just the invitation code at the end of it.",
@@ -32,7 +38,6 @@
     "title": "This RSVP page isn't available",
     "message": "The link may be mistyped, or the host has closed replies for this event. If you think this is a mistake, contact the person who invited you."
   },
-
   "guest": {
     "loading": "Loading invitation…",
     "loadErrorTitle": "We couldn't load this invitation",
@@ -53,7 +58,11 @@
     "sending": "Sending…",
     "privacy": "Only the host sees your reply.",
     "summary": "Please add {{items}}.",
-    "missing": { "name": "your name", "reply": "a reply", "notes": "the notes field" },
+    "missing": {
+      "name": "your name",
+      "reply": "a reply",
+      "notes": "the notes field"
+    },
     "problems": {
       "notes_too_long": "Please keep your note under 1,000 characters.",
       "rsvp_limit_reached": "Sorry, this event isn't taking more replies.",
@@ -69,13 +78,11 @@
     "icsHint": "Nothing downloaded? Open this page in Safari or Chrome and try again.",
     "change": "Change my reply"
   },
-
   "admin": {
     "signOut": "Sign out",
     "copyLink": "Copy link",
     "copied": "Copied ✓",
     "copyFailed": "Couldn't copy. Select the link and copy it manually.",
-
     "login": {
       "title": "Sign in",
       "email": "Email",
@@ -88,7 +95,6 @@
       "failed": "Couldn't sign in. Try again.",
       "notAdmin": "This account doesn't have admin access."
     },
-
     "dashboard": {
       "title": "Events",
       "newEvent": "+ New event",
@@ -117,7 +123,6 @@
       "created": "Event created. It stays inactive until you switch replies on.",
       "createFailed": "Couldn't create the event. Try again."
     },
-
     "list": {
       "loading": "Loading replies…",
       "loadError": "Couldn't load replies. Check your connection.",
@@ -145,7 +150,6 @@
       "deleted": "Reply deleted",
       "deleteFailed": "Couldn't delete the reply. Try again."
     },
-
     "editor": {
       "loading": "Loading event…",
       "loadError": "Couldn't load the event. Check your connection.",
@@ -161,7 +165,12 @@
       "edit": "Edit",
       "preview": "Preview",
       "tabsLabel": "Event settings",
-      "tabs": { "details": "Details", "wording": "Wording", "rsvp": "RSVP", "look": "Look" },
+      "tabs": {
+        "details": "Details",
+        "wording": "Wording",
+        "rsvp": "RSVP",
+        "look": "Look"
+      },
       "title": "Title",
       "link": "Link",
       "guestsWillOpen": "Guests will open",
@@ -174,7 +183,9 @@
       "timezone": "Time zone",
       "locationName": "Location name",
       "address": "Address",
-      "addressHint": "Used for the \"Open in Maps\" link.",
+      "addressHint": "Shown on the invite, and searched on the map when there’s no map link.",
+      "mapLink": "Map link",
+      "mapLinkHint": "Optional. Paste a link from Google Maps, Apple Maps or Waze and “Open in Maps” opens it. Without one, guests get a map search for the address.",
       "language": "Guest page language",
       "languageHint": "Language of the labels and buttons around your wording. Write the wording below in the same language.",
       "message": "Message",
@@ -210,7 +221,8 @@
         "slugTaken": "Another event already uses this link.",
         "date": "Pick a date.",
         "start": "Pick a start time.",
-        "empty": "This can't be empty."
+        "empty": "This can't be empty.",
+        "mapLink": "Paste a full map link, like https://maps.app.goo.gl/…"
       },
       "fixFields": "Fix the highlighted fields first.",
       "saved": "Saved",
@@ -219,7 +231,6 @@
       "discardBody": "Your edits to this event haven't been saved.",
       "discard": "Discard"
     },
-
     "look": {
       "presets": "Start from a preset",
       "presetNames": {
@@ -275,7 +286,11 @@
       },
       "photoNoCard": "With no card, text sits directly on the photo. Pick a card style so the form stays readable.",
       "background": "Background",
-      "backgroundKinds": { "color": "Solid", "gradient": "Gradient", "image": "Image" },
+      "backgroundKinds": {
+        "color": "Solid",
+        "gradient": "Gradient",
+        "image": "Image"
+      },
       "from": "From",
       "to": "To",
       "color": "Color",
@@ -307,16 +322,37 @@
       "corners": "Corners",
       "buttons": "Buttons",
       "options": {
-        "scale": { "sm": "S", "md": "M", "lg": "L" },
-        "card": { "solid": "Solid", "glass": "Glass", "outline": "Outline", "none": "None" },
-        "radius": { "none": "None", "sm": "S", "lg": "L", "xl": "XL" },
-        "button": { "solid": "Solid", "outline": "Outline", "pill": "Pill" }
+        "scale": {
+          "sm": "S",
+          "md": "M",
+          "lg": "L"
+        },
+        "card": {
+          "solid": "Solid",
+          "glass": "Glass",
+          "outline": "Outline",
+          "none": "None"
+        },
+        "radius": {
+          "none": "None",
+          "sm": "S",
+          "lg": "L",
+          "xl": "XL"
+        },
+        "button": {
+          "solid": "Solid",
+          "outline": "Outline",
+          "pill": "Pill"
+        }
       }
     },
-
     "preview": {
       "title": "Preview",
-      "states": { "form": "Form", "errors": "Errors", "sent": "Sent" },
+      "states": {
+        "form": "Form",
+        "errors": "Errors",
+        "sent": "Sent"
+      },
       "inactive": "Replies are off, so guests see “not available”. Switch on Accepting replies at the top and save when the invite is ready."
     }
   }

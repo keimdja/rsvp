@@ -16,6 +16,7 @@ const event: PublicEvent = {
   timezone: 'America/Puerto_Rico',
   location_name: null,
   location_address: null,
+  location_url: null,
   rsvp_question: 'Will you be joining us?',
   button_text: 'Send RSVP',
   confirmation_message: 'Thanks!',

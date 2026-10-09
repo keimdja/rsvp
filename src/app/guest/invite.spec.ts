@@ -20,6 +20,7 @@ const event: PublicEvent = {
   timezone: 'Europe/London',
   location_name: 'Casa Abuela',
   location_address: '48 Harbour Road',
+  location_url: null,
   rsvp_question: '¿Nos acompañas?',
   button_text: 'Enviar respuesta',
   confirmation_message: '¡Gracias!',
@@ -106,5 +107,26 @@ describe('Invite', () => {
     const preview = await render('es', true);
     expect(preview.textContent).toContain('Cuándo');
     expect(preview.querySelector('app-language-switch')).toBeNull();
+  });
+
+  it("links Open in Maps to the host's map link, else to a search for the address", async () => {
+    const fixture = TestBed.createComponent(Host);
+    fixture.componentInstance.event.set({ ...event, language: 'en' });
+    await fixture.whenStable();
+    const link = () => fixture.nativeElement.querySelector('a[target=_blank]') as HTMLAnchorElement;
+    expect(link().href).toContain('google.com/maps/search/?api=1&query=48%20Harbour%20Road');
+    // One text run (no flex items), so the underline can't split or wrap.
+    expect(link().children.length).toBe(1);
+    expect(link().textContent!.replace(/\s/g, ' ').trim()).toBe('Open in Maps ↗');
+
+    fixture.componentInstance.event.set({
+      ...event,
+      language: 'en',
+      location_name: null,
+      location_address: null,
+      location_url: 'https://maps.app.goo.gl/ppwpVww5QhdvueNY8',
+    });
+    await fixture.whenStable();
+    expect(link().href).toBe('https://maps.app.goo.gl/ppwpVww5QhdvueNY8');
   });
 });
