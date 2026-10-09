@@ -155,6 +155,7 @@ Notes for guests and hosts:
 - An end time earlier than the start time means the event ends the next day.
 - A guest's reply is remembered in their browser, so revisiting the link lets them change it instead of adding a duplicate.
 - Turning replies off makes the link show "This RSVP page isn't available".
+- To remove an event for good, use **Delete event** at the bottom of the editor's **RSVP** tab. It deletes the event, all its replies and its images, after confirmation; the link then shows "not available".
 - Uploaded images are resized to at most 1600 px and stored as WebP (JPEG on Safari) in the `event-images` bucket. Images that are no longer used are deleted when you save.
 
 ## Changing the database

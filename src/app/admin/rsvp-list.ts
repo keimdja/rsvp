@@ -1,17 +1,12 @@
 import { Component, computed, DOCUMENT, inject, input, resource, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { RESPONSE_LABELS, type RsvpResponse, SUPABASE } from '../supabase';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { I18n, isLanguage, LOCALES } from '../i18n';
+import { RESPONSES, type RsvpResponse, SUPABASE } from '../supabase';
 import { toCsv } from './csv';
 import { AdminUi, copiedState } from './ui';
 
 type Filter = 'all' | RsvpResponse;
-
-const submitted = new Intl.DateTimeFormat(undefined, {
-  day: 'numeric',
-  month: 'short',
-  hour: '2-digit',
-  minute: '2-digit',
-});
 
 /** Local "YYYY-MM-DD HH:MM", which Excel and Sheets read as a date. */
 function csvDate(iso: string): string {
@@ -22,31 +17,35 @@ function csvDate(iso: string): string {
 
 @Component({
   selector: 'app-rsvp-list',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   template: `
     <main class="mx-auto flex max-w-[1120px] flex-col gap-[18px] px-4 pt-6 pb-16">
       @if (data.isLoading() && !data.hasValue()) {
-        <p class="text-muted" role="status">Loading replies…</p>
+        <p class="text-muted" role="status">{{ 'admin.list.loading' | translate }}</p>
       } @else if (data.error()) {
         <div class="panel flex flex-col items-start gap-3 p-6">
-          <p>Couldn't load replies. Check your connection.</p>
-          <button type="button" class="btn" (click)="data.reload()">Try again</button>
+          <p>{{ 'admin.list.loadError' | translate }}</p>
+          <button type="button" class="btn" (click)="data.reload()">
+            {{ 'common.tryAgain' | translate }}
+          </button>
         </div>
       } @else if (event(); as ev) {
         <div class="flex flex-wrap items-end justify-between gap-3">
           <div class="flex min-w-0 flex-col gap-1.5">
-            <a routerLink="/admin" class="text-[13px] text-muted">← Events</a>
+            <a routerLink="/admin" class="text-[13px] text-muted">{{
+              'common.back' | translate
+            }}</a>
             <h1 class="text-2xl leading-tight font-semibold">{{ ev.title }}</h1>
             <span class="font-mono text-[15px] font-medium">
-              {{ counts().yes }} Yes · {{ counts().maybe }} Maybe · {{ counts().no }} No
+              {{ 'admin.dashboard.summary' | translate: counts() }}
             </span>
           </div>
           <div class="flex gap-2">
-            <a class="btn hidden wide:inline-flex" [routerLink]="['/admin/events', ev.id]"
-              >Edit event</a
-            >
+            <a class="btn hidden wide:inline-flex" [routerLink]="['/admin/events', ev.id]">{{
+              'admin.list.editEvent' | translate
+            }}</a>
             <button type="button" class="btn hidden wide:inline-flex" (click)="copyLink(ev.slug)">
-              {{ copied.copied() ? 'Copied ✓' : 'Copy link' }}
+              {{ (copied.copied() ? 'admin.copied' : 'admin.copyLink') | translate }}
             </button>
             <button
               type="button"
@@ -54,7 +53,7 @@ function csvDate(iso: string): string {
               [disabled]="!all().length"
               (click)="exportCsv(ev.slug)"
             >
-              Export CSV
+              {{ 'admin.list.exportCsv' | translate }}
             </button>
           </div>
         </div>
@@ -62,7 +61,7 @@ function csvDate(iso: string): string {
         <div class="flex flex-wrap items-center justify-between gap-2.5">
           <div
             role="group"
-            aria-label="Filter by response"
+            [attr.aria-label]="'admin.list.filterLabel' | translate"
             class="flex max-w-full min-w-0 gap-1.5 overflow-x-auto"
           >
             @for (chip of chips(); track chip.value) {
@@ -77,7 +76,8 @@ function csvDate(iso: string): string {
                 [attr.aria-pressed]="filter() === chip.value"
                 (click)="filter.set(chip.value)"
               >
-                {{ chip.label }} <span class="font-mono opacity-75">{{ chip.count }}</span>
+                {{ chip.label | translate }}
+                <span class="font-mono opacity-75">{{ chip.count }}</span>
               </button>
             }
           </div>
@@ -85,8 +85,8 @@ function csvDate(iso: string): string {
             #searchBox
             type="search"
             class="input max-w-[320px] flex-[1_1_220px] text-base!"
-            placeholder="Search guests"
-            aria-label="Search guests by name"
+            [placeholder]="'admin.list.searchPlaceholder' | translate"
+            [attr.aria-label]="'admin.list.searchLabel' | translate"
             [value]="search()"
             (input)="search.set(searchBox.value)"
           />
@@ -97,8 +97,11 @@ function csvDate(iso: string): string {
           <div
             class="grid grid-cols-[minmax(0,1.3fr)_100px_minmax(0,2fr)_150px_72px] gap-4 border-b border-line px-5 py-2.5 text-xs font-medium text-muted"
           >
-            <span>Guest name</span><span>Response</span><span>Notes</span><span>Submitted</span
-            ><span></span>
+            <span>{{ 'admin.list.columns.name' | translate }}</span>
+            <span>{{ 'admin.list.columns.response' | translate }}</span>
+            <span>{{ 'admin.list.columns.notes' | translate }}</span>
+            <span>{{ 'admin.list.columns.submitted' | translate }}</span>
+            <span></span>
           </div>
           @for (r of rows(); track r.id) {
             <div
@@ -107,7 +110,7 @@ function csvDate(iso: string): string {
               <span class="font-medium break-words">{{ r.guest_name }}</span>
               <span
                 ><span class="badge" [class]="'badge-' + r.response">{{
-                  labels[r.response]
+                  'response.' + r.response | translate
                 }}</span></span
               >
               <span class="text-pretty break-words" [class.text-faint]="!r.notes">{{
@@ -117,15 +120,17 @@ function csvDate(iso: string): string {
               <button
                 type="button"
                 class="btn btn-sm border-transparent bg-transparent text-danger hover:border-[#e8c9c5] hover:bg-[#fbf3f2]"
-                [attr.aria-label]="'Delete ' + r.guest_name + '\\'s reply'"
+                [attr.aria-label]="'admin.list.deleteLabel' | translate: { name: r.guest_name }"
                 (click)="remove(r)"
               >
-                Delete
+                {{ 'admin.list.delete' | translate }}
               </button>
             </div>
           }
           @if (emptyMessage()) {
-            <p class="p-10 text-center text-muted">{{ emptyMessage() }}</p>
+            <p class="p-10 text-center text-muted">
+              {{ emptyMessage() | translate: { query: search().trim() } }}
+            </p>
           }
         </div>
 
@@ -135,7 +140,9 @@ function csvDate(iso: string): string {
             <div class="panel flex flex-col gap-1.5 px-3.5 pt-3 pb-1">
               <div class="flex items-center justify-between gap-2">
                 <span class="text-[15px] font-semibold break-words">{{ r.guest_name }}</span>
-                <span class="badge" [class]="'badge-' + r.response">{{ labels[r.response] }}</span>
+                <span class="badge" [class]="'badge-' + r.response">{{
+                  'response.' + r.response | translate
+                }}</span>
               </div>
               <span class="text-pretty break-words" [class.text-faint]="!r.notes">{{
                 r.notes || '—'
@@ -145,22 +152,24 @@ function csvDate(iso: string): string {
                 <button
                   type="button"
                   class="h-11 cursor-pointer pr-1 pl-3 text-danger"
-                  [attr.aria-label]="'Delete ' + r.guest_name + '\\'s reply'"
+                  [attr.aria-label]="'admin.list.deleteLabel' | translate: { name: r.guest_name }"
                   (click)="remove(r)"
                 >
-                  Delete
+                  {{ 'admin.list.delete' | translate }}
                 </button>
               </div>
             </div>
           }
           @if (emptyMessage()) {
-            <p class="panel p-8 text-center text-muted">{{ emptyMessage() }}</p>
+            <p class="panel p-8 text-center text-muted">
+              {{ emptyMessage() | translate: { query: search().trim() } }}
+            </p>
           }
         </div>
       } @else {
         <div class="panel flex flex-col items-start gap-3 p-6">
-          <p>This event doesn't exist anymore.</p>
-          <a routerLink="/admin" class="btn">← Events</a>
+          <p>{{ 'admin.list.missing' | translate }}</p>
+          <a routerLink="/admin" class="btn">{{ 'common.back' | translate }}</a>
         </div>
       }
     </main>
@@ -172,8 +181,9 @@ export default class RsvpList {
   private readonly supabase = inject(SUPABASE);
   private readonly document = inject(DOCUMENT);
   private readonly ui = inject(AdminUi);
+  private readonly i18n = inject(I18n);
+  private readonly translate = inject(TranslateService);
 
-  protected readonly labels = RESPONSE_LABELS;
   protected readonly copied = copiedState();
   protected readonly filter = signal<Filter>('all');
   protected readonly search = signal('');
@@ -207,10 +217,10 @@ export default class RsvpList {
   });
 
   protected readonly chips = computed(() => [
-    { value: 'all' as Filter, label: 'All', count: this.all().length },
-    ...(Object.keys(RESPONSE_LABELS) as RsvpResponse[]).map((value) => ({
+    { value: 'all' as Filter, label: 'admin.list.all', count: this.all().length },
+    ...RESPONSES.map((value) => ({
       value: value as Filter,
-      label: RESPONSE_LABELS[value],
+      label: `response.${value}`,
       count: this.counts()[value],
     })),
   ]);
@@ -218,6 +228,13 @@ export default class RsvpList {
   protected readonly rows = computed(() => {
     const filter = this.filter();
     const query = this.search().trim().toLocaleLowerCase();
+    const lang = this.i18n.current();
+    const submitted = new Intl.DateTimeFormat(LOCALES[isLanguage(lang) ? lang : 'en'], {
+      day: 'numeric',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
     return this.all()
       .filter((r) => filter === 'all' || r.response === filter)
       .filter((r) => !query || r.guest_name.toLocaleLowerCase().includes(query))
@@ -225,10 +242,9 @@ export default class RsvpList {
   });
 
   protected readonly emptyMessage = computed(() => {
-    if (!this.all().length) return 'No replies yet. Share the link to start collecting them.';
+    if (!this.all().length) return 'admin.list.emptyNone';
     if (this.rows().length) return '';
-    const query = this.search().trim();
-    return query ? `No guests match “${query}”.` : 'No replies in this group.';
+    return this.search().trim() ? 'admin.list.emptySearch' : 'admin.list.emptyGroup';
   });
 
   protected async copyLink(slug: string): Promise<void> {
@@ -237,29 +253,32 @@ export default class RsvpList {
 
   protected async remove(reply: { id: string; guest_name: string }): Promise<void> {
     const confirmed = await this.ui.confirm({
-      title: `Delete ${reply.guest_name}'s reply?`,
-      body: "This removes it from the list and the counts. It can't be undone.",
-      confirm: 'Delete reply',
+      title: 'admin.list.confirmTitle',
+      body: 'admin.list.confirmBody',
+      confirm: 'admin.list.confirm',
+      params: { name: reply.guest_name },
       danger: true,
     });
     if (!confirmed) return;
 
     const { error } = await this.supabase.from('rsvps').delete().eq('id', reply.id);
     if (error) {
-      this.ui.toast("Couldn't delete the reply. Try again.");
+      this.ui.toast('admin.list.deleteFailed');
       return;
     }
     this.data.update((d) => d && { ...d, rsvps: d.rsvps.filter((r) => r.id !== reply.id) });
-    this.ui.toast('Reply deleted');
+    this.ui.toast('admin.list.deleted');
   }
 
   /** Exports every reply, regardless of the current filter or search. */
   protected exportCsv(slug: string): void {
     const csv = toCsv([
-      ['Guest name', 'Response', 'Notes', 'Submitted'],
+      ['name', 'response', 'notes', 'submitted'].map(
+        (column) => this.translate.instant(`admin.list.columns.${column}`) as string,
+      ),
       ...this.all().map((r) => [
         r.guest_name,
-        RESPONSE_LABELS[r.response],
+        this.translate.instant(`response.${r.response}`) as string,
         r.notes ?? '',
         csvDate(r.created_at),
       ]),

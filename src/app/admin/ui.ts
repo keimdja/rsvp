@@ -1,13 +1,20 @@
 import { DOCUMENT, inject, Injectable, signal } from '@angular/core';
+import { type InterpolationParameters, TranslateService } from '@ngx-translate/core';
 
+/** Translation keys for the dialog's texts, plus the parameters they share. */
 export interface ConfirmOptions {
   title: string;
   body: string;
   confirm: string;
+  params?: InterpolationParameters;
   danger?: boolean;
 }
 
-interface OpenDialog extends ConfirmOptions {
+interface OpenDialog {
+  title: string;
+  body: string;
+  confirm: string;
+  danger: boolean;
   resolve: (confirmed: boolean) => void;
 }
 
@@ -15,20 +22,25 @@ interface OpenDialog extends ConfirmOptions {
 @Injectable({ providedIn: 'root' })
 export class AdminUi {
   private readonly document = inject(DOCUMENT);
+  private readonly translate = inject(TranslateService);
   private toastTimer?: ReturnType<typeof setTimeout>;
 
   readonly toastMessage = signal('');
   readonly dialog = signal<OpenDialog | null>(null);
 
-  toast(message: string): void {
+  /** Shows a translated message for a couple of seconds. */
+  toast(key: string, params?: InterpolationParameters): void {
     clearTimeout(this.toastTimer);
-    this.toastMessage.set(message);
+    this.toastMessage.set(this.translate.instant(key, params) as string);
     this.toastTimer = setTimeout(() => this.toastMessage.set(''), 2200);
   }
 
-  confirm(options: ConfirmOptions): Promise<boolean> {
+  confirm({ title, body, confirm, params, danger = false }: ConfirmOptions): Promise<boolean> {
     this.dialog()?.resolve(false);
-    return new Promise((resolve) => this.dialog.set({ ...options, resolve }));
+    const t = (key: string) => this.translate.instant(key, params) as string;
+    return new Promise((resolve) =>
+      this.dialog.set({ title: t(title), body: t(body), confirm: t(confirm), danger, resolve }),
+    );
   }
 
   closeDialog(confirmed: boolean): void {
@@ -51,7 +63,7 @@ export class AdminUi {
       await navigator.clipboard.writeText(text);
       return true;
     } catch {
-      this.toast("Couldn't copy. Select the link and copy it manually.");
+      this.toast('admin.copyFailed');
       return false;
     }
   }

@@ -23,11 +23,8 @@ type Public = Database['public'];
 type WithNullable<T, K extends keyof T> = Omit<T, K> & { [P in K]: T[P] | null };
 
 export type RsvpResponse = Public['Enums']['rsvp_response'];
-export const RESPONSE_LABELS: Record<RsvpResponse, string> = {
-  yes: 'Yes',
-  maybe: 'Maybe',
-  no: 'No',
-};
+/** Display order; labels are translated under the `response.*` keys. */
+export const RESPONSES: readonly RsvpResponse[] = ['yes', 'maybe', 'no'];
 export type EventRow = Public['Tables']['events']['Row'];
 export type RsvpRow = Public['Tables']['rsvps']['Row'];
 export type EventSummary = Public['Views']['event_summaries']['Row'];

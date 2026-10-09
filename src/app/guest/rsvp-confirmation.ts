@@ -10,7 +10,8 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { RESPONSE_LABELS, type PublicEvent } from '../supabase';
+import { guestTranslator } from '../i18n';
+import type { PublicEvent } from '../supabase';
 import { googleCalendarUrl, icsFile, outlookCalendarUrl } from './calendar';
 import type { RsvpDraft } from './rsvp-form';
 
@@ -34,9 +35,10 @@ import type { RsvpDraft } from './rsvp-form';
           {{ event().confirmation_message }}
         </h2>
         <p class="text-rsvp-muted">
-          Reply saved for <strong class="text-rsvp-text">{{ reply().guest_name }}</strong
+          {{ t('confirmation.savedFor') }}
+          <strong class="text-rsvp-text">{{ reply().guest_name }}</strong
           >:
-          <strong class="text-rsvp-text">{{ responseLabel() }}</strong>
+          <strong class="text-rsvp-text">{{ t('response.' + reply().response) }}</strong>
         </p>
       </div>
 
@@ -45,26 +47,26 @@ import type { RsvpDraft } from './rsvp-form';
           class="flex flex-col gap-3 border-t-2 border-rsvp-accent pt-5"
           aria-labelledby="rsvp-calendar"
         >
-          <h3 id="rsvp-calendar" class="font-bold">Add to calendar</h3>
+          <h3 id="rsvp-calendar" class="font-bold">{{ t('confirmation.addToCalendar') }}</h3>
           <div class="grid gap-2">
-            <a [href]="googleUrl()" target="_blank" rel="noopener" [class]="secondary"
-              >Google Calendar</a
-            >
+            <a [href]="googleUrl()" target="_blank" rel="noopener" [class]="secondary">{{
+              t('confirmation.google')
+            }}</a>
             <button type="button" [class]="secondary" (click)="downloadIcs()">
-              Apple Calendar (.ics)
+              {{ t('confirmation.apple') }}
             </button>
-            <a [href]="outlookUrl()" target="_blank" rel="noopener" [class]="secondary">Outlook</a>
+            <a [href]="outlookUrl()" target="_blank" rel="noopener" [class]="secondary">{{
+              t('confirmation.outlook')
+            }}</a>
           </div>
           @if (icsRequested()) {
-            <p role="status" class="text-sm text-rsvp-muted">
-              Nothing downloaded? Open this page in Safari or Chrome and try again.
-            </p>
+            <p role="status" class="text-sm text-rsvp-muted">{{ t('confirmation.icsHint') }}</p>
           }
         </section>
       }
 
       <button type="button" class="rsvp-link min-h-11 self-start" (click)="edit.emit()">
-        Change my reply
+        {{ t('confirmation.change') }}
       </button>
     </div>
   `,
@@ -83,7 +85,7 @@ export class RsvpConfirmation {
   protected readonly secondary =
     'rsvp-secondary flex min-h-[50px] items-center justify-center font-bold';
   protected readonly icsRequested = signal(false);
-  protected readonly responseLabel = computed(() => RESPONSE_LABELS[this.reply().response]);
+  protected readonly t = guestTranslator();
   protected readonly googleUrl = computed(() => googleCalendarUrl(this.event(), this.pageUrl()));
   protected readonly outlookUrl = computed(() => outlookCalendarUrl(this.event(), this.pageUrl()));
 

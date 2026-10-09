@@ -1,5 +1,7 @@
 import { Component, DOCUMENT, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { LanguageSwitch } from './language-switch';
 import { DEFAULT_THEME, fontStylesheetUrl, loadStylesheet, NEUTRAL_STYLE } from './theme';
 
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -24,23 +26,26 @@ export function slugFromInput(value: string, basePath = '/'): string | null {
 /** Landing page at the site root: guests open their invitation, hosts go to sign in. */
 @Component({
   selector: 'app-home',
-  imports: [RouterLink],
-  host: { class: 'rsvp-page @container flow-root min-h-dvh', '[style]': 'style' },
+  imports: [LanguageSwitch, RouterLink, TranslatePipe],
+  host: { class: 'rsvp-page @container relative flow-root min-h-dvh', '[style]': 'style' },
   template: `
+    <div
+      class="absolute top-[max(12px,env(safe-area-inset-top))] right-[max(12px,env(safe-area-inset-right))]"
+    >
+      <app-language-switch appearance="guest" />
+    </div>
     <main
       class="mx-4 mt-30 flex max-w-[560px] flex-col gap-6 rounded-rsvp border border-rsvp-border bg-rsvp-surface px-6 py-8 @3xl:mx-auto @3xl:mt-35 @3xl:p-12"
     >
       <div class="flex flex-col gap-2">
         <h1 class="rsvp-heading text-[calc(28px*var(--rsvp-scale))] leading-[1.15] text-balance">
-          Open your invitation
+          {{ 'home.title' | translate }}
         </h1>
-        <p class="text-pretty text-rsvp-muted">
-          Paste the link you were sent, or just the invitation code at the end of it.
-        </p>
+        <p class="text-pretty text-rsvp-muted">{{ 'home.intro' | translate }}</p>
       </div>
 
       <form class="flex flex-col gap-3" novalidate (submit)="open($event, link.value)">
-        <label for="invite-link" class="font-bold">Invitation link or code</label>
+        <label for="invite-link" class="font-bold">{{ 'home.label' | translate }}</label>
         <input
           #link
           id="invite-link"
@@ -56,20 +61,23 @@ export function slugFromInput(value: string, basePath = '/'): string | null {
         @if (error()) {
           <span id="invite-link-error" class="rsvp-error">{{ error() }}</span>
         }
-        <button type="submit" class="rsvp-submit mt-1 min-h-[58px] w-full">Open invitation</button>
+        <button type="submit" class="rsvp-submit mt-1 min-h-[58px] w-full">
+          {{ 'home.submit' | translate }}
+        </button>
       </form>
 
       <div aria-hidden="true" class="h-px bg-rsvp-border opacity-40"></div>
 
       <p class="text-rsvp-muted">
-        Hosting an event?
-        <a routerLink="/admin" class="rsvp-link text-rsvp-text">Sign in to manage events</a>
+        {{ 'home.hosting' | translate }}
+        <a routerLink="/admin" class="rsvp-link text-rsvp-text">{{ 'home.signIn' | translate }}</a>
       </p>
     </main>
   `,
 })
 export default class Home {
   private readonly router = inject(Router);
+  private readonly translate = inject(TranslateService);
   private readonly document = inject(DOCUMENT);
 
   protected readonly style = NEUTRAL_STYLE;
@@ -84,9 +92,7 @@ export default class Home {
     const slug = slugFromInput(value, new URL(this.document.baseURI).pathname);
     if (!slug) {
       this.error.set(
-        value.trim()
-          ? "That doesn't look like an invitation link. Check the message you were sent."
-          : 'Paste your invitation link or code.',
+        this.translate.instant(value.trim() ? 'home.errorInvalid' : 'home.errorEmpty'),
       );
       return;
     }

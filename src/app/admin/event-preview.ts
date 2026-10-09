@@ -1,4 +1,5 @@
 import { Component, input, signal } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Invite } from '../guest/invite';
 import { RsvpConfirmation } from '../guest/rsvp-confirmation';
 import { type RsvpDraft, RsvpForm } from '../guest/rsvp-form';
@@ -17,19 +18,15 @@ const SAMPLE_REPLY: RsvpDraft = { guest_name: 'Priya Shah', response: 'yes', not
  */
 @Component({
   selector: 'app-event-preview',
-  imports: [Invite, NotFound, RsvpConfirmation, RsvpForm],
+  imports: [Invite, NotFound, RsvpConfirmation, RsvpForm, TranslatePipe],
   host: { class: 'flex flex-col gap-3' },
   template: `
     <div class="flex items-center justify-between gap-2 px-4 wide:px-0">
-      <h2 class="font-semibold">Preview</h2>
+      <h2 class="font-semibold">{{ 'admin.preview.title' | translate }}</h2>
       <div class="segmented">
-        @for (s of states; track s.value) {
-          <button
-            type="button"
-            [attr.aria-pressed]="state() === s.value"
-            (click)="state.set(s.value)"
-          >
-            {{ s.label }}
+        @for (s of states; track s) {
+          <button type="button" [attr.aria-pressed]="state() === s" (click)="state.set(s)">
+            {{ 'admin.preview.states.' + s | translate }}
           </button>
         }
       </div>
@@ -61,9 +58,7 @@ const SAMPLE_REPLY: RsvpDraft = { guest_name: 'Priya Shah', response: 'yes', not
       </div>
     </div>
     @if (!active()) {
-      <p class="hint px-4 text-center wide:px-0">
-        Replies are off, so guests see "not available". Switch on Accepting replies in the RSVP tab.
-      </p>
+      <p class="hint px-4 text-center wide:px-0">{{ 'admin.preview.inactive' | translate }}</p>
     }
   `,
 })
@@ -73,11 +68,7 @@ export class EventPreview {
   readonly active = input.required<boolean>();
   readonly pageUrl = input.required<string>();
 
-  protected readonly states = [
-    { value: 'form', label: 'Form' },
-    { value: 'errors', label: 'Errors' },
-    { value: 'sent', label: 'Sent' },
-  ] as const;
+  protected readonly states: readonly PreviewState[] = ['form', 'errors', 'sent'];
   protected readonly state = signal<PreviewState>('form');
   protected readonly sample = SAMPLE_REPLY;
 }

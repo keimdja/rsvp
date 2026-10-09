@@ -35,17 +35,15 @@ export class Auth {
     return this.adminCheck.result;
   }
 
-  /** Resolves to an error message, or null when signed in as an admin. */
+  /** Resolves to an error's translation key, or null when signed in as an admin. */
   async signIn(email: string, password: string): Promise<string | null> {
     const { error } = await this.supabase.auth.signInWithPassword({ email, password });
     if (error) {
-      return error.status === 400
-        ? 'Email or password is incorrect.'
-        : "Couldn't sign in. Try again.";
+      return error.status === 400 ? 'admin.login.wrongCredentials' : 'admin.login.failed';
     }
     if (await this.isAdmin()) return null;
     await this.supabase.auth.signOut();
-    return "This account doesn't have admin access.";
+    return 'admin.login.notAdmin';
   }
 
   async signOut(): Promise<void> {

@@ -1,0 +1,323 @@
+{
+  "titles": {
+    "default": "RSVP",
+    "signIn": "Iniciar sesión · RSVP",
+    "events": "Eventos · RSVP",
+    "editEvent": "Editar evento · RSVP",
+    "replies": "Respuestas · RSVP"
+  },
+  "common": {
+    "appName": "RSVP",
+    "tryAgain": "Intentar de nuevo",
+    "cancel": "Cancelar",
+    "remove": "Quitar",
+    "back": "← Eventos",
+    "language": "Idioma",
+    "untitled": "Evento sin título",
+    "languages": { "en": "English", "es": "Español" }
+  },
+  "response": { "yes": "Sí", "maybe": "Quizás", "no": "No" },
+
+  "home": {
+    "title": "Abre tu invitación",
+    "intro": "Pega el enlace que te enviaron, o solo el código de invitación que aparece al final.",
+    "label": "Enlace o código de invitación",
+    "submit": "Abrir invitación",
+    "errorEmpty": "Pega tu enlace o código de invitación.",
+    "errorInvalid": "Eso no parece un enlace de invitación. Revisa el mensaje que te enviaron.",
+    "hosting": "¿Organizas un evento?",
+    "signIn": "Inicia sesión para administrar tus eventos"
+  },
+  "notFound": {
+    "title": "Esta página de RSVP no está disponible",
+    "message": "Puede que el enlace esté mal escrito o que el anfitrión haya cerrado las respuestas para este evento. Si crees que es un error, comunícate con quien te invitó."
+  },
+
+  "guest": {
+    "loading": "Cargando invitación…",
+    "loadErrorTitle": "No pudimos cargar esta invitación",
+    "loadErrorMessage": "Revisa tu conexión e inténtalo de nuevo.",
+    "when": "Cuándo",
+    "where": "Dónde",
+    "openInMaps": "Abrir en Mapas"
+  },
+  "form": {
+    "yourName": "Tu nombre",
+    "namePlaceholder": "Nombre y apellido",
+    "nameError": "Escribe tu nombre para que el anfitrión sepa quién responde.",
+    "choiceError": "Elige Sí, Quizás o No.",
+    "required": "Obligatorio",
+    "optional": "Opcional",
+    "notesError": "Este campo es obligatorio. Escribe \"nada\" si no aplica.",
+    "honeypot": "Deja esto vacío",
+    "sending": "Enviando…",
+    "privacy": "Solo el anfitrión ve tu respuesta.",
+    "summary": "Por favor, completa {{items}}.",
+    "missing": { "name": "tu nombre", "reply": "una respuesta", "notes": "el campo de notas" },
+    "problems": {
+      "notes_too_long": "Escribe una nota de menos de 1,000 caracteres.",
+      "rsvp_limit_reached": "Lo sentimos, este evento ya no acepta más respuestas.",
+      "network": "No pudimos enviar tu respuesta. Revisa tu conexión e inténtalo de nuevo."
+    }
+  },
+  "confirmation": {
+    "savedFor": "Respuesta guardada para",
+    "addToCalendar": "Añadir al calendario",
+    "google": "Google Calendar",
+    "apple": "Calendario de Apple (.ics)",
+    "outlook": "Outlook",
+    "icsHint": "¿No se descargó nada? Abre esta página en Safari o Chrome e inténtalo de nuevo.",
+    "change": "Cambiar mi respuesta"
+  },
+
+  "admin": {
+    "signOut": "Cerrar sesión",
+    "copyLink": "Copiar enlace",
+    "copied": "Copiado ✓",
+    "copyFailed": "No se pudo copiar. Selecciona el enlace y cópialo manualmente.",
+
+    "login": {
+      "title": "Iniciar sesión",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "submit": "Iniciar sesión",
+      "pending": "Iniciando sesión…",
+      "invalidEmail": "Escribe un correo electrónico válido.",
+      "emptyPassword": "Escribe tu contraseña.",
+      "wrongCredentials": "El correo o la contraseña no son correctos.",
+      "failed": "No se pudo iniciar sesión. Inténtalo de nuevo.",
+      "notAdmin": "Esta cuenta no tiene acceso de administrador."
+    },
+
+    "dashboard": {
+      "title": "Eventos",
+      "newEvent": "+ Nuevo evento",
+      "newEventTitle": "Nuevo evento",
+      "loading": "Cargando eventos…",
+      "loadError": "No se pudieron cargar los eventos. Revisa tu conexión.",
+      "emptyTitle": "Aún no hay eventos",
+      "emptyBody": "Crea un evento para obtener un enlace que puedas compartir con tus invitados.",
+      "columns": {
+        "event": "Evento",
+        "date": "Fecha",
+        "yes": "Sí",
+        "maybe": "Quizás",
+        "no": "No",
+        "total": "Total",
+        "active": "Activo"
+      },
+      "viewRsvps": "Ver respuestas",
+      "rsvps": "Respuestas",
+      "edit": "Editar",
+      "switchLabel": "Aceptar respuestas para {{title}}",
+      "summary": "{{yes}} Sí · {{maybe}} Quizás · {{no}} No",
+      "opened": "Respuestas abiertas.",
+      "closed": "Respuestas cerradas. El enlace ahora muestra “no disponible”.",
+      "updateFailed": "No se pudo actualizar el evento. Inténtalo de nuevo.",
+      "created": "Evento creado. Seguirá inactivo hasta que actives las respuestas.",
+      "createFailed": "No se pudo crear el evento. Inténtalo de nuevo."
+    },
+
+    "list": {
+      "loading": "Cargando respuestas…",
+      "loadError": "No se pudieron cargar las respuestas. Revisa tu conexión.",
+      "missing": "Este evento ya no existe.",
+      "editEvent": "Editar evento",
+      "exportCsv": "Exportar CSV",
+      "filterLabel": "Filtrar por respuesta",
+      "all": "Todas",
+      "searchPlaceholder": "Buscar invitados",
+      "searchLabel": "Buscar invitados por nombre",
+      "columns": {
+        "name": "Invitado",
+        "response": "Respuesta",
+        "notes": "Notas",
+        "submitted": "Enviada"
+      },
+      "delete": "Eliminar",
+      "deleteLabel": "Eliminar la respuesta de {{name}}",
+      "emptyNone": "Aún no hay respuestas. Comparte el enlace para empezar a recibirlas.",
+      "emptyGroup": "No hay respuestas en este grupo.",
+      "emptySearch": "Ningún invitado coincide con “{{query}}”.",
+      "confirmTitle": "¿Eliminar la respuesta de {{name}}?",
+      "confirmBody": "Se quitará de la lista y de los totales. No se puede deshacer.",
+      "confirm": "Eliminar respuesta",
+      "deleted": "Respuesta eliminada",
+      "deleteFailed": "No se pudo eliminar la respuesta. Inténtalo de nuevo."
+    },
+
+    "editor": {
+      "loading": "Cargando evento…",
+      "loadError": "No se pudo cargar el evento. Revisa tu conexión.",
+      "missing": "Este evento ya no existe.",
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "saving": "Guardando…",
+      "unsaved": "Cambios sin guardar",
+      "allSaved": "Todos los cambios guardados",
+      "rsvps": "Respuestas",
+      "viewPage": "Ver página ↗",
+      "save": "Guardar cambios",
+      "edit": "Editar",
+      "preview": "Vista previa",
+      "tabsLabel": "Ajustes del evento",
+      "tabs": { "details": "Detalles", "wording": "Textos", "rsvp": "RSVP", "look": "Diseño" },
+      "title": "Título",
+      "link": "Enlace",
+      "guestsWillOpen": "Los invitados abrirán",
+      "code": "Código de invitación:",
+      "codeHint": "los invitados también pueden escribirlo en {{url}}",
+      "date": "Fecha",
+      "starts": "Empieza",
+      "ends": "Termina",
+      "endsNextDay": "Termina al día siguiente.",
+      "timezone": "Zona horaria",
+      "locationName": "Nombre del lugar",
+      "address": "Dirección",
+      "addressHint": "Se usa para el enlace \"Abrir en Mapas\".",
+      "language": "Idioma de la página de invitados",
+      "languageHint": "Idioma de las etiquetas y botones alrededor de tus textos. Escribe los textos de abajo en el mismo idioma.",
+      "message": "Mensaje",
+      "messageHint": "Opcional. Aparece debajo del lugar.",
+      "rsvpQuestion": "Pregunta de RSVP",
+      "buttonText": "Texto del botón",
+      "confirmationMessage": "Mensaje de confirmación",
+      "confirmationHint": "Aparece después de que un invitado responde. Cambia la vista previa a \"Enviada\" para revisarlo.",
+      "notesLabel": "Etiqueta de notas",
+      "switches": {
+        "accepting": "Aceptar respuestas",
+        "acceptingHint": "Si está apagado, el enlace muestra “Esta página de RSVP no está disponible”.",
+        "notes": "Campo de notas",
+        "notesHint": "Un cuadro de texto adicional debajo de las opciones de respuesta.",
+        "notesRequired": "Notas obligatorias",
+        "notesRequiredHint": "Los invitados no pueden enviar sin completarlo."
+      },
+      "deleteTitle": "Eliminar evento",
+      "deleteHint": "Elimina el evento, todas sus respuestas y sus imágenes. El enlace dejará de funcionar.",
+      "delete": "Eliminar evento",
+      "deleting": "Eliminando…",
+      "deleteConfirmTitle": "¿Eliminar {{title}}?",
+      "deleteConfirmBody": "Esto elimina permanentemente el evento y sus {{replies}}. Su enlace mostrará “no disponible”. No se puede deshacer.",
+      "replyOne": "1 respuesta",
+      "replyOther": "{{count}} respuestas",
+      "deleted": "Evento eliminado",
+      "deleteFailed": "No se pudo eliminar el evento. Inténtalo de nuevo.",
+      "errors": {
+        "title": "Ponle un título al evento.",
+        "slugFormat": "Usa letras minúsculas, números y guiones simples.",
+        "slugLength": "Usa entre 3 y 64 caracteres.",
+        "slugReserved": "Este enlace está reservado. Elige otro.",
+        "slugTaken": "Otro evento ya usa este enlace.",
+        "date": "Elige una fecha.",
+        "start": "Elige una hora de inicio.",
+        "empty": "Este campo no puede estar vacío."
+      },
+      "fixFields": "Corrige primero los campos marcados.",
+      "saved": "Guardado",
+      "saveFailed": "No se pudo guardar. Revisa tu conexión e inténtalo de nuevo.",
+      "discardTitle": "¿Descartar los cambios sin guardar?",
+      "discardBody": "Los cambios a este evento no se han guardado.",
+      "discard": "Descartar"
+    },
+
+    "look": {
+      "presets": "Empieza con un estilo",
+      "presetNames": {
+        "birthday": "Cumpleaños",
+        "christmas": "Navidad",
+        "wedding": "Boda",
+        "plain": "Sencillo"
+      },
+      "layout": "Diseño",
+      "layouts": {
+        "card": "Tarjeta",
+        "cardHint": "Invitación arriba, detalles en una tarjeta",
+        "poster": "Póster",
+        "posterHint": "La invitación ocupa la primera pantalla"
+      },
+      "colors": "Colores",
+      "colorNames": {
+        "primary": "Principal",
+        "accent": "Acento",
+        "text": "Texto",
+        "surface": "Superficie",
+        "background": "Fondo",
+        "gradientTo": "Final del degradado"
+      },
+      "colorHints": {
+        "primary": "Botones, respuesta seleccionada",
+        "accent": "Detalles, separadores, anillo de foco",
+        "text": "Títulos y texto",
+        "surface": "Relleno de la tarjeta",
+        "surfaceGlass": "Relleno de la tarjeta, translúcido en vidrio"
+      },
+      "colorPicker": "Selector de color: {{label}}",
+      "hex": "Hex: {{label}}",
+      "hexError": "Usa un hex de 6 dígitos como #5B2BD6.",
+      "checks": {
+        "whiteLabel": "Texto blanco sobre principal",
+        "darkLabel": "Texto oscuro sobre principal",
+        "focusRing": "Anillo de foco sobre {{ground}}",
+        "text": "Texto sobre {{ground}}",
+        "selected": "Respuesta seleccionada sobre {{ground}}",
+        "card": "la tarjeta",
+        "background": "el fondo"
+      },
+      "passes": "{{ratio}}:1 · AA",
+      "fails": "{{ratio}}:1 · no cumple AA",
+      "onPhoto": "revisar sobre la foto",
+      "contrastWarning": "{{check}} es {{ratio}}:1; WCAG AA pide {{min}}:1. {{fix}}",
+      "fixes": {
+        "primary": "Elige un principal más oscuro o más claro.",
+        "accent": "Oscurece el acento.",
+        "text": "Oscurece el texto o cambia el relleno de la tarjeta.",
+        "surface": "Haz más distintos el principal y la tarjeta."
+      },
+      "photoNoCard": "Sin tarjeta, el texto queda directamente sobre la foto. Elige un estilo de tarjeta para que el formulario se lea bien.",
+      "background": "Fondo",
+      "backgroundKinds": { "color": "Sólido", "gradient": "Degradado", "image": "Imagen" },
+      "from": "Desde",
+      "to": "Hasta",
+      "color": "Color",
+      "overlay": "Oscurecer",
+      "blur": "Desenfoque",
+      "photoNote": "El formulario siempre va sobre la tarjeta, así que se lee bien con cualquier foto.",
+      "invitationImage": "Imagen de la invitación",
+      "none": "ninguna",
+      "uploadImage": "Subir imagen",
+      "replaceImage": "Cambiar imagen",
+      "uploadPhoto": "Subir foto",
+      "replacePhoto": "Cambiar foto",
+      "uploading": "Subiendo…",
+      "uploadFailed": "No se pudo subir ese archivo. Prueba con una imagen JPEG, PNG o WebP.",
+      "altText": "Texto alternativo",
+      "altHint": "Si la imagen tiene texto, resúmelo aquí para los lectores de pantalla.",
+      "altWarning": "Añade texto alternativo para que quienes usan lectores de pantalla también reciban la invitación.",
+      "fonts": "Tipografías",
+      "fontNames": {
+        "playful": "Divertida",
+        "festive": "Festiva",
+        "elegant": "Elegante",
+        "classic": "Clásica",
+        "modern": "Moderna",
+        "warm": "Cálida"
+      },
+      "textSize": "Tamaño del texto",
+      "card": "Tarjeta",
+      "corners": "Esquinas",
+      "buttons": "Botones",
+      "options": {
+        "scale": { "sm": "S", "md": "M", "lg": "L" },
+        "card": { "solid": "Sólida", "glass": "Vidrio", "outline": "Contorno", "none": "Ninguna" },
+        "radius": { "none": "Ninguna", "sm": "S", "lg": "L", "xl": "XL" },
+        "button": { "solid": "Sólido", "outline": "Contorno", "pill": "Píldora" }
+      }
+    },
+
+    "preview": {
+      "title": "Vista previa",
+      "states": { "form": "Formulario", "errors": "Errores", "sent": "Enviada" },
+      "inactive": "Las respuestas están apagadas, así que los invitados ven \"no disponible\". Activa Aceptar respuestas en la pestaña RSVP."
+    }
+  }
+}

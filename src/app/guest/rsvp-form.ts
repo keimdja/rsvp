@@ -1,5 +1,6 @@
 import { Component, computed, input, linkedSignal, output } from '@angular/core';
-import { RESPONSE_LABELS, type PublicEvent, type RsvpResponse } from '../supabase';
+import { guestLocale, guestTranslator } from '../i18n';
+import { type PublicEvent, RESPONSES, type RsvpResponse } from '../supabase';
 
 export interface RsvpDraft {
   guest_name: string;
@@ -16,19 +17,6 @@ export interface RsvpSubmission {
 /** Server-side outcomes the form shows; codes match the errors raised by submit_rsvp. */
 export type RsvpProblem =
   'invalid_name' | 'notes_required' | 'notes_too_long' | 'rsvp_limit_reached' | 'network';
-
-const CHOICES = (Object.keys(RESPONSE_LABELS) as RsvpResponse[]).map((value) => ({
-  value,
-  label: RESPONSE_LABELS[value],
-}));
-
-const PROBLEM_MESSAGES: Partial<Record<RsvpProblem, string>> = {
-  notes_too_long: 'Please keep your note under 1,000 characters.',
-  rsvp_limit_reached: "Sorry, this event isn't taking more replies.",
-  network: "We couldn't send your reply. Check your connection and try again.",
-};
-
-const listFormat = new Intl.ListFormat('en', { type: 'conjunction' });
 
 @Component({
   selector: 'app-rsvp-form',
@@ -50,14 +38,14 @@ const listFormat = new Intl.ListFormat('en', { type: 'conjunction' });
       }
 
       <div class="flex flex-col gap-2">
-        <label for="rsvp-name" class="font-bold">Your name</label>
+        <label for="rsvp-name" class="font-bold">{{ t('form.yourName') }}</label>
         <input
           #nameInput
           id="rsvp-name"
           class="rsvp-field"
           autocomplete="name"
           maxlength="100"
-          placeholder="First and last name"
+          [placeholder]="t('form.namePlaceholder')"
           aria-required="true"
           [value]="name()"
           [disabled]="pending()"
@@ -66,9 +54,7 @@ const listFormat = new Intl.ListFormat('en', { type: 'conjunction' });
           (input)="name.set(nameInput.value); nameError.set(false)"
         />
         @if (nameError()) {
-          <span id="rsvp-name-error" class="rsvp-error">
-            Add your name so the host knows who's replying.
-          </span>
+          <span id="rsvp-name-error" class="rsvp-error">{{ t('form.nameError') }}</span>
         }
       </div>
 
@@ -80,8 +66,8 @@ const listFormat = new Intl.ListFormat('en', { type: 'conjunction' });
           {{ ev.rsvp_question }}
         </legend>
         <div class="grid grid-cols-3 gap-2">
-          @for (choice of choices; track choice.value) {
-            @let checked = response() === choice.value;
+          @for (choice of choices; track choice) {
+            @let checked = response() === choice;
             <label
               class="rsvp-choice flex min-h-[68px] flex-col items-center justify-center gap-1 px-1 py-2 text-[max(16px,1em)] font-extrabold @3xl:min-h-[76px]"
             >
@@ -89,19 +75,19 @@ const listFormat = new Intl.ListFormat('en', { type: 'conjunction' });
                 type="radio"
                 name="response"
                 class="sr-only"
-                [value]="choice.value"
+                [value]="choice"
                 [checked]="checked"
                 [disabled]="pending()"
                 [attr.aria-invalid]="choiceError()"
-                (change)="response.set(choice.value); choiceError.set(false)"
+                (change)="response.set(choice); choiceError.set(false)"
               />
               <span aria-hidden="true" class="text-lg leading-none">{{ checked ? '✓' : '○' }}</span>
-              <span>{{ choice.label }}</span>
+              <span>{{ t('response.' + choice) }}</span>
             </label>
           }
         </div>
         @if (choiceError()) {
-          <span id="rsvp-choice-error" class="rsvp-error">Choose Yes, Maybe or No.</span>
+          <span id="rsvp-choice-error" class="rsvp-error">{{ t('form.choiceError') }}</span>
         }
       </fieldset>
 
@@ -110,7 +96,7 @@ const listFormat = new Intl.ListFormat('en', { type: 'conjunction' });
           <label for="rsvp-notes" class="flex flex-wrap items-baseline gap-2">
             <span class="font-bold">{{ ev.notes_label }}</span>
             <span class="text-[13px] font-semibold text-rsvp-muted">
-              {{ ev.notes_required ? 'Required' : 'Optional' }}
+              {{ t(ev.notes_required ? 'form.required' : 'form.optional') }}
             </span>
           </label>
           <textarea
@@ -127,9 +113,7 @@ const listFormat = new Intl.ListFormat('en', { type: 'conjunction' });
             (input)="notes.set(notesInput.value); notesError.set(false)"
           ></textarea>
           @if (notesError()) {
-            <span id="rsvp-notes-error" class="rsvp-error">
-              This one's required. Write "none" if it doesn't apply.
-            </span>
+            <span id="rsvp-notes-error" class="rsvp-error">{{ t('form.notesError') }}</span>
           }
         </div>
       }
@@ -137,7 +121,7 @@ const listFormat = new Intl.ListFormat('en', { type: 'conjunction' });
       <!-- Honeypot: invisible to people, tempting to bots. -->
       <div aria-hidden="true" class="absolute -left-[10000px] size-px overflow-hidden">
         <label
-          >Leave this empty <input #trap name="website" tabindex="-1" autocomplete="off"
+          >{{ t('form.honeypot') }} <input #trap name="website" tabindex="-1" autocomplete="off"
         /></label>
       </div>
 
@@ -154,12 +138,12 @@ const listFormat = new Intl.ListFormat('en', { type: 'conjunction' });
               aria-hidden="true"
               class="size-[18px] animate-spin rounded-full border-[2.5px] border-current border-r-transparent"
             ></span>
-            <span>Sending…</span>
+            <span>{{ t('form.sending') }}</span>
           } @else {
             {{ ev.button_text }}
           }
         </button>
-        <p class="text-center text-sm text-rsvp-muted">Only the host sees your reply.</p>
+        <p class="text-center text-sm text-rsvp-muted">{{ t('form.privacy') }}</p>
       </div>
     </form>
   `,
@@ -180,7 +164,9 @@ export class RsvpForm {
   readonly showErrors = input(false);
   readonly send = output<RsvpSubmission>();
 
-  protected readonly choices = CHOICES;
+  protected readonly choices = RESPONSES;
+  protected readonly t = guestTranslator();
+  private readonly locale = guestLocale();
 
   protected readonly name = linkedSignal(() => this.initial()?.guest_name ?? '');
   protected readonly response = linkedSignal(() => this.initial()?.response ?? null);
@@ -199,13 +185,19 @@ export class RsvpForm {
 
   protected readonly summary = computed(() => {
     const missing = [
-      this.nameError() && 'your name',
-      this.choiceError() && 'a reply',
-      this.notesError() && 'the notes field',
+      this.nameError() && this.t('form.missing.name'),
+      this.choiceError() && this.t('form.missing.reply'),
+      this.notesError() && this.t('form.missing.notes'),
     ].filter((item): item is string => !!item);
-    if (missing.length) return `Please add ${listFormat.format(missing)}.`;
+    if (missing.length) {
+      const items = new Intl.ListFormat(this.locale(), { type: 'conjunction' }).format(missing);
+      return this.t('form.summary', { items });
+    }
+    // Field problems show under their field; the rest get a message here.
     const problem = this.problem();
-    return problem ? (PROBLEM_MESSAGES[problem] ?? null) : null;
+    return problem && problem !== 'invalid_name' && problem !== 'notes_required'
+      ? this.t(`form.problems.${problem}`)
+      : null;
   });
 
   protected submit(event: SubmitEvent, trap: string): void {

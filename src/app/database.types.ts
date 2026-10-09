@@ -33,6 +33,7 @@ export type Database = {
           event_date: string;
           id: string;
           is_active: boolean;
+          language: string;
           location_address: string | null;
           location_name: string | null;
           notes_enabled: boolean;
@@ -55,6 +56,7 @@ export type Database = {
           event_date: string;
           id?: string;
           is_active?: boolean;
+          language?: string;
           location_address?: string | null;
           location_name?: string | null;
           notes_enabled?: boolean;
@@ -77,6 +79,7 @@ export type Database = {
           event_date?: string;
           id?: string;
           is_active?: boolean;
+          language?: string;
           location_address?: string | null;
           location_name?: string | null;
           notes_enabled?: boolean;
@@ -166,6 +169,7 @@ export type Database = {
           description: string;
           end_time: string;
           event_date: string;
+          language: string;
           location_address: string;
           location_name: string;
           notes_enabled: boolean;

@@ -1,11 +1,13 @@
 import { afterRenderEffect, Component, ElementRef, inject, viewChild } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Auth } from './auth';
+import { LanguageSwitch } from '../language-switch';
 import { AdminUi } from './ui';
 
 @Component({
   selector: 'app-admin-shell',
-  imports: [RouterLink, RouterOutlet],
+  imports: [LanguageSwitch, RouterLink, RouterOutlet, TranslatePipe],
   host: { class: 'admin block min-h-dvh' },
   template: `
     <header
@@ -15,8 +17,11 @@ import { AdminUi } from './ui';
         <span aria-hidden="true" class="size-5 rounded-[5px] bg-ink"></span>RSVP
       </a>
       <div class="flex min-w-0 items-center gap-3 text-muted">
-        <span class="truncate">{{ auth.email() }}</span>
-        <button type="button" class="btn btn-sm" (click)="auth.signOut()">Sign out</button>
+        <span class="hidden truncate sm:inline">{{ auth.email() }}</span>
+        <app-language-switch />
+        <button type="button" class="btn btn-sm" (click)="auth.signOut()">
+          {{ 'admin.signOut' | translate }}
+        </button>
       </div>
     </header>
 
@@ -34,7 +39,9 @@ import { AdminUi } from './ui';
           <h2 id="dialog-title" class="text-lg leading-snug font-semibold">{{ d.title }}</h2>
           <p class="text-muted">{{ d.body }}</p>
           <div class="mt-1.5 flex justify-end gap-2">
-            <button type="button" class="btn" (click)="ui.closeDialog(false)">Cancel</button>
+            <button type="button" class="btn" (click)="ui.closeDialog(false)">
+              {{ 'common.cancel' | translate }}
+            </button>
             <button
               type="button"
               autofocus

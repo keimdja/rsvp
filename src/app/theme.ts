@@ -11,42 +11,36 @@ export const BUTTON_STYLES = ['solid', 'outline', 'pill'] as const;
 
 export const FONT_PAIRINGS = {
   playful: {
-    label: 'Playful',
     heading: 'Baloo 2',
     body: 'Nunito',
     weight: 800,
     query: 'family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800',
   },
   festive: {
-    label: 'Festive',
     heading: 'DM Serif Display',
     body: 'DM Sans',
     weight: 400,
     query: 'family=DM+Serif+Display&family=DM+Sans:wght@400;500;700',
   },
   elegant: {
-    label: 'Elegant',
     heading: 'Cormorant Garamond',
     body: 'Jost',
     weight: 500,
     query: 'family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@400;500;600',
   },
   classic: {
-    label: 'Classic',
     heading: 'Libre Baskerville',
     body: 'Source Sans 3',
     weight: 700,
     query: 'family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@400;600;700',
   },
   modern: {
-    label: 'Modern',
     heading: 'Space Grotesk',
     body: 'Work Sans',
     weight: 700,
     query: 'family=Space+Grotesk:wght@500;700&family=Work+Sans:wght@400;500;600',
   },
   warm: {
-    label: 'Warm',
     heading: 'Bricolage Grotesque',
     body: 'Figtree',
     weight: 800,
@@ -101,61 +95,52 @@ export const DEFAULT_THEME: EventTheme = {
   button: { style: 'solid' },
 };
 
-/** Editor presets from the design. Applying one keeps the event's uploaded images. */
-export const THEME_PRESETS: Record<string, { label: string; theme: EventTheme }> = {
+/** Editor presets from the design (names: admin.look.presetNames.*). Applying one keeps the event's uploaded images. */
+export const THEME_PRESETS: Record<string, EventTheme> = {
   birthday: {
-    label: 'Birthday',
-    theme: {
-      ...DEFAULT_THEME,
-      colors: {
-        primary: '#5b2bd6',
-        accent: '#e5530c',
-        text: '#2b1a40',
-        surface: '#ffffff',
-        background: '#ffd66b',
-      },
-      background: { kind: 'gradient', gradientTo: '#ff9fbf', overlay: 0.55, blur: 3 },
-      typography: { pairing: 'playful', scale: 'lg' },
-      card: { style: 'solid', radius: 'xl' },
-      button: { style: 'pill' },
+    ...DEFAULT_THEME,
+    colors: {
+      primary: '#5b2bd6',
+      accent: '#e5530c',
+      text: '#2b1a40',
+      surface: '#ffffff',
+      background: '#ffd66b',
     },
+    background: { kind: 'gradient', gradientTo: '#ff9fbf', overlay: 0.55, blur: 3 },
+    typography: { pairing: 'playful', scale: 'lg' },
+    card: { style: 'solid', radius: 'xl' },
+    button: { style: 'pill' },
   },
   christmas: {
-    label: 'Christmas',
-    theme: {
-      ...DEFAULT_THEME,
-      colors: {
-        primary: '#c42b32',
-        accent: '#e9c46a',
-        text: '#f8f4ea',
-        surface: '#0c2218',
-        background: '#0e261b',
-      },
-      background: { kind: 'image', gradientTo: '#2d5a40', overlay: 0.55, blur: 3 },
-      typography: { pairing: 'festive', scale: 'md' },
-      card: { style: 'glass', radius: 'lg' },
-      button: { style: 'solid' },
+    ...DEFAULT_THEME,
+    colors: {
+      primary: '#c42b32',
+      accent: '#e9c46a',
+      text: '#f8f4ea',
+      surface: '#0c2218',
+      background: '#0e261b',
     },
+    background: { kind: 'image', gradientTo: '#2d5a40', overlay: 0.55, blur: 3 },
+    typography: { pairing: 'festive', scale: 'md' },
+    card: { style: 'glass', radius: 'lg' },
+    button: { style: 'solid' },
   },
   wedding: {
-    label: 'Wedding',
-    theme: {
-      ...DEFAULT_THEME,
-      layout: 'poster',
-      colors: {
-        primary: '#161412',
-        accent: '#8f6f3f',
-        text: '#161412',
-        surface: '#fbf8f1',
-        background: '#f1ebdf',
-      },
-      background: { kind: 'color', gradientTo: '#e6dfd1', overlay: 0.4, blur: 0 },
-      typography: { pairing: 'elegant', scale: 'lg' },
-      card: { style: 'outline', radius: 'none' },
-      button: { style: 'outline' },
+    ...DEFAULT_THEME,
+    layout: 'poster',
+    colors: {
+      primary: '#161412',
+      accent: '#8f6f3f',
+      text: '#161412',
+      surface: '#fbf8f1',
+      background: '#f1ebdf',
     },
+    background: { kind: 'color', gradientTo: '#e6dfd1', overlay: 0.4, blur: 0 },
+    typography: { pairing: 'elegant', scale: 'lg' },
+    card: { style: 'outline', radius: 'none' },
+    button: { style: 'outline' },
   },
-  plain: { label: 'Plain', theme: DEFAULT_THEME },
+  plain: DEFAULT_THEME,
 };
 
 // ---------------------------------------------------------------------------
