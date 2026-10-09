@@ -2,7 +2,7 @@ import { afterRenderEffect, Component, ElementRef, inject, viewChild } from '@an
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Auth } from './auth';
-import { LanguageSwitch } from './language-switch';
+import { LanguageSwitch } from '../language-switch';
 import { AdminUi } from './ui';
 
 @Component({

@@ -12,6 +12,7 @@
     "cancel": "Cancel",
     "remove": "Remove",
     "back": "← Events",
+    "language": "Language",
     "untitled": "Untitled event",
     "languages": { "en": "English", "es": "Español" }
   },
@@ -71,7 +72,6 @@
 
   "admin": {
     "signOut": "Sign out",
-    "language": "Language",
     "copyLink": "Copy link",
     "copied": "Copied ✓",
     "copyFailed": "Couldn't copy. Select the link and copy it manually.",
@@ -222,7 +222,12 @@
 
     "look": {
       "presets": "Start from a preset",
-      "presetNames": { "birthday": "Birthday", "christmas": "Christmas", "wedding": "Wedding", "plain": "Plain" },
+      "presetNames": {
+        "birthday": "Birthday",
+        "christmas": "Christmas",
+        "wedding": "Wedding",
+        "plain": "Plain"
+      },
       "layout": "Layout",
       "layouts": {
         "card": "Card",

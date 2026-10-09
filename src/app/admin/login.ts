@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Auth } from './auth';
-import { LanguageSwitch } from './language-switch';
+import { LanguageSwitch } from '../language-switch';
 
 @Component({
   selector: 'app-login',

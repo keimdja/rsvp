@@ -12,6 +12,7 @@
     "cancel": "Cancelar",
     "remove": "Quitar",
     "back": "← Eventos",
+    "language": "Idioma",
     "untitled": "Evento sin título",
     "languages": { "en": "English", "es": "Español" }
   },
@@ -71,7 +72,6 @@
 
   "admin": {
     "signOut": "Cerrar sesión",
-    "language": "Idioma",
     "copyLink": "Copiar enlace",
     "copied": "Copiado ✓",
     "copyFailed": "No se pudo copiar. Selecciona el enlace y cópialo manualmente.",
@@ -222,7 +222,12 @@
 
     "look": {
       "presets": "Empieza con un estilo",
-      "presetNames": { "birthday": "Cumpleaños", "christmas": "Navidad", "wedding": "Boda", "plain": "Sencillo" },
+      "presetNames": {
+        "birthday": "Cumpleaños",
+        "christmas": "Navidad",
+        "wedding": "Boda",
+        "plain": "Sencillo"
+      },
       "layout": "Diseño",
       "layouts": {
         "card": "Tarjeta",

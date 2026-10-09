@@ -1,4 +1,4 @@
-import { DOCUMENT, inject, Injectable, InjectionToken, type Signal } from '@angular/core';
+import { DOCUMENT, inject, Injectable, InjectionToken, type Signal, signal } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { type RouterStateSnapshot, TitleStrategy } from '@angular/router';
 import {
@@ -22,8 +22,8 @@ export const isLanguage = (value: unknown): value is Language =>
 
 /**
  * The app's language (admin, landing and "not available" pages): the visitor's saved
- * choice, else the browser language, else English. Event pages use the event's own
- * language instead, through EVENT_LANGUAGE.
+ * choice, else the browser language, else English. Invites use the visitor's saved
+ * choice, else the event's own language (see Invite).
  */
 @Injectable({ providedIn: 'root' })
 export class I18n {
@@ -33,17 +33,19 @@ export class I18n {
   private readonly loading = new Map<Language, Promise<void>>();
 
   readonly current = this.translate.currentLang as Signal<Language | null>;
+  /** A language the visitor picked with the EN/ES switch (remembered on this device). */
+  readonly chosen = signal<Language | null>(null);
 
   /** App initializer: load the starting language before the first render. */
   init(): Promise<void> {
-    let saved: string | null = null;
     try {
-      saved = localStorage.getItem(STORAGE_KEY);
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (isLanguage(saved)) this.chosen.set(saved);
     } catch {
       // storage blocked: fall back to the browser language
     }
     const browser = this.translate.getBrowserLang();
-    return this.use(isLanguage(saved) ? saved : isLanguage(browser) ? browser : 'en');
+    return this.use(this.chosen() ?? (isLanguage(browser) ? browser : 'en'));
   }
 
   async use(language: Language, remember = false): Promise<void> {
@@ -51,6 +53,7 @@ export class I18n {
     await firstValueFrom(this.translate.use(language));
     this.document.documentElement.lang = language;
     if (remember) {
+      this.chosen.set(language);
       try {
         localStorage.setItem(STORAGE_KEY, language);
       } catch {

@@ -9,7 +9,10 @@ import {
 } from '@angular/core';
 import { publicImageUrl, SUPABASE, type PublicEvent } from '../supabase';
 import { fontStylesheetUrl, loadStylesheet, themeToStyle, type EventTheme } from '../theme';
-import { EVENT_LANGUAGE, guestTranslator, I18n, isLanguage, type Language, LOCALES } from '../i18n';
+import { NgTemplateOutlet } from '@angular/common';
+import { TranslateService } from '@ngx-translate/core';
+import { EVENT_LANGUAGE, I18n, isLanguage, type Language, LOCALES } from '../i18n';
+import { LanguageSwitch } from '../language-switch';
 import { formatWhen, mapsUrl } from './calendar';
 
 // Classes per layout, from the design: card = invite on top and details in a centered card;
@@ -41,6 +44,7 @@ const LAYOUT = {
  */
 @Component({
   selector: 'app-invite',
+  imports: [LanguageSwitch, NgTemplateOutlet],
   // `providers` (not viewProviders) so projected form/confirmation content sees it too.
   providers: [{ provide: EVENT_LANGUAGE, useFactory: () => inject(Invite).language }],
   host: {
@@ -64,7 +68,29 @@ const LAYOUT = {
       <div aria-hidden="true" class="absolute inset-0 -z-10 bg-(--rsvp-overlay)"></div>
     }
 
+    <!-- Over a full-bleed poster image the switch floats; otherwise it gets its own row. -->
+    @let floatSwitch = poster && !!heroUrl();
+    @if (!framed() && floatSwitch) {
+      <div
+        class="absolute top-[max(12px,env(safe-area-inset-top))] right-[max(12px,env(safe-area-inset-right))] z-10"
+      >
+        <ng-container [ngTemplateOutlet]="languageSwitch" />
+      </div>
+    }
+
     <div [class]="css.shell">
+      @if (!framed() && !floatSwitch) {
+        <div
+          class="flex justify-end"
+          [class]="
+            poster
+              ? 'px-3 pt-[max(12px,env(safe-area-inset-top))] @3xl:mx-auto @3xl:w-[640px] @3xl:px-0'
+              : ''
+          "
+        >
+          <ng-container [ngTemplateOutlet]="languageSwitch" />
+        </div>
+      }
       @if (heroUrl(); as src) {
         <div [class]="css.hero">
           <img
@@ -135,6 +161,10 @@ const LAYOUT = {
         <ng-content />
       </div>
     </div>
+
+    <ng-template #languageSwitch>
+      <app-language-switch appearance="guest" [current]="language()" />
+    </ng-template>
   `,
 })
 export class Invite {
@@ -147,12 +177,23 @@ export class Invite {
   private readonly document = inject(DOCUMENT);
 
   private readonly i18n = inject(I18n);
-  protected readonly t = guestTranslator();
+  private readonly translate = inject(TranslateService);
+  /**
+   * Translates in the event's language. Not guestTranslator(): that injects
+   * EVENT_LANGUAGE, which this component provides, so injecting it here is circular.
+   */
+  protected readonly t = (key: string) =>
+    this.translate.instant(key, undefined, this.language()) as string;
 
-  /** The event's language; guest components inside read it through EVENT_LANGUAGE. */
+  /**
+   * The language for default text and dates: a language the guest picked with the
+   * switch, else the event's own. The admin preview always shows the event's own.
+   * Guest components inside read it through EVENT_LANGUAGE.
+   */
   readonly language = computed<Language>(() => {
-    const language = this.event().language;
-    return isLanguage(language) ? language : 'en';
+    const own = this.event().language;
+    const eventLanguage = isLanguage(own) ? own : 'en';
+    return this.framed() ? eventLanguage : (this.i18n.chosen() ?? eventLanguage);
   });
 
   private readonly imageUrl = (path: string) => publicImageUrl(this.supabase, path);
