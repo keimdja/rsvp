@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { toMapLink } from '../guest/calendar';
 import { DEFAULT_WORDING, isLanguage, type Language, LANGUAGES } from '../i18n';
 import { type EventRow, IMAGE_BUCKET, type PublicEvent, SUPABASE } from '../supabase';
 import { type EventTheme, resolveTheme } from '../theme';
@@ -28,6 +29,7 @@ interface Draft {
   timezone: string;
   location_name: string;
   location_address: string;
+  location_url: string;
   rsvp_question: string;
   button_text: string;
   confirmation_message: string;
@@ -71,6 +73,7 @@ function toDraft(row: EventRow): Draft {
     timezone: row.timezone,
     location_name: row.location_name ?? '',
     location_address: row.location_address ?? '',
+    location_url: row.location_url ?? '',
     rsvp_question: row.rsvp_question,
     button_text: row.button_text,
     confirmation_message: row.confirmation_message,
@@ -95,6 +98,7 @@ function toRow(d: Draft) {
     timezone: d.timezone,
     location_name: optional(d.location_name),
     location_address: optional(d.location_address),
+    location_url: toMapLink(d.location_url),
     rsvp_question: d.rsvp_question.trim(),
     button_text: d.button_text.trim(),
     confirmation_message: d.confirmation_message.trim(),
@@ -120,6 +124,9 @@ function validate(d: Draft): Partial<Record<Field, string>> {
   }
   if (!d.event_date) errors.event_date = 'admin.editor.errors.date';
   if (!d.start_time) errors.start_time = 'admin.editor.errors.start';
+  if (d.location_url.trim() && !toMapLink(d.location_url)) {
+    errors.location_url = 'admin.editor.errors.mapLink';
+  }
   for (const field of [
     'rsvp_question',
     'button_text',
@@ -178,11 +185,22 @@ const themePaths = (theme: EventTheme) =>
               <h1 class="truncate text-[22px] leading-tight font-semibold">
                 {{ d.title || ('common.untitled' | translate) }}
               </h1>
-              <span
-                class="badge h-[22px] px-2"
-                [class]="d.is_active ? 'bg-yes-soft text-yes' : 'bg-track text-[#4a4a46]'"
-              >
-                {{ (d.is_active ? 'admin.editor.active' : 'admin.editor.inactive') | translate }}
+              <!-- Same setting as "Accepting replies" in the RSVP tab, reachable from every tab. -->
+              <span class="flex shrink-0 items-center">
+                <button
+                  type="button"
+                  role="switch"
+                  class="switch -my-2.5"
+                  [attr.aria-checked]="d.is_active"
+                  [attr.aria-label]="'admin.editor.switches.accepting' | translate"
+                  (click)="update({ is_active: !d.is_active })"
+                ></button>
+                <span
+                  class="text-[13px] font-semibold"
+                  [class]="d.is_active ? 'text-yes' : 'text-muted'"
+                >
+                  {{ (d.is_active ? 'admin.editor.active' : 'admin.editor.inactive') | translate }}
+                </span>
               </span>
             </div>
           </div>
@@ -401,6 +419,28 @@ const themePaths = (theme: EventTheme) =>
                       (input)="update({ location_address: address.value })"
                     />
                     <span class="hint">{{ 'admin.editor.addressHint' | translate }}</span>
+                  </label>
+
+                  <label class="field">
+                    {{ 'admin.editor.mapLink' | translate }}
+                    <input
+                      #mapLink
+                      type="url"
+                      inputmode="url"
+                      class="input"
+                      maxlength="2000"
+                      autocapitalize="off"
+                      spellcheck="false"
+                      placeholder="https://maps.app.goo.gl/…"
+                      [value]="d.location_url"
+                      [attr.aria-invalid]="!!errors().location_url"
+                      (input)="update({ location_url: mapLink.value })"
+                      (blur)="tidyMapLink(mapLink)"
+                    />
+                    <span class="hint">{{ 'admin.editor.mapLinkHint' | translate }}</span>
+                    @if (errors().location_url) {
+                      <span class="field-error">{{ errors().location_url | translate }}</span>
+                    }
                   </label>
                 </div>
               }
@@ -662,6 +702,15 @@ export default class EventEditor {
       (field) => draft[field] === from[field],
     );
     this.update({ language, ...Object.fromEntries(wording.map((field) => [field, to[field]])) });
+  }
+
+  /** Shows the cleaned-up link (e.g. with https:// added) once the field loses focus. */
+  protected tidyMapLink(input: HTMLInputElement): void {
+    const link = toMapLink(input.value);
+    if (link && link !== input.value) {
+      input.value = link;
+      this.update({ location_url: link });
+    }
   }
 
   protected moveTab(event: KeyboardEvent): void {

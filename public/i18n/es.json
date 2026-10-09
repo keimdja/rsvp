@@ -14,10 +14,16 @@
     "back": "← Eventos",
     "language": "Idioma",
     "untitled": "Evento sin título",
-    "languages": { "en": "English", "es": "Español" }
+    "languages": {
+      "en": "English",
+      "es": "Español"
+    }
   },
-  "response": { "yes": "Sí", "maybe": "Quizás", "no": "No" },
-
+  "response": {
+    "yes": "Sí",
+    "maybe": "Quizás",
+    "no": "No"
+  },
   "home": {
     "title": "Abre tu invitación",
     "intro": "Pega el enlace que te enviaron, o solo el código de invitación que aparece al final.",
@@ -32,7 +38,6 @@
     "title": "Esta página de RSVP no está disponible",
     "message": "Puede que el enlace esté mal escrito o que el anfitrión haya cerrado las respuestas para este evento. Si crees que es un error, comunícate con quien te invitó."
   },
-
   "guest": {
     "loading": "Cargando invitación…",
     "loadErrorTitle": "No pudimos cargar esta invitación",
@@ -53,7 +58,11 @@
     "sending": "Enviando…",
     "privacy": "Solo el anfitrión ve tu respuesta.",
     "summary": "Por favor, completa {{items}}.",
-    "missing": { "name": "tu nombre", "reply": "una respuesta", "notes": "el campo de notas" },
+    "missing": {
+      "name": "tu nombre",
+      "reply": "una respuesta",
+      "notes": "el campo de notas"
+    },
     "problems": {
       "notes_too_long": "Escribe una nota de menos de 1,000 caracteres.",
       "rsvp_limit_reached": "Lo sentimos, este evento ya no acepta más respuestas.",
@@ -69,13 +78,11 @@
     "icsHint": "¿No se descargó nada? Abre esta página en Safari o Chrome e inténtalo de nuevo.",
     "change": "Cambiar mi respuesta"
   },
-
   "admin": {
     "signOut": "Cerrar sesión",
     "copyLink": "Copiar enlace",
     "copied": "Copiado ✓",
     "copyFailed": "No se pudo copiar. Selecciona el enlace y cópialo manualmente.",
-
     "login": {
       "title": "Iniciar sesión",
       "email": "Correo electrónico",
@@ -88,7 +95,6 @@
       "failed": "No se pudo iniciar sesión. Inténtalo de nuevo.",
       "notAdmin": "Esta cuenta no tiene acceso de administrador."
     },
-
     "dashboard": {
       "title": "Eventos",
       "newEvent": "+ Nuevo evento",
@@ -117,7 +123,6 @@
       "created": "Evento creado. Seguirá inactivo hasta que actives las respuestas.",
       "createFailed": "No se pudo crear el evento. Inténtalo de nuevo."
     },
-
     "list": {
       "loading": "Cargando respuestas…",
       "loadError": "No se pudieron cargar las respuestas. Revisa tu conexión.",
@@ -145,7 +150,6 @@
       "deleted": "Respuesta eliminada",
       "deleteFailed": "No se pudo eliminar la respuesta. Inténtalo de nuevo."
     },
-
     "editor": {
       "loading": "Cargando evento…",
       "loadError": "No se pudo cargar el evento. Revisa tu conexión.",
@@ -161,7 +165,12 @@
       "edit": "Editar",
       "preview": "Vista previa",
       "tabsLabel": "Ajustes del evento",
-      "tabs": { "details": "Detalles", "wording": "Textos", "rsvp": "RSVP", "look": "Diseño" },
+      "tabs": {
+        "details": "Detalles",
+        "wording": "Textos",
+        "rsvp": "RSVP",
+        "look": "Diseño"
+      },
       "title": "Título",
       "link": "Enlace",
       "guestsWillOpen": "Los invitados abrirán",
@@ -174,7 +183,9 @@
       "timezone": "Zona horaria",
       "locationName": "Nombre del lugar",
       "address": "Dirección",
-      "addressHint": "Se usa para el enlace \"Abrir en Mapas\".",
+      "addressHint": "Aparece en la invitación y se busca en el mapa cuando no hay enlace del mapa.",
+      "mapLink": "Enlace del mapa",
+      "mapLinkHint": "Opcional. Pega un enlace de Google Maps, Apple Maps o Waze y “Abrir en Mapas” lo abrirá. Sin enlace, los invitados ven una búsqueda de la dirección en el mapa.",
       "language": "Idioma de la página de invitados",
       "languageHint": "Idioma de las etiquetas y botones alrededor de tus textos. Escribe los textos de abajo en el mismo idioma.",
       "message": "Mensaje",
@@ -210,7 +221,8 @@
         "slugTaken": "Otro evento ya usa este enlace.",
         "date": "Elige una fecha.",
         "start": "Elige una hora de inicio.",
-        "empty": "Este campo no puede estar vacío."
+        "empty": "Este campo no puede estar vacío.",
+        "mapLink": "Pega un enlace de mapa completo, como https://maps.app.goo.gl/…"
       },
       "fixFields": "Corrige primero los campos marcados.",
       "saved": "Guardado",
@@ -219,7 +231,6 @@
       "discardBody": "Los cambios a este evento no se han guardado.",
       "discard": "Descartar"
     },
-
     "look": {
       "presets": "Empieza con un estilo",
       "presetNames": {
@@ -275,7 +286,11 @@
       },
       "photoNoCard": "Sin tarjeta, el texto queda directamente sobre la foto. Elige un estilo de tarjeta para que el formulario se lea bien.",
       "background": "Fondo",
-      "backgroundKinds": { "color": "Sólido", "gradient": "Degradado", "image": "Imagen" },
+      "backgroundKinds": {
+        "color": "Sólido",
+        "gradient": "Degradado",
+        "image": "Imagen"
+      },
       "from": "Desde",
       "to": "Hasta",
       "color": "Color",
@@ -307,17 +322,38 @@
       "corners": "Esquinas",
       "buttons": "Botones",
       "options": {
-        "scale": { "sm": "S", "md": "M", "lg": "L" },
-        "card": { "solid": "Sólida", "glass": "Vidrio", "outline": "Contorno", "none": "Ninguna" },
-        "radius": { "none": "Ninguna", "sm": "S", "lg": "L", "xl": "XL" },
-        "button": { "solid": "Sólido", "outline": "Contorno", "pill": "Píldora" }
+        "scale": {
+          "sm": "S",
+          "md": "M",
+          "lg": "L"
+        },
+        "card": {
+          "solid": "Sólida",
+          "glass": "Vidrio",
+          "outline": "Contorno",
+          "none": "Ninguna"
+        },
+        "radius": {
+          "none": "Ninguna",
+          "sm": "S",
+          "lg": "L",
+          "xl": "XL"
+        },
+        "button": {
+          "solid": "Sólido",
+          "outline": "Contorno",
+          "pill": "Píldora"
+        }
       }
     },
-
     "preview": {
       "title": "Vista previa",
-      "states": { "form": "Formulario", "errors": "Errores", "sent": "Enviada" },
-      "inactive": "Las respuestas están apagadas, así que los invitados ven \"no disponible\". Activa Aceptar respuestas en la pestaña RSVP."
+      "states": {
+        "form": "Formulario",
+        "errors": "Errores",
+        "sent": "Enviada"
+      },
+      "inactive": "Las respuestas están apagadas, así que los invitados ven “no disponible”. Activa Aceptar respuestas arriba y guarda cuando la invitación esté lista."
     }
   }
 }

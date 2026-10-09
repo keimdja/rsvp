@@ -36,6 +36,7 @@ export type Database = {
           language: string;
           location_address: string | null;
           location_name: string | null;
+          location_url: string | null;
           notes_enabled: boolean;
           notes_label: string;
           notes_required: boolean;
@@ -59,6 +60,7 @@ export type Database = {
           language?: string;
           location_address?: string | null;
           location_name?: string | null;
+          location_url?: string | null;
           notes_enabled?: boolean;
           notes_label?: string;
           notes_required?: boolean;
@@ -82,6 +84,7 @@ export type Database = {
           language?: string;
           location_address?: string | null;
           location_name?: string | null;
+          location_url?: string | null;
           notes_enabled?: boolean;
           notes_label?: string;
           notes_required?: boolean;
@@ -172,6 +175,7 @@ export type Database = {
           language: string;
           location_address: string;
           location_name: string;
+          location_url: string;
           notes_enabled: boolean;
           notes_label: string;
           notes_required: boolean;
