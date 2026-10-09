@@ -1,4 +1,4 @@
-import { Component, computed, input, linkedSignal, output, signal } from '@angular/core';
+import { Component, computed, input, linkedSignal, output } from '@angular/core';
 import { RESPONSE_LABELS, type PublicEvent, type RsvpResponse } from '../supabase';
 
 export interface RsvpDraft {
@@ -83,7 +83,7 @@ const listFormat = new Intl.ListFormat('en', { type: 'conjunction' });
           @for (choice of choices; track choice.value) {
             @let checked = response() === choice.value;
             <label
-              class="rsvp-choice flex min-h-[68px] flex-col items-center justify-center gap-1 px-1 py-2 text-[max(16px,1em)] font-extrabold md:min-h-[76px]"
+              class="rsvp-choice flex min-h-[68px] flex-col items-center justify-center gap-1 px-1 py-2 text-[max(16px,1em)] font-extrabold @3xl:min-h-[76px]"
             >
               <input
                 type="radio"
@@ -176,6 +176,8 @@ export class RsvpForm {
   readonly initial = input<RsvpDraft | null>(null);
   readonly pending = input(false);
   readonly problem = input<RsvpProblem | null>(null);
+  /** Admin preview: show the empty-form validation state. */
+  readonly showErrors = input(false);
   readonly send = output<RsvpSubmission>();
 
   protected readonly choices = CHOICES;
@@ -185,9 +187,15 @@ export class RsvpForm {
   protected readonly notes = linkedSignal(() => this.initial()?.notes ?? '');
 
   // Field errors come from local validation or from the server, and clear on edit.
-  protected readonly nameError = linkedSignal(() => this.problem() === 'invalid_name');
-  protected readonly notesError = linkedSignal(() => this.problem() === 'notes_required');
-  protected readonly choiceError = signal(false);
+  protected readonly nameError = linkedSignal(
+    () => this.showErrors() || this.problem() === 'invalid_name',
+  );
+  protected readonly notesError = linkedSignal(
+    () =>
+      (this.showErrors() && this.event().notes_enabled && this.event().notes_required) ||
+      this.problem() === 'notes_required',
+  );
+  protected readonly choiceError = linkedSignal(() => this.showErrors());
 
   protected readonly summary = computed(() => {
     const missing = [

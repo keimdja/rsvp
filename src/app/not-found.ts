@@ -4,10 +4,13 @@ import { DEFAULT_THEME, fontStylesheetUrl, loadStylesheet, NEUTRAL_STYLE } from 
 /** Unknown, inactive and empty links land here, in the neutral theme. */
 @Component({
   selector: 'app-not-found',
-  host: { class: 'rsvp-page flow-root min-h-dvh', '[style]': 'style' },
+  host: {
+    class: 'rsvp-page @container flow-root min-h-[var(--rsvp-screen,100dvh)]',
+    '[style]': 'style',
+  },
   template: `
     <main
-      class="mx-4 mt-30 flex max-w-[560px] flex-col gap-4 rounded-rsvp border border-rsvp-border bg-rsvp-surface px-6 py-8 md:mx-auto md:mt-35 md:p-12"
+      class="mx-4 mt-30 flex max-w-[560px] flex-col gap-4 rounded-rsvp border border-rsvp-border bg-rsvp-surface px-6 py-8 @3xl:mx-auto @3xl:mt-35 @3xl:p-12"
     >
       <div
         aria-hidden="true"

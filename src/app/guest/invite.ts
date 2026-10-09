@@ -1,25 +1,35 @@
-import { Component, computed, DOCUMENT, effect, inject, input } from '@angular/core';
+import {
+  booleanAttribute,
+  Component,
+  computed,
+  DOCUMENT,
+  effect,
+  inject,
+  input,
+} from '@angular/core';
 import { publicImageUrl, SUPABASE, type PublicEvent } from '../supabase';
 import { fontStylesheetUrl, loadStylesheet, themeToStyle, type EventTheme } from '../theme';
 import { formatWhen, mapsUrl } from './calendar';
 
 // Classes per layout, from the design: card = invite on top and details in a centered card;
-// poster = invite fills the first screen and the card rises over it.
+// poster = invite fills the first screen and the card rises over it. Breakpoints are
+// container queries (@3xl = 768px of the invite's own width) and screen heights read
+// --rsvp-screen, so the admin's phone-sized preview renders exactly like a phone.
 const LAYOUT = {
   card: {
     shell:
-      'mx-auto flex max-w-[600px] flex-col gap-4 pt-[max(16px,env(safe-area-inset-top))] pr-[max(16px,env(safe-area-inset-right))] pb-[calc(40px+env(safe-area-inset-bottom))] pl-[max(16px,env(safe-area-inset-left))] md:max-w-[560px] md:gap-5 md:px-0 md:pt-16 md:pb-30',
+      'mx-auto flex max-w-[600px] flex-col gap-4 pt-[max(16px,env(safe-area-inset-top))] pr-[max(16px,env(safe-area-inset-right))] pb-[calc(40px+env(safe-area-inset-bottom))] pl-[max(16px,env(safe-area-inset-left))] @3xl:max-w-[560px] @3xl:gap-5 @3xl:px-0 @3xl:pt-16 @3xl:pb-30',
     hero: 'overflow-hidden rounded-rsvp bg-rsvp-hero-tint shadow-[0_12px_40px_-16px_rgb(0_0_0/0.35)]',
     image: 'h-auto',
     card: '',
   },
   poster: {
-    shell: 'pb-[calc(40px+env(safe-area-inset-bottom))] md:pb-30',
-    hero: 'h-[88svh] w-full bg-rsvp-hero-tint md:h-[92vh]',
+    shell: 'pb-[calc(40px+env(safe-area-inset-bottom))] @3xl:pb-30',
+    hero: 'h-[calc(var(--rsvp-screen,100svh)*0.88)] w-full bg-rsvp-hero-tint @3xl:h-[calc(var(--rsvp-screen,100vh)*0.92)]',
     image: 'h-full',
-    card: 'mx-3 md:mx-auto md:w-[640px]',
-    cardOverHero: '-mt-22 md:-mt-50',
-    cardNoHero: 'mt-[max(24px,env(safe-area-inset-top))] md:mt-16',
+    card: 'mx-3 @3xl:mx-auto @3xl:w-[640px]',
+    cardOverHero: '-mt-22 @3xl:-mt-50',
+    cardNoHero: 'mt-[max(24px,env(safe-area-inset-top))] @3xl:mt-16',
   },
 };
 
@@ -31,7 +41,9 @@ const LAYOUT = {
 @Component({
   selector: 'app-invite',
   host: {
-    class: 'rsvp-page relative isolate block min-h-dvh overflow-hidden',
+    class:
+      'rsvp-page @container relative isolate block min-h-[var(--rsvp-screen,100dvh)] overflow-hidden',
+    '[attr.role]': "framed() ? null : 'main'",
     '[style]': 'style()',
     '[attr.data-card]': 'theme().card.style',
     '[attr.data-button]': 'theme().button.style',
@@ -63,10 +75,13 @@ const LAYOUT = {
         </div>
       }
 
-      <main class="rsvp-card relative flex flex-col gap-7 rounded-rsvp md:gap-9" [class]="css.card">
+      <div
+        class="rsvp-card relative flex flex-col gap-7 rounded-rsvp @3xl:gap-9"
+        [class]="css.card"
+      >
         <div class="flex flex-col gap-5">
           <h1
-            class="rsvp-heading text-[calc(38px*var(--rsvp-scale))] leading-[1.02] tracking-[-0.01em] text-balance md:text-[calc(54px*var(--rsvp-scale))]"
+            class="rsvp-heading text-[calc(38px*var(--rsvp-scale))] leading-[1.02] tracking-[-0.01em] text-balance @3xl:text-[calc(54px*var(--rsvp-scale))]"
           >
             {{ ev.title }}
           </h1>
@@ -110,13 +125,15 @@ const LAYOUT = {
         <div aria-hidden="true" class="h-0.5 w-14 rounded-xs bg-rsvp-accent"></div>
 
         <ng-content />
-      </main>
+      </div>
     </div>
   `,
 })
 export class Invite {
   readonly event = input.required<PublicEvent>();
   readonly theme = input.required<EventTheme>();
+  /** Rendered inside the admin preview: the page is not the document's main landmark. */
+  readonly framed = input(false, { transform: booleanAttribute });
 
   private readonly supabase = inject(SUPABASE);
   private readonly document = inject(DOCUMENT);

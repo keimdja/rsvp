@@ -30,6 +30,7 @@
   --color-ground: #f6f6f4;
   --color-ink: #1c1c1a;
   --color-muted: #62625d;
+  --color-faint: #8a8a84;
   --color-line: #e4e3df;
   --color-line-strong: #c9c8c3;
   --color-track: #ebeae6;
@@ -43,6 +44,9 @@
   --color-maybe-soft: #fbefd5;
   --color-no: var(--color-danger);
   --color-no-soft: #f5e3e1;
+
+  /* Admin switches between table and card layouts here (design: 860px). */
+  --breakpoint-wide: 53.75rem;
 }
 
 @utility rsvp-heading {
@@ -67,7 +71,7 @@
   .rsvp-card {
     background: var(--rsvp-surface);
     padding: 30px 22px 32px;
-    @media (width >= 48rem) {
+    @container (width >= 48rem) {
       padding: 48px 56px 52px;
     }
   }
@@ -89,7 +93,7 @@
   [data-card='none'] .rsvp-card {
     background: transparent;
     padding-inline: 6px;
-    @media (width >= 48rem) {
+    @container (width >= 48rem) {
       padding-inline: 0;
     }
   }
@@ -176,13 +180,96 @@
     font-weight: 700;
   }
 
+  /* Admin */
   .admin {
     background: var(--color-ground);
     color: var(--color-ink);
     font-family: var(--font-sans);
+    font-size: 14px;
   }
   .admin :focus-visible {
     outline: 2px solid var(--color-focus);
     outline-offset: 2px;
+  }
+
+  .btn {
+    @apply inline-flex h-11 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md border border-line bg-white px-3.5 text-sm whitespace-nowrap text-ink no-underline hover:border-line-strong disabled:cursor-not-allowed;
+  }
+  .btn-sm {
+    @apply h-9 px-2.5 text-[13px];
+  }
+  .btn-primary {
+    @apply border-ink bg-ink font-semibold text-white hover:border-[#3a3a37] hover:bg-[#3a3a37] disabled:border-line-strong disabled:bg-line-strong;
+  }
+  .btn-danger {
+    @apply border-[#a3271f] bg-[#a3271f] font-semibold text-white hover:border-[#8a1f18] hover:bg-[#8a1f18];
+  }
+
+  /* 16px on phones stops iOS zooming on focus; the design uses 14px on wide screens. */
+  .input {
+    @apply h-11 w-full rounded-md border border-line-strong bg-white px-3 text-base text-ink wide:text-sm;
+  }
+  textarea.input {
+    @apply h-auto resize-y py-2.5;
+  }
+  .input[aria-invalid='true'] {
+    @apply border-danger;
+  }
+  .field {
+    @apply flex flex-col gap-1.5 font-medium;
+  }
+  .hint {
+    @apply text-[13px] font-normal text-muted;
+  }
+  .field-error {
+    @apply text-[13px] font-normal text-danger;
+  }
+  .warning {
+    @apply flex items-start gap-2 rounded-md bg-maybe-soft px-2.5 py-2 text-[13px] text-maybe;
+  }
+
+  /* Segmented control: a row of aria-pressed buttons. */
+  .segmented {
+    @apply inline-flex gap-0.5 rounded-lg bg-track p-[3px];
+  }
+  .segmented > button {
+    @apply h-8 flex-1 cursor-pointer rounded-md px-3 text-[13px] text-[#4a4a46];
+  }
+  .segmented > button[aria-pressed='true'] {
+    @apply bg-white font-semibold text-ink shadow-[0_1px_2px_rgb(0_0_0/0.12)];
+  }
+
+  /* Switch: a role="switch" button with a 44px hit area. */
+  .switch {
+    @apply relative size-11 shrink-0 cursor-pointer rounded-lg disabled:cursor-not-allowed disabled:opacity-40;
+  }
+  .switch::before {
+    @apply absolute top-[11px] left-1 h-[22px] w-9 rounded-full bg-line-strong transition-colors content-[''];
+  }
+  .switch::after {
+    @apply absolute top-[14px] left-[7px] size-4 rounded-full bg-white shadow-[0_1px_2px_rgb(0_0_0/0.2)] transition-[left] content-[''];
+  }
+  .switch[aria-checked='true']::before {
+    @apply bg-ink;
+  }
+  .switch[aria-checked='true']::after {
+    @apply left-[21px];
+  }
+
+  .badge {
+    @apply inline-flex h-6 shrink-0 items-center rounded-full px-[9px] text-xs font-semibold;
+  }
+  .badge-yes {
+    @apply bg-yes-soft text-yes;
+  }
+  .badge-maybe {
+    @apply bg-maybe-soft text-maybe;
+  }
+  .badge-no {
+    @apply bg-no-soft text-no;
+  }
+
+  .panel {
+    @apply rounded-[10px] border border-line bg-white;
   }
 }
