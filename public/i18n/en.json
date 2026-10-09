@@ -1,0 +1,318 @@
+{
+  "titles": {
+    "default": "RSVP",
+    "signIn": "Sign in · RSVP",
+    "events": "Events · RSVP",
+    "editEvent": "Edit event · RSVP",
+    "replies": "Replies · RSVP"
+  },
+  "common": {
+    "appName": "RSVP",
+    "tryAgain": "Try again",
+    "cancel": "Cancel",
+    "remove": "Remove",
+    "back": "← Events",
+    "untitled": "Untitled event",
+    "languages": { "en": "English", "es": "Español" }
+  },
+  "response": { "yes": "Yes", "maybe": "Maybe", "no": "No" },
+
+  "home": {
+    "title": "Open your invitation",
+    "intro": "Paste the link you were sent, or just the invitation code at the end of it.",
+    "label": "Invitation link or code",
+    "submit": "Open invitation",
+    "errorEmpty": "Paste your invitation link or code.",
+    "errorInvalid": "That doesn't look like an invitation link. Check the message you were sent.",
+    "hosting": "Hosting an event?",
+    "signIn": "Sign in to manage events"
+  },
+  "notFound": {
+    "title": "This RSVP page isn't available",
+    "message": "The link may be mistyped, or the host has closed replies for this event. If you think this is a mistake, contact the person who invited you."
+  },
+
+  "guest": {
+    "loading": "Loading invitation…",
+    "loadErrorTitle": "We couldn't load this invitation",
+    "loadErrorMessage": "Check your connection and try again.",
+    "when": "When",
+    "where": "Where",
+    "openInMaps": "Open in Maps"
+  },
+  "form": {
+    "yourName": "Your name",
+    "namePlaceholder": "First and last name",
+    "nameError": "Add your name so the host knows who's replying.",
+    "choiceError": "Choose Yes, Maybe or No.",
+    "required": "Required",
+    "optional": "Optional",
+    "notesError": "This one's required. Write \"none\" if it doesn't apply.",
+    "honeypot": "Leave this empty",
+    "sending": "Sending…",
+    "privacy": "Only the host sees your reply.",
+    "summary": "Please add {{items}}.",
+    "missing": { "name": "your name", "reply": "a reply", "notes": "the notes field" },
+    "problems": {
+      "notes_too_long": "Please keep your note under 1,000 characters.",
+      "rsvp_limit_reached": "Sorry, this event isn't taking more replies.",
+      "network": "We couldn't send your reply. Check your connection and try again."
+    }
+  },
+  "confirmation": {
+    "savedFor": "Reply saved for",
+    "addToCalendar": "Add to calendar",
+    "google": "Google Calendar",
+    "apple": "Apple Calendar (.ics)",
+    "outlook": "Outlook",
+    "icsHint": "Nothing downloaded? Open this page in Safari or Chrome and try again.",
+    "change": "Change my reply"
+  },
+
+  "admin": {
+    "signOut": "Sign out",
+    "language": "Language",
+    "copyLink": "Copy link",
+    "copied": "Copied ✓",
+    "copyFailed": "Couldn't copy. Select the link and copy it manually.",
+
+    "login": {
+      "title": "Sign in",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in",
+      "pending": "Signing in…",
+      "invalidEmail": "Enter a valid email address.",
+      "emptyPassword": "Enter your password.",
+      "wrongCredentials": "Email or password is incorrect.",
+      "failed": "Couldn't sign in. Try again.",
+      "notAdmin": "This account doesn't have admin access."
+    },
+
+    "dashboard": {
+      "title": "Events",
+      "newEvent": "+ New event",
+      "newEventTitle": "New event",
+      "loading": "Loading events…",
+      "loadError": "Couldn't load events. Check your connection.",
+      "emptyTitle": "No events yet",
+      "emptyBody": "Create an event to get a link you can share with guests.",
+      "columns": {
+        "event": "Event",
+        "date": "Date",
+        "yes": "Yes",
+        "maybe": "Maybe",
+        "no": "No",
+        "total": "Total",
+        "active": "Active"
+      },
+      "viewRsvps": "View RSVPs",
+      "rsvps": "RSVPs",
+      "edit": "Edit",
+      "switchLabel": "Accepting replies for {{title}}",
+      "summary": "{{yes}} Yes · {{maybe}} Maybe · {{no}} No",
+      "opened": "Replies open.",
+      "closed": "Replies closed. The link now shows “not available”.",
+      "updateFailed": "Couldn't update the event. Try again.",
+      "created": "Event created. It stays inactive until you switch replies on.",
+      "createFailed": "Couldn't create the event. Try again."
+    },
+
+    "list": {
+      "loading": "Loading replies…",
+      "loadError": "Couldn't load replies. Check your connection.",
+      "missing": "This event doesn't exist anymore.",
+      "editEvent": "Edit event",
+      "exportCsv": "Export CSV",
+      "filterLabel": "Filter by response",
+      "all": "All",
+      "searchPlaceholder": "Search guests",
+      "searchLabel": "Search guests by name",
+      "columns": {
+        "name": "Guest name",
+        "response": "Response",
+        "notes": "Notes",
+        "submitted": "Submitted"
+      },
+      "delete": "Delete",
+      "deleteLabel": "Delete {{name}}'s reply",
+      "emptyNone": "No replies yet. Share the link to start collecting them.",
+      "emptyGroup": "No replies in this group.",
+      "emptySearch": "No guests match “{{query}}”.",
+      "confirmTitle": "Delete {{name}}'s reply?",
+      "confirmBody": "This removes it from the list and the counts. It can't be undone.",
+      "confirm": "Delete reply",
+      "deleted": "Reply deleted",
+      "deleteFailed": "Couldn't delete the reply. Try again."
+    },
+
+    "editor": {
+      "loading": "Loading event…",
+      "loadError": "Couldn't load the event. Check your connection.",
+      "missing": "This event doesn't exist anymore.",
+      "active": "Active",
+      "inactive": "Inactive",
+      "saving": "Saving…",
+      "unsaved": "Unsaved changes",
+      "allSaved": "All changes saved",
+      "rsvps": "RSVPs",
+      "viewPage": "View page ↗",
+      "save": "Save changes",
+      "edit": "Edit",
+      "preview": "Preview",
+      "tabsLabel": "Event settings",
+      "tabs": { "details": "Details", "wording": "Wording", "rsvp": "RSVP", "look": "Look" },
+      "title": "Title",
+      "link": "Link",
+      "guestsWillOpen": "Guests will open",
+      "code": "Invitation code:",
+      "codeHint": "guests can also type it at {{url}}",
+      "date": "Date",
+      "starts": "Starts",
+      "ends": "Ends",
+      "endsNextDay": "Ends the next day.",
+      "timezone": "Time zone",
+      "locationName": "Location name",
+      "address": "Address",
+      "addressHint": "Used for the \"Open in Maps\" link.",
+      "language": "Guest page language",
+      "languageHint": "Language of the labels and buttons around your wording. Write the wording below in the same language.",
+      "message": "Message",
+      "messageHint": "Optional. Shown under the location.",
+      "rsvpQuestion": "RSVP question",
+      "buttonText": "Button text",
+      "confirmationMessage": "Confirmation message",
+      "confirmationHint": "Shown after a guest replies. Switch the preview to \"Sent\" to check it.",
+      "notesLabel": "Notes label",
+      "switches": {
+        "accepting": "Accepting replies",
+        "acceptingHint": "When off, the link shows “This RSVP page isn’t available”.",
+        "notes": "Notes field",
+        "notesHint": "An extra text box under the reply choices.",
+        "notesRequired": "Notes required",
+        "notesRequiredHint": "Guests can't send without filling it in."
+      },
+      "deleteTitle": "Delete event",
+      "deleteHint": "Removes the event, all its replies and its images. The link stops working.",
+      "delete": "Delete event",
+      "deleting": "Deleting…",
+      "deleteConfirmTitle": "Delete {{title}}?",
+      "deleteConfirmBody": "This permanently deletes the event and its {{replies}}. Its link will show “not available”. It can't be undone.",
+      "replyOne": "1 reply",
+      "replyOther": "{{count}} replies",
+      "deleted": "Event deleted",
+      "deleteFailed": "Couldn't delete the event. Try again.",
+      "errors": {
+        "title": "Give the event a title.",
+        "slugFormat": "Use lowercase letters, numbers and single hyphens.",
+        "slugLength": "Use 3 to 64 characters.",
+        "slugReserved": "This link is reserved. Pick another.",
+        "slugTaken": "Another event already uses this link.",
+        "date": "Pick a date.",
+        "start": "Pick a start time.",
+        "empty": "This can't be empty."
+      },
+      "fixFields": "Fix the highlighted fields first.",
+      "saved": "Saved",
+      "saveFailed": "Couldn't save. Check your connection and try again.",
+      "discardTitle": "Discard unsaved changes?",
+      "discardBody": "Your edits to this event haven't been saved.",
+      "discard": "Discard"
+    },
+
+    "look": {
+      "presets": "Start from a preset",
+      "presetNames": { "birthday": "Birthday", "christmas": "Christmas", "wedding": "Wedding", "plain": "Plain" },
+      "layout": "Layout",
+      "layouts": {
+        "card": "Card",
+        "cardHint": "Invite on top, details in a card",
+        "poster": "Poster",
+        "posterHint": "Invite fills the first screen"
+      },
+      "colors": "Colors",
+      "colorNames": {
+        "primary": "Primary",
+        "accent": "Accent",
+        "text": "Text",
+        "surface": "Surface",
+        "background": "Background",
+        "gradientTo": "Gradient end"
+      },
+      "colorHints": {
+        "primary": "Buttons, selected reply",
+        "accent": "Highlights, dividers, focus ring",
+        "text": "Headings and body",
+        "surface": "Card fill",
+        "surfaceGlass": "Card fill, translucent for glass"
+      },
+      "colorPicker": "{{label}} color picker",
+      "hex": "{{label}} hex",
+      "hexError": "Use a 6-digit hex like #5B2BD6.",
+      "checks": {
+        "whiteLabel": "White label on primary",
+        "darkLabel": "Dark label on primary",
+        "focusRing": "Focus ring on {{ground}}",
+        "text": "Text on {{ground}}",
+        "selected": "Selected reply on {{ground}}",
+        "card": "card",
+        "background": "background"
+      },
+      "passes": "{{ratio}}:1 · AA",
+      "fails": "{{ratio}}:1 · fails AA",
+      "onPhoto": "check on photo",
+      "contrastWarning": "{{check}} is {{ratio}}:1; WCAG AA needs {{min}}:1. {{fix}}",
+      "fixes": {
+        "primary": "Pick a darker or lighter primary.",
+        "accent": "Darken the accent.",
+        "text": "Darken the text or change the card fill.",
+        "surface": "Make primary and card more different."
+      },
+      "photoNoCard": "With no card, text sits directly on the photo. Pick a card style so the form stays readable.",
+      "background": "Background",
+      "backgroundKinds": { "color": "Solid", "gradient": "Gradient", "image": "Image" },
+      "from": "From",
+      "to": "To",
+      "color": "Color",
+      "overlay": "Overlay",
+      "blur": "Blur",
+      "photoNote": "The form always sits on the card surface, so it stays readable whatever the photo.",
+      "invitationImage": "Invitation image",
+      "none": "none",
+      "uploadImage": "Upload image",
+      "replaceImage": "Replace image",
+      "uploadPhoto": "Upload photo",
+      "replacePhoto": "Replace photo",
+      "uploading": "Uploading…",
+      "uploadFailed": "That file couldn't be uploaded. Try a JPEG, PNG or WebP image.",
+      "altText": "Alt text",
+      "altHint": "If the image has text baked in, summarise it here for screen readers.",
+      "altWarning": "Add alt text so screen-reader users get the invitation too.",
+      "fonts": "Fonts",
+      "fontNames": {
+        "playful": "Playful",
+        "festive": "Festive",
+        "elegant": "Elegant",
+        "classic": "Classic",
+        "modern": "Modern",
+        "warm": "Warm"
+      },
+      "textSize": "Text size",
+      "card": "Card",
+      "corners": "Corners",
+      "buttons": "Buttons",
+      "options": {
+        "scale": { "sm": "S", "md": "M", "lg": "L" },
+        "card": { "solid": "Solid", "glass": "Glass", "outline": "Outline", "none": "None" },
+        "radius": { "none": "None", "sm": "S", "lg": "L", "xl": "XL" },
+        "button": { "solid": "Solid", "outline": "Outline", "pill": "Pill" }
+      }
+    },
+
+    "preview": {
+      "title": "Preview",
+      "states": { "form": "Form", "errors": "Errors", "sent": "Sent" },
+      "inactive": "Replies are off, so guests see \"not available\". Switch on Accepting replies in the RSVP tab."
+    }
+  }
+}

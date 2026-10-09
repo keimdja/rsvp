@@ -1,4 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Component, computed, DOCUMENT, inject, input, model, output, signal } from '@angular/core';
 import { IMAGE_BUCKET, publicImageUrl, SUPABASE } from '../supabase';
 import {
@@ -23,20 +24,7 @@ type ImageKind = 'hero' | 'background';
 /** Card colors with a contrast check; the page background has its own control. */
 type CheckedColor = Exclude<keyof EventTheme['colors'], 'background'>;
 
-const COLOR_ROWS: { key: CheckedColor; label: string; hint: string }[] = [
-  { key: 'primary', label: 'Primary', hint: 'Buttons, selected reply' },
-  { key: 'accent', label: 'Accent', hint: 'Highlights, dividers, focus ring' },
-  { key: 'text', label: 'Text', hint: 'Headings and body' },
-  { key: 'surface', label: 'Surface', hint: 'Card fill' },
-];
-
-const LABELS = {
-  scale: { sm: 'S', md: 'M', lg: 'L' },
-  card: { solid: 'Solid', glass: 'Glass', outline: 'Outline', none: 'None' },
-  radius: { none: 'None', sm: 'S', lg: 'L', xl: 'XL' },
-  button: { solid: 'Solid', outline: 'Outline', pill: 'Pill' },
-  background: { color: 'Solid', gradient: 'Gradient', image: 'Image' },
-} as const;
+const COLOR_ROWS: CheckedColor[] = ['primary', 'accent', 'text', 'surface'];
 
 const ALL_FONTS_URL = `https://fonts.googleapis.com/css2?${Object.values(FONT_PAIRINGS)
   .map((f) => f.query)
@@ -69,7 +57,7 @@ async function toWebImage(file: File, doc: Document): Promise<Blob> {
     @let t = theme();
     <div class="flex max-w-[640px] flex-col gap-[30px]">
       <section class="flex flex-col gap-2.5">
-        <h3 class="font-semibold">Start from a preset</h3>
+        <h3 class="font-semibold">{{ 'admin.look.presets' | translate }}</h3>
         <div class="flex flex-wrap gap-1.5">
           @for (p of presets; track p.key) {
             <button type="button" class="btn btn-sm rounded-full pl-2" (click)="applyPreset(p.key)">
@@ -84,29 +72,29 @@ async function toWebImage(file: File, doc: Document): Promise<Blob> {
                   ' 50%)'
                 "
               ></span>
-              {{ p.label }}
+              {{ 'admin.look.presetNames.' + p.key | translate }}
             </button>
           }
         </div>
       </section>
 
       <section class="flex flex-col gap-2.5">
-        <h3 class="font-semibold">Layout</h3>
+        <h3 class="font-semibold">{{ 'admin.look.layout' | translate }}</h3>
         <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2.5">
-          @for (l of layouts; track l.value) {
-            @let on = t.layout === l.value;
+          @for (l of layouts; track l) {
+            @let on = t.layout === l;
             <button
               type="button"
               class="flex cursor-pointer items-center gap-3.5 rounded-[10px] bg-white p-3 text-left"
               [class]="on ? 'border-2 border-ink' : 'm-px border border-line'"
               [attr.aria-pressed]="on"
-              (click)="setLayout(l.value)"
+              (click)="setLayout(l)"
             >
               <span
                 aria-hidden="true"
                 class="relative h-16 w-11 shrink-0 overflow-hidden rounded bg-track"
               >
-                @if (l.value === 'card') {
+                @if (l === 'card') {
                   <span
                     class="absolute inset-x-1.5 top-[5px] h-[22px] rounded-xs bg-[#bdbcb6]"
                   ></span>
@@ -119,8 +107,8 @@ async function toWebImage(file: File, doc: Document): Promise<Blob> {
                 }
               </span>
               <span class="flex flex-col gap-0.5">
-                <span class="font-semibold">{{ l.label }}</span>
-                <span class="hint">{{ l.hint }}</span>
+                <span class="font-semibold">{{ 'admin.look.layouts.' + l | translate }}</span>
+                <span class="hint">{{ 'admin.look.layouts.' + l + 'Hint' | translate }}</span>
               </span>
             </button>
           }
@@ -128,22 +116,24 @@ async function toWebImage(file: File, doc: Document): Promise<Blob> {
       </section>
 
       <section class="flex flex-col gap-2.5">
-        <h3 class="font-semibold">Colors</h3>
+        <h3 class="font-semibold">{{ 'admin.look.colors' | translate }}</h3>
         <div class="panel flex flex-col">
           @for (row of colorRows(); track row.key) {
             <div class="flex flex-col gap-2 border-b border-[#efeeea] px-3.5 py-3 last:border-b-0">
               <div class="grid grid-cols-[40px_minmax(0,1fr)_104px] items-center gap-3">
                 <ng-container
                   [ngTemplateOutlet]="picker"
-                  [ngTemplateOutletContext]="{ key: row.key, label: row.label }"
+                  [ngTemplateOutletContext]="{ key: row.key }"
                 />
                 <span class="flex min-w-0 flex-col">
-                  <span class="font-medium">{{ row.label }}</span>
+                  <span class="font-medium">{{
+                    'admin.look.colorNames.' + row.key | translate
+                  }}</span>
                   <span class="text-xs text-muted">{{ row.hint }}</span>
                 </span>
                 <ng-container
                   [ngTemplateOutlet]="hex"
-                  [ngTemplateOutletContext]="{ key: row.key, label: row.label }"
+                  [ngTemplateOutletContext]="{ key: row.key }"
                 />
               </div>
               <div class="flex justify-between gap-2 pl-[52px] text-xs">
@@ -163,7 +153,7 @@ async function toWebImage(file: File, doc: Document): Promise<Blob> {
       </section>
 
       <section class="flex flex-col gap-3">
-        <h3 class="font-semibold">Background</h3>
+        <h3 class="font-semibold">{{ 'admin.look.background' | translate }}</h3>
         <div class="segmented self-start">
           @for (kind of backgroundKinds; track kind) {
             <button
@@ -171,7 +161,7 @@ async function toWebImage(file: File, doc: Document): Promise<Blob> {
               [attr.aria-pressed]="t.background.kind === kind"
               (click)="set('background', { kind })"
             >
-              {{ labels.background[kind] }}
+              {{ 'admin.look.backgroundKinds.' + kind | translate }}
             </button>
           }
         </div>
@@ -184,14 +174,10 @@ async function toWebImage(file: File, doc: Document): Promise<Blob> {
             <div class="flex min-w-0 flex-col gap-3">
               <ng-container
                 [ngTemplateOutlet]="uploader"
-                [ngTemplateOutletContext]="{
-                  kind: 'background',
-                  path: t.background.imagePath,
-                  noun: 'photo',
-                }"
+                [ngTemplateOutletContext]="{ kind: 'background', path: t.background.imagePath }"
               />
               <label class="grid grid-cols-[64px_1fr_44px] items-center gap-2.5 text-[13px]">
-                Overlay
+                {{ 'admin.look.overlay' | translate }}
                 <input
                   #overlay
                   type="range"
@@ -204,7 +190,7 @@ async function toWebImage(file: File, doc: Document): Promise<Blob> {
                 <span class="font-mono">{{ round(t.background.overlay * 100) }}%</span>
               </label>
               <label class="grid grid-cols-[64px_1fr_44px] items-center gap-2.5 text-[13px]">
-                Blur
+                {{ 'admin.look.blur' | translate }}
                 <input
                   #blur
                   type="range"
@@ -216,37 +202,38 @@ async function toWebImage(file: File, doc: Document): Promise<Blob> {
                 />
                 <span class="font-mono">{{ t.background.blur }}px</span>
               </label>
-              <p class="text-xs text-muted">
-                The form always sits on the card surface, so it stays readable whatever the photo.
-              </p>
+              <p class="text-xs text-muted">{{ 'admin.look.photoNote' | translate }}</p>
             </div>
           </div>
         } @else {
           <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3">
             <div class="flex flex-col gap-1.5 text-[13px] text-muted">
-              {{ t.background.kind === 'gradient' ? 'From' : 'Color' }}
+              {{
+                (t.background.kind === 'gradient' ? 'admin.look.from' : 'admin.look.color')
+                  | translate
+              }}
               <div class="flex items-center gap-2">
                 <ng-container
                   [ngTemplateOutlet]="picker"
-                  [ngTemplateOutletContext]="{ key: 'background', label: 'Background' }"
+                  [ngTemplateOutletContext]="{ key: 'background' }"
                 />
                 <ng-container
                   [ngTemplateOutlet]="hex"
-                  [ngTemplateOutletContext]="{ key: 'background', label: 'Background' }"
+                  [ngTemplateOutletContext]="{ key: 'background' }"
                 />
               </div>
             </div>
             @if (t.background.kind === 'gradient') {
               <div class="flex flex-col gap-1.5 text-[13px] text-muted">
-                To
+                {{ 'admin.look.to' | translate }}
                 <div class="flex items-center gap-2">
                   <ng-container
                     [ngTemplateOutlet]="picker"
-                    [ngTemplateOutletContext]="{ key: 'gradientTo', label: 'Gradient end' }"
+                    [ngTemplateOutletContext]="{ key: 'gradientTo' }"
                   />
                   <ng-container
                     [ngTemplateOutlet]="hex"
-                    [ngTemplateOutletContext]="{ key: 'gradientTo', label: 'Gradient end' }"
+                    [ngTemplateOutletContext]="{ key: 'gradientTo' }"
                   />
                 </div>
               </div>
@@ -256,23 +243,25 @@ async function toWebImage(file: File, doc: Document): Promise<Blob> {
       </section>
 
       <section class="flex flex-col gap-2.5">
-        <h3 class="font-semibold">Invitation image</h3>
+        <h3 class="font-semibold">{{ 'admin.look.invitationImage' | translate }}</h3>
         <div class="panel grid grid-cols-[96px_minmax(0,1fr)] gap-4 p-3.5">
           <div
             class="grid h-[120px] w-24 place-items-center rounded bg-cover bg-center"
             [style.background-image]="imageCss(t.hero.imagePath)"
           >
             @if (!t.hero.imagePath) {
-              <span class="font-mono text-[10px] text-[#4a4a46]">none</span>
+              <span class="font-mono text-[10px] text-[#4a4a46]">{{
+                'admin.look.none' | translate
+              }}</span>
             }
           </div>
           <div class="flex min-w-0 flex-col gap-2.5">
             <ng-container
               [ngTemplateOutlet]="uploader"
-              [ngTemplateOutletContext]="{ kind: 'hero', path: t.hero.imagePath, noun: 'image' }"
+              [ngTemplateOutletContext]="{ kind: 'hero', path: t.hero.imagePath }"
             />
             <label class="field text-[13px]">
-              Alt text
+              {{ 'admin.look.altText' | translate }}
               <input
                 #alt
                 class="input"
@@ -280,14 +269,12 @@ async function toWebImage(file: File, doc: Document): Promise<Blob> {
                 [value]="t.hero.alt"
                 (input)="set('hero', { alt: alt.value })"
               />
-              <span class="hint">
-                If the image has text baked in, summarise it here for screen readers.
-              </span>
+              <span class="hint">{{ 'admin.look.altHint' | translate }}</span>
             </label>
             @if (t.hero.imagePath && !t.hero.alt.trim()) {
               <p role="alert" class="warning">
-                <span aria-hidden="true" class="font-bold">!</span>Add alt text so screen-reader
-                users get the invitation too.
+                <span aria-hidden="true" class="font-bold">!</span
+                >{{ 'admin.look.altWarning' | translate }}
               </p>
             }
           </div>
@@ -295,7 +282,7 @@ async function toWebImage(file: File, doc: Document): Promise<Blob> {
       </section>
 
       <section class="flex flex-col gap-2.5">
-        <h3 class="font-semibold">Fonts</h3>
+        <h3 class="font-semibold">{{ 'admin.look.fonts' | translate }}</h3>
         <div class="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-2">
           @for (f of fonts; track f.key) {
             @let on = t.typography.pairing === f.key;
@@ -311,7 +298,7 @@ async function toWebImage(file: File, doc: Document): Promise<Blob> {
                 [style.font-family]="f.family"
                 [style.font-weight]="f.weight"
               >
-                {{ f.label }}
+                {{ 'admin.look.fontNames.' + f.key | translate }}
               </span>
               <span class="text-xs text-muted">{{ f.heading }} / {{ f.body }}</span>
             </button>
@@ -320,7 +307,7 @@ async function toWebImage(file: File, doc: Document): Promise<Blob> {
       </section>
 
       <section class="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-3">
-        <h3 class="font-semibold">Text size</h3>
+        <h3 class="font-semibold">{{ 'admin.look.textSize' | translate }}</h3>
         <div class="segmented justify-self-start">
           @for (v of scales; track v) {
             <button
@@ -328,11 +315,11 @@ async function toWebImage(file: File, doc: Document): Promise<Blob> {
               [attr.aria-pressed]="t.typography.scale === v"
               (click)="set('typography', { scale: v })"
             >
-              {{ labels.scale[v] }}
+              {{ 'admin.look.options.scale.' + v | translate }}
             </button>
           }
         </div>
-        <h3 class="font-semibold">Card</h3>
+        <h3 class="font-semibold">{{ 'admin.look.card' | translate }}</h3>
         <div class="segmented justify-self-start">
           @for (v of cardStyles; track v) {
             <button
@@ -340,11 +327,11 @@ async function toWebImage(file: File, doc: Document): Promise<Blob> {
               [attr.aria-pressed]="t.card.style === v"
               (click)="set('card', { style: v })"
             >
-              {{ labels.card[v] }}
+              {{ 'admin.look.options.card.' + v | translate }}
             </button>
           }
         </div>
-        <h3 class="font-semibold">Corners</h3>
+        <h3 class="font-semibold">{{ 'admin.look.corners' | translate }}</h3>
         <div class="segmented justify-self-start">
           @for (v of radii; track v) {
             <button
@@ -352,11 +339,11 @@ async function toWebImage(file: File, doc: Document): Promise<Blob> {
               [attr.aria-pressed]="t.card.radius === v"
               (click)="set('card', { radius: v })"
             >
-              {{ labels.radius[v] }}
+              {{ 'admin.look.options.radius.' + v | translate }}
             </button>
           }
         </div>
-        <h3 class="font-semibold">Buttons</h3>
+        <h3 class="font-semibold">{{ 'admin.look.buttons' | translate }}</h3>
         <div class="segmented justify-self-start">
           @for (v of buttonStyles; track v) {
             <button
@@ -364,49 +351,61 @@ async function toWebImage(file: File, doc: Document): Promise<Blob> {
               [attr.aria-pressed]="t.button.style === v"
               (click)="set('button', { style: v })"
             >
-              {{ labels.button[v] }}
+              {{ 'admin.look.options.button.' + v | translate }}
             </button>
           }
         </div>
       </section>
     </div>
 
-    <ng-template #picker let-key="key" let-label="label">
+    <ng-template #picker let-key="key">
       <input
         #pick
         type="color"
         class="size-10 shrink-0 cursor-pointer rounded-md border border-black/15 bg-transparent p-0"
         [value]="color(key)"
-        [attr.aria-label]="label + ' color picker'"
+        [attr.aria-label]="
+          'admin.look.colorPicker'
+            | translate: { label: 'admin.look.colorNames.' + key | translate }
+        "
         (input)="setColor(key, pick.value)"
       />
     </ng-template>
 
-    <ng-template #hex let-key="key" let-label="label">
+    <ng-template #hex let-key="key">
       <span class="flex min-w-0 flex-1 flex-col gap-1">
         <input
           #hexInput
           class="input h-10 font-mono text-sm!"
           spellcheck="false"
           [value]="hexText(key)"
-          [attr.aria-label]="label + ' hex'"
+          [attr.aria-label]="
+            'admin.look.hex' | translate: { label: 'admin.look.colorNames.' + key | translate }
+          "
           [attr.aria-invalid]="!validHex(key)"
           (input)="typeHex(key, hexInput.value)"
           (blur)="forgetHex(key)"
         />
         @if (!validHex(key)) {
-          <span class="field-error">Use a 6-digit hex like #5B2BD6.</span>
+          <span class="field-error">{{ 'admin.look.hexError' | translate }}</span>
         }
       </span>
     </ng-template>
 
-    <ng-template #uploader let-kind="kind" let-path="path" let-noun="noun">
+    <ng-template #uploader let-kind="kind" let-path="path">
       <div class="flex flex-wrap gap-1.5">
         <label
           class="btn btn-sm relative border-line-strong"
           [class.opacity-60]="uploading() === kind"
         >
-          {{ uploading() === kind ? 'Uploading…' : (path ? 'Replace ' : 'Upload ') + noun }}
+          {{
+            (uploading() === kind
+              ? 'admin.look.uploading'
+              : 'admin.look.' +
+                (path ? 'replace' : 'upload') +
+                (kind === 'hero' ? 'Image' : 'Photo')
+            ) | translate
+          }}
           <input
             type="file"
             accept="image/jpeg,image/png,image/webp"
@@ -416,12 +415,14 @@ async function toWebImage(file: File, doc: Document): Promise<Blob> {
           />
         </label>
         @if (path) {
-          <button type="button" class="btn btn-sm" (click)="removeImage(kind)">Remove</button>
+          <button type="button" class="btn btn-sm" (click)="removeImage(kind)">
+            {{ 'common.remove' | translate }}
+          </button>
         }
       </div>
     </ng-template>
   `,
-  imports: [NgTemplateOutlet],
+  imports: [NgTemplateOutlet, TranslatePipe],
 })
 export class LookEditor {
   /** Two-way bound, so consecutive edits always build on the latest theme. */
@@ -433,13 +434,13 @@ export class LookEditor {
   private readonly supabase = inject(SUPABASE);
   private readonly document = inject(DOCUMENT);
   private readonly ui = inject(AdminUi);
+  private readonly translate = inject(TranslateService);
 
-  protected readonly labels = LABELS;
-  protected readonly presets = Object.entries(THEME_PRESETS).map(([key, p]) => ({ key, ...p }));
-  protected readonly layouts = [
-    { value: 'card', label: 'Card', hint: 'Invite on top, details in a card' },
-    { value: 'poster', label: 'Poster', hint: 'Invite fills the first screen' },
-  ] as const;
+  protected readonly presets = Object.entries(THEME_PRESETS).map(([key, theme]) => ({
+    key,
+    theme,
+  }));
+  protected readonly layouts = ['card', 'poster'] as const;
   protected readonly fonts = (Object.keys(FONT_PAIRINGS) as FontPairingKey[]).map((key) => ({
     key,
     ...FONT_PAIRINGS[key],
@@ -460,63 +461,60 @@ export class LookEditor {
     loadStylesheet(this.document, ALL_FONTS_URL); // font cards preview each pairing
   }
 
-  /** Contrast checks from the design; with no card, text sits on the page background. */
+  /**
+   * Contrast checks from the design; with no card, text sits on the page background.
+   * Texts come from instant(), which re-evaluates when the admin switches language.
+   */
   protected readonly colorRows = computed(() => {
     const { colors, card, background } = this.theme();
+    const t = (key: string, params?: Record<string, unknown>) =>
+      this.translate.instant(`admin.look.${key}`, params) as string;
     const noCard = card.style === 'none';
     const ground = noCard
       ? background.kind === 'image'
         ? null
         : colors.background
       : colors.surface;
-    const groundName = noCard ? 'background' : 'card';
+    const on = { ground: t(noCard ? 'checks.background' : 'checks.card') };
     const onPrimary = onColor(colors.primary);
-    const checks = {
+    const checks: Record<CheckedColor, [ratio: number | null, min: number, check: string]> = {
       primary: [
         contrastRatio(onPrimary, colors.primary),
         4.5,
-        `${onPrimary === '#ffffff' ? 'White' : 'Dark'} label on primary`,
-        'Pick a darker or lighter primary.',
+        t(onPrimary === '#ffffff' ? 'checks.whiteLabel' : 'checks.darkLabel'),
       ],
-      accent: [
-        ground ? contrastRatio(colors.accent, ground) : null,
-        3,
-        `Focus ring on ${groundName}`,
-        'Darken the accent.',
-      ],
-      text: [
-        ground ? contrastRatio(colors.text, ground) : null,
-        4.5,
-        `Text on ${groundName}`,
-        'Darken the text or change the card fill.',
-      ],
-      surface: [
-        ground ? contrastRatio(colors.primary, ground) : null,
-        3,
-        `Selected reply on ${groundName}`,
-        'Make primary and card more different.',
-      ],
-    } as const;
+      accent: [ground ? contrastRatio(colors.accent, ground) : null, 3, t('checks.focusRing', on)],
+      text: [ground ? contrastRatio(colors.text, ground) : null, 4.5, t('checks.text', on)],
+      surface: [ground ? contrastRatio(colors.primary, ground) : null, 3, t('checks.selected', on)],
+    };
 
-    return COLOR_ROWS.map(({ key, label, hint }) => {
-      const [ratio, min, check, fix] = checks[key];
-      const onPhoto = ratio === null;
-      const ok = onPhoto || ratio >= min;
+    return COLOR_ROWS.map((key) => {
+      const [ratio, min, check] = checks[key];
+      if (ratio === null) {
+        return {
+          key,
+          hint: t(`colorHints.${key}`),
+          check,
+          ok: false,
+          ratio: t('onPhoto'),
+          warning: key === 'text' ? t('photoNoCard') : '',
+        };
+      }
+      const ok = ratio >= min;
+      const shown = ratio.toFixed(1);
       return {
         key,
-        label,
-        hint:
-          key === 'surface' && card.style === 'glass' ? 'Card fill, translucent for glass' : hint,
+        hint: t(
+          key === 'surface' && card.style === 'glass'
+            ? 'colorHints.surfaceGlass'
+            : `colorHints.${key}`,
+        ),
         check,
-        ok: !onPhoto && ok,
-        ratio: onPhoto ? 'check on photo' : `${ratio.toFixed(1)}:1 · ${ok ? 'AA' : 'fails AA'}`,
-        warning: onPhoto
-          ? key === 'text'
-            ? 'With no card, text sits directly on the photo. Pick a card style so the form stays readable.'
-            : ''
-          : ok
-            ? ''
-            : `${check} is ${ratio.toFixed(1)}:1; WCAG AA needs ${min}:1. ${fix}`,
+        ok,
+        ratio: t(ok ? 'passes' : 'fails', { ratio: shown }),
+        warning: ok
+          ? ''
+          : t('contrastWarning', { check, ratio: shown, min, fix: t(`fixes.${key}`) }),
       };
     });
   });
@@ -534,7 +532,7 @@ export class LookEditor {
   }
 
   protected applyPreset(key: string): void {
-    const { theme } = THEME_PRESETS[key];
+    const theme = THEME_PRESETS[key];
     this.hexDrafts.set({});
     this.theme.update((current) => ({
       ...theme,
@@ -602,7 +600,7 @@ export class LookEditor {
       this.uploaded.emit(path);
       this.setImage(kind, path);
     } catch {
-      this.ui.toast("That file couldn't be uploaded. Try a JPEG, PNG or WebP image.");
+      this.ui.toast('admin.look.uploadFailed');
     } finally {
       this.uploading.set(null);
     }

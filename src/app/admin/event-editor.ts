@@ -9,6 +9,8 @@ import {
   signal,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { DEFAULT_WORDING, isLanguage, type Language, LANGUAGES } from '../i18n';
 import { type EventRow, IMAGE_BUCKET, type PublicEvent, SUPABASE } from '../supabase';
 import { type EventTheme, resolveTheme } from '../theme';
 import { EventPreview } from './event-preview';
@@ -33,17 +35,13 @@ interface Draft {
   notes_enabled: boolean;
   notes_required: boolean;
   is_active: boolean;
+  language: Language;
   theme: EventTheme;
 }
 type Field = keyof Draft;
 type Tab = 'details' | 'wording' | 'rsvp' | 'look';
 
-const TABS: { value: Tab; label: string }[] = [
-  { value: 'details', label: 'Details' },
-  { value: 'wording', label: 'Wording' },
-  { value: 'rsvp', label: 'RSVP' },
-  { value: 'look', label: 'Look' },
-];
+const TABS: Tab[] = ['details', 'wording', 'rsvp', 'look'];
 
 const TIME_ZONES = [
   'America/Puerto_Rico',
@@ -80,6 +78,7 @@ function toDraft(row: EventRow): Draft {
     notes_enabled: row.notes_enabled,
     notes_required: row.notes_required,
     is_active: row.is_active,
+    language: isLanguage(row.language) ? row.language : 'en',
     theme: resolveTheme(row.theme),
   };
 }
@@ -103,29 +102,31 @@ function toRow(d: Draft) {
     notes_enabled: d.notes_enabled,
     notes_required: d.notes_enabled && d.notes_required,
     is_active: d.is_active,
+    language: d.language,
     theme: { ...d.theme },
   };
 }
 
+/** Returns translation keys of the errors, per field. */
 function validate(d: Draft): Partial<Record<Field, string>> {
   const errors: Partial<Record<Field, string>> = {};
-  if (!d.title.trim()) errors.title = 'Give the event a title.';
+  if (!d.title.trim()) errors.title = 'admin.editor.errors.title';
   if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(d.slug)) {
-    errors.slug = 'Use lowercase letters, numbers and single hyphens.';
+    errors.slug = 'admin.editor.errors.slugFormat';
   } else if (d.slug.length < 3 || d.slug.length > 64) {
-    errors.slug = 'Use 3 to 64 characters.';
+    errors.slug = 'admin.editor.errors.slugLength';
   } else if (RESERVED_SLUGS.includes(d.slug)) {
-    errors.slug = 'This link is reserved. Pick another.';
+    errors.slug = 'admin.editor.errors.slugReserved';
   }
-  if (!d.event_date) errors.event_date = 'Pick a date.';
-  if (!d.start_time) errors.start_time = 'Pick a start time.';
+  if (!d.event_date) errors.event_date = 'admin.editor.errors.date';
+  if (!d.start_time) errors.start_time = 'admin.editor.errors.start';
   for (const field of [
     'rsvp_question',
     'button_text',
     'confirmation_message',
     'notes_label',
   ] as const) {
-    if (!d[field].trim()) errors[field] = "This can't be empty.";
+    if (!d[field].trim()) errors[field] = 'admin.editor.errors.empty';
   }
   return errors;
 }
@@ -152,15 +153,17 @@ const themePaths = (theme: EventTheme) =>
 
 @Component({
   selector: 'app-event-editor',
-  imports: [RouterLink, EventPreview, LookEditor],
+  imports: [RouterLink, EventPreview, LookEditor, TranslatePipe],
   host: { '(window:beforeunload)': 'warnBeforeUnload($event)' },
   template: `
     @if (event.isLoading() && !event.hasValue()) {
-      <p class="p-4 text-muted" role="status">Loading event…</p>
+      <p class="p-4 text-muted" role="status">{{ 'admin.editor.loading' | translate }}</p>
     } @else if (event.error()) {
       <div class="panel m-4 flex flex-col items-start gap-3 p-6">
-        <p>Couldn't load the event. Check your connection.</p>
-        <button type="button" class="btn" (click)="event.reload()">Try again</button>
+        <p>{{ 'admin.editor.loadError' | translate }}</p>
+        <button type="button" class="btn" (click)="event.reload()">
+          {{ 'common.tryAgain' | translate }}
+        </button>
       </div>
     } @else if (draft(); as d) {
       <div class="border-b border-line bg-white">
@@ -168,32 +171,45 @@ const themePaths = (theme: EventTheme) =>
           class="mx-auto flex max-w-[1280px] flex-wrap items-center justify-between gap-x-4 gap-y-3 p-4"
         >
           <div class="flex min-w-0 flex-col gap-1">
-            <a routerLink="/admin" class="text-[13px] text-muted">← Events</a>
+            <a routerLink="/admin" class="text-[13px] text-muted">{{
+              'common.back' | translate
+            }}</a>
             <div class="flex min-w-0 items-center gap-2.5">
               <h1 class="truncate text-[22px] leading-tight font-semibold">
-                {{ d.title || 'Untitled event' }}
+                {{ d.title || ('common.untitled' | translate) }}
               </h1>
               <span
                 class="badge h-[22px] px-2"
                 [class]="d.is_active ? 'bg-yes-soft text-yes' : 'bg-track text-[#4a4a46]'"
               >
-                {{ d.is_active ? 'Active' : 'Inactive' }}
+                {{ (d.is_active ? 'admin.editor.active' : 'admin.editor.inactive') | translate }}
               </span>
             </div>
           </div>
           <div class="flex flex-wrap items-center gap-2">
             <span class="text-[13px] text-muted" role="status">
-              {{ saving() ? 'Saving…' : dirty() ? 'Unsaved changes' : 'All changes saved' }}
+              {{
+                (saving()
+                  ? 'admin.editor.saving'
+                  : dirty()
+                    ? 'admin.editor.unsaved'
+                    : 'admin.editor.allSaved'
+                ) | translate
+              }}
             </span>
-            <a class="btn h-10" [routerLink]="['/admin/events', id(), 'rsvps']">RSVPs</a>
-            <a class="btn h-10" [href]="savedUrl()" target="_blank" rel="noopener">View page ↗</a>
+            <a class="btn h-10" [routerLink]="['/admin/events', id(), 'rsvps']">{{
+              'admin.editor.rsvps' | translate
+            }}</a>
+            <a class="btn h-10" [href]="savedUrl()" target="_blank" rel="noopener">{{
+              'admin.editor.viewPage' | translate
+            }}</a>
             <button
               type="button"
               class="btn btn-primary h-10"
               [disabled]="!dirty() || saving()"
               (click)="save()"
             >
-              Save changes
+              {{ 'admin.editor.save' | translate }}
             </button>
           </div>
         </div>
@@ -210,7 +226,7 @@ const themePaths = (theme: EventTheme) =>
             [attr.aria-pressed]="!mobilePreview()"
             (click)="mobilePreview.set(false)"
           >
-            Edit
+            {{ 'admin.editor.edit' | translate }}
           </button>
           <button
             type="button"
@@ -218,7 +234,7 @@ const themePaths = (theme: EventTheme) =>
             [attr.aria-pressed]="mobilePreview()"
             (click)="mobilePreview.set(true)"
           >
-            Preview
+            {{ 'admin.editor.preview' | translate }}
           </button>
         </div>
       </div>
@@ -232,24 +248,24 @@ const themePaths = (theme: EventTheme) =>
         >
           <div
             role="tablist"
-            aria-label="Event settings"
+            [attr.aria-label]="'admin.editor.tabsLabel' | translate"
             class="mb-6 flex gap-0.5 overflow-x-auto overflow-y-hidden border-b border-line"
             (keydown)="moveTab($event)"
           >
-            @for (t of tabs; track t.value) {
-              @let on = tab() === t.value;
+            @for (t of tabs; track t) {
+              @let on = tab() === t;
               <button
                 type="button"
                 role="tab"
-                [id]="'tab-' + t.value"
-                [attr.aria-controls]="'panel-' + t.value"
+                [id]="'tab-' + t"
+                [attr.aria-controls]="'panel-' + t"
                 [attr.aria-selected]="on"
                 [attr.tabindex]="on ? 0 : -1"
                 class="-mb-px h-11 shrink-0 cursor-pointer border-b-2 px-3.5"
                 [class]="on ? 'border-ink font-semibold text-ink' : 'border-transparent text-muted'"
-                (click)="tab.set(t.value)"
+                (click)="tab.set(t)"
               >
-                {{ t.label }}
+                {{ 'admin.editor.tabs.' + t | translate }}
               </button>
             }
           </div>
@@ -259,7 +275,7 @@ const themePaths = (theme: EventTheme) =>
               @case ('details') {
                 <div class="flex max-w-[620px] flex-col gap-5">
                   <label class="field">
-                    Title
+                    {{ 'admin.editor.title' | translate }}
                     <input
                       #title
                       class="input"
@@ -269,12 +285,12 @@ const themePaths = (theme: EventTheme) =>
                       (input)="update({ title: title.value })"
                     />
                     @if (errors().title) {
-                      <span class="field-error">{{ errors().title }}</span>
+                      <span class="field-error">{{ errors().title | translate }}</span>
                     }
                   </label>
 
                   <label class="field">
-                    Link
+                    {{ 'admin.editor.link' | translate }}
                     <span
                       class="flex h-11 items-stretch overflow-hidden rounded-md border border-line-strong bg-white focus-within:outline-2 focus-within:outline-focus"
                       [class.border-danger]="!!errors().slug"
@@ -295,25 +311,24 @@ const themePaths = (theme: EventTheme) =>
                       />
                     </span>
                     <span class="hint break-all">
-                      Guests will open <span class="font-mono text-ink">{{ draftUrl() }}</span>
+                      {{ 'admin.editor.guestsWillOpen' | translate }}
+                      <span class="font-mono text-ink">{{ draftUrl() }}</span>
                     </span>
                     @if (d.slug) {
                       <span class="hint break-words">
-                        Invitation code:
+                        {{ 'admin.editor.code' | translate }}
                         <strong class="font-mono font-medium text-ink">{{ d.slug }}</strong>
-                        (guests can also type this at
-                        <span class="font-mono text-ink break-all">{{ homeUrl }}</span
-                        >)
+                        · {{ 'admin.editor.codeHint' | translate: { url: homeUrl } }}
                       </span>
                     }
                     @if (errors().slug) {
-                      <span class="field-error">{{ errors().slug }}</span>
+                      <span class="field-error">{{ errors().slug | translate }}</span>
                     }
                   </label>
 
                   <div class="grid grid-cols-[repeat(auto-fit,minmax(140px,1fr))] gap-3">
                     <label class="field">
-                      Date
+                      {{ 'admin.editor.date' | translate }}
                       <input
                         #date
                         type="date"
@@ -324,7 +339,7 @@ const themePaths = (theme: EventTheme) =>
                       />
                     </label>
                     <label class="field">
-                      Starts
+                      {{ 'admin.editor.starts' | translate }}
                       <input
                         #start
                         type="time"
@@ -335,7 +350,7 @@ const themePaths = (theme: EventTheme) =>
                       />
                     </label>
                     <label class="field">
-                      Ends
+                      {{ 'admin.editor.ends' | translate }}
                       <input
                         #end
                         type="time"
@@ -347,14 +362,14 @@ const themePaths = (theme: EventTheme) =>
                   </div>
                   @if (errors().event_date || errors().start_time) {
                     <span class="field-error -mt-3">{{
-                      errors().event_date || errors().start_time
+                      errors().event_date || errors().start_time | translate
                     }}</span>
                   } @else if (d.end_time && d.end_time <= d.start_time) {
-                    <span class="hint -mt-3">Ends the next day.</span>
+                    <span class="hint -mt-3">{{ 'admin.editor.endsNextDay' | translate }}</span>
                   }
 
                   <label class="field">
-                    Time zone
+                    {{ 'admin.editor.timezone' | translate }}
                     <select
                       #zone
                       class="input"
@@ -367,7 +382,7 @@ const themePaths = (theme: EventTheme) =>
                     </select>
                   </label>
                   <label class="field">
-                    Location name
+                    {{ 'admin.editor.locationName' | translate }}
                     <input
                       #venue
                       class="input"
@@ -377,7 +392,7 @@ const themePaths = (theme: EventTheme) =>
                     />
                   </label>
                   <label class="field">
-                    Address
+                    {{ 'admin.editor.address' | translate }}
                     <input
                       #address
                       class="input"
@@ -385,7 +400,7 @@ const themePaths = (theme: EventTheme) =>
                       [value]="d.location_address"
                       (input)="update({ location_address: address.value })"
                     />
-                    <span class="hint">Used for the "Open in Maps" link.</span>
+                    <span class="hint">{{ 'admin.editor.addressHint' | translate }}</span>
                   </label>
                 </div>
               }
@@ -393,7 +408,23 @@ const themePaths = (theme: EventTheme) =>
               @case ('wording') {
                 <div class="flex max-w-[620px] flex-col gap-5">
                   <label class="field">
-                    Message
+                    {{ 'admin.editor.language' | translate }}
+                    <select
+                      #language
+                      class="input"
+                      [value]="d.language"
+                      (change)="setLanguage($any(language.value))"
+                    >
+                      @for (lang of languages; track lang) {
+                        <option [value]="lang" [attr.lang]="lang">
+                          {{ 'common.languages.' + lang | translate }}
+                        </option>
+                      }
+                    </select>
+                    <span class="hint">{{ 'admin.editor.languageHint' | translate }}</span>
+                  </label>
+                  <label class="field">
+                    {{ 'admin.editor.message' | translate }}
                     <textarea
                       #message
                       rows="3"
@@ -402,11 +433,11 @@ const themePaths = (theme: EventTheme) =>
                       [value]="d.description"
                       (input)="update({ description: message.value })"
                     ></textarea>
-                    <span class="hint">Optional. Shown under the location.</span>
+                    <span class="hint">{{ 'admin.editor.messageHint' | translate }}</span>
                   </label>
                   @for (f of wordingFields; track f.key) {
                     <label class="field">
-                      {{ f.label }}
+                      {{ f.label | translate }}
                       <input
                         #text
                         class="input"
@@ -416,10 +447,10 @@ const themePaths = (theme: EventTheme) =>
                         (input)="setText(f.key, text.value)"
                       />
                       @if (f.hint) {
-                        <span class="hint">{{ f.hint }}</span>
+                        <span class="hint">{{ f.hint | translate }}</span>
                       }
                       @if (errors()[f.key]) {
-                        <span class="field-error">{{ errors()[f.key] }}</span>
+                        <span class="field-error">{{ errors()[f.key] | translate }}</span>
                       }
                     </label>
                   }
@@ -434,16 +465,16 @@ const themePaths = (theme: EventTheme) =>
                     >
                       <div class="flex flex-col gap-0.5">
                         <span class="font-medium" [class.text-faint]="s.disabled">{{
-                          s.label
+                          s.label | translate
                         }}</span>
-                        <span class="hint">{{ s.hint }}</span>
+                        <span class="hint">{{ s.hint | translate }}</span>
                       </div>
                       <button
                         type="button"
                         role="switch"
                         class="switch"
                         [attr.aria-checked]="s.on"
-                        [attr.aria-label]="s.label"
+                        [attr.aria-label]="s.label | translate"
                         [disabled]="s.disabled"
                         (click)="s.toggle()"
                       ></button>
@@ -455,11 +486,8 @@ const themePaths = (theme: EventTheme) =>
                   class="panel mt-6 flex max-w-[620px] flex-wrap items-center justify-between gap-4 py-3.5 pr-4 pl-5"
                 >
                   <div class="flex flex-col gap-0.5">
-                    <span class="font-medium">Delete event</span>
-                    <span class="hint"
-                      >Removes the event, all its replies and its images. The link stops
-                      working.</span
-                    >
+                    <span class="font-medium">{{ 'admin.editor.deleteTitle' | translate }}</span>
+                    <span class="hint">{{ 'admin.editor.deleteHint' | translate }}</span>
                   </div>
                   <button
                     type="button"
@@ -467,7 +495,7 @@ const themePaths = (theme: EventTheme) =>
                     [disabled]="deleting()"
                     (click)="deleteEvent()"
                   >
-                    {{ deleting() ? 'Deleting…' : 'Delete event' }}
+                    {{ (deleting() ? 'admin.editor.deleting' : 'admin.editor.delete') | translate }}
                   </button>
                 </div>
               }
@@ -487,7 +515,7 @@ const themePaths = (theme: EventTheme) =>
         <aside
           class="pt-4 wide:sticky wide:top-[72px] wide:pt-5"
           [class]="mobilePreview() ? '' : 'max-wide:hidden'"
-          aria-label="Preview"
+          [attr.aria-label]="'admin.editor.preview' | translate"
         >
           <app-event-preview
             [event]="previewEvent()!"
@@ -499,8 +527,8 @@ const themePaths = (theme: EventTheme) =>
       </div>
     } @else {
       <div class="panel m-4 flex flex-col items-start gap-3 p-6">
-        <p>This event doesn't exist anymore.</p>
-        <a routerLink="/admin" class="btn">← Events</a>
+        <p>{{ 'admin.editor.missing' | translate }}</p>
+        <a routerLink="/admin" class="btn">{{ 'common.back' | translate }}</a>
       </div>
     }
   `,
@@ -511,22 +539,24 @@ export default class EventEditor {
   private readonly supabase = inject(SUPABASE);
   private readonly document = inject(DOCUMENT);
   private readonly ui = inject(AdminUi);
+  private readonly translate = inject(TranslateService);
   private readonly router = inject(Router);
 
   protected readonly tabs = TABS;
+  protected readonly languages = LANGUAGES;
   protected readonly slugify = slugify;
   protected readonly basePath = this.ui.basePath();
   protected readonly homeUrl = this.ui.eventUrl('');
   protected readonly wordingFields = [
-    { key: 'rsvp_question', label: 'RSVP question', max: 200, hint: '' },
-    { key: 'button_text', label: 'Button text', max: 40, hint: '' },
+    { key: 'rsvp_question', label: 'admin.editor.rsvpQuestion', max: 200, hint: '' },
+    { key: 'button_text', label: 'admin.editor.buttonText', max: 40, hint: '' },
     {
       key: 'confirmation_message',
-      label: 'Confirmation message',
+      label: 'admin.editor.confirmationMessage',
       max: 500,
-      hint: 'Shown after a guest replies. Switch the preview to "Sent" to check it.',
+      hint: 'admin.editor.confirmationHint',
     },
-    { key: 'notes_label', label: 'Notes label', max: 120, hint: '' },
+    { key: 'notes_label', label: 'admin.editor.notesLabel', max: 120, hint: '' },
   ] as const;
 
   /** Images uploaded while editing; unused ones are deleted on save or discard. */
@@ -571,29 +601,34 @@ export default class EventEditor {
     const d = this.draft();
     if (!d) return null;
     const row = toRow(d);
-    return { ...row, title: row.title || 'Untitled event', theme: d.theme, end_time: row.end_time };
+    return {
+      ...row,
+      title: row.title || (this.translate.instant('common.untitled') as string),
+      theme: d.theme,
+      end_time: row.end_time,
+    };
   });
 
   protected readonly switches = computed(() => {
     const d = this.draft()!;
     return [
       {
-        label: 'Accepting replies',
-        hint: 'When off, the link shows “This RSVP page isn’t available”.',
+        label: 'admin.editor.switches.accepting',
+        hint: 'admin.editor.switches.acceptingHint',
         on: d.is_active,
         disabled: false,
         toggle: () => this.update({ is_active: !this.draft()!.is_active }),
       },
       {
-        label: 'Notes field',
-        hint: 'An extra text box under the reply choices.',
+        label: 'admin.editor.switches.notes',
+        hint: 'admin.editor.switches.notesHint',
         on: d.notes_enabled,
         disabled: false,
         toggle: () => this.update({ notes_enabled: !this.draft()!.notes_enabled }),
       },
       {
-        label: 'Notes required',
-        hint: "Guests can't send without filling it in.",
+        label: 'admin.editor.switches.notesRequired',
+        hint: 'admin.editor.switches.notesRequiredHint',
         on: d.notes_enabled && d.notes_required,
         disabled: !d.notes_enabled,
         toggle: () => this.update({ notes_required: !this.draft()!.notes_required }),
@@ -617,11 +652,23 @@ export default class EventEditor {
     this.update({ [field]: value });
   }
 
+  /** Switches the guest page language and swaps any wording still at the old default. */
+  protected setLanguage(language: Language): void {
+    const draft = this.draft();
+    if (!draft || draft.language === language) return;
+    const from = DEFAULT_WORDING[draft.language];
+    const to = DEFAULT_WORDING[language];
+    const wording = (Object.keys(to) as (keyof typeof to)[]).filter(
+      (field) => draft[field] === from[field],
+    );
+    this.update({ language, ...Object.fromEntries(wording.map((field) => [field, to[field]])) });
+  }
+
   protected moveTab(event: KeyboardEvent): void {
     const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key];
     if (!step) return;
-    const index = TABS.findIndex((t) => t.value === this.tab());
-    const next = TABS[(index + step + TABS.length) % TABS.length].value;
+    const index = TABS.indexOf(this.tab());
+    const next = TABS[(index + step + TABS.length) % TABS.length];
     this.tab.set(next);
     this.document.getElementById(`tab-${next}`)?.focus();
   }
@@ -636,7 +683,7 @@ export default class EventEditor {
     if (first) {
       this.tab.set(tabOf(first));
       this.mobilePreview.set(false);
-      this.ui.toast('Fix the highlighted fields first.');
+      this.ui.toast('admin.editor.fixFields');
       return;
     }
 
@@ -646,11 +693,11 @@ export default class EventEditor {
 
     if (error) {
       if (error.code === '23505') {
-        this.errors.set({ slug: 'Another event already uses this link.' });
+        this.errors.set({ slug: 'admin.editor.errors.slugTaken' });
         this.tab.set('details');
-        this.ui.toast('Fix the highlighted fields first.');
+        this.ui.toast('admin.editor.fixFields');
       } else {
-        this.ui.toast("Couldn't save. Check your connection and try again.");
+        this.ui.toast('admin.editor.saveFailed');
       }
       return;
     }
@@ -658,7 +705,7 @@ export default class EventEditor {
     const previous = this.saved();
     this.saved.set(draft);
     this.removeUnusedImages(draft.theme, previous ? themePaths(previous.theme) : []);
-    this.ui.toast('Saved');
+    this.ui.toast('admin.editor.saved');
   }
 
   /**
@@ -666,16 +713,20 @@ export default class EventEditor {
    * its images are removed from Storage afterwards.
    */
   protected async deleteEvent(): Promise<void> {
-    const title = this.saved()?.title || 'this event';
+    const title = this.saved()?.title || (this.translate.instant('common.untitled') as string);
     const { count } = await this.supabase
       .from('rsvps')
       .select('id', { count: 'exact', head: true })
       .eq('event_id', this.id());
-    const replies = count === 1 ? '1 reply' : `${count ?? 0} replies`;
+    const replies = this.translate.instant(
+      count === 1 ? 'admin.editor.replyOne' : 'admin.editor.replyOther',
+      { count: count ?? 0 },
+    ) as string;
     const confirmed = await this.ui.confirm({
-      title: `Delete ${title}?`,
-      body: `This permanently deletes the event and its ${replies}. Its link will show “not available”. It can't be undone.`,
-      confirm: 'Delete event',
+      title: 'admin.editor.deleteConfirmTitle',
+      body: 'admin.editor.deleteConfirmBody',
+      confirm: 'admin.editor.delete',
+      params: { title, replies },
       danger: true,
     });
     if (!confirmed) return;
@@ -684,7 +735,7 @@ export default class EventEditor {
     const { error } = await this.supabase.from('events').delete().eq('id', this.id());
     if (error) {
       this.deleting.set(false);
-      this.ui.toast("Couldn't delete the event. Try again.");
+      this.ui.toast('admin.editor.deleteFailed');
       return;
     }
 
@@ -693,7 +744,7 @@ export default class EventEditor {
     if (files?.length) await bucket.remove(files.map((f) => `${this.id()}/${f.name}`));
 
     this.deleted = true;
-    this.ui.toast('Event deleted');
+    this.ui.toast('admin.editor.deleted');
     await this.router.navigateByUrl('/admin');
   }
 
@@ -701,9 +752,9 @@ export default class EventEditor {
   async canLeave(): Promise<boolean> {
     if (this.deleted || !this.dirty()) return true;
     const discard = await this.ui.confirm({
-      title: 'Discard unsaved changes?',
-      body: "Your edits to this event haven't been saved.",
-      confirm: 'Discard',
+      title: 'admin.editor.discardTitle',
+      body: 'admin.editor.discardBody',
+      confirm: 'admin.editor.discard',
       danger: true,
     });
     const saved = this.saved();

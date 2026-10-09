@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { publicImageUrl, SUPABASE, type PublicEvent } from '../supabase';
 import { fontStylesheetUrl, loadStylesheet, themeToStyle, type EventTheme } from '../theme';
+import { EVENT_LANGUAGE, guestTranslator, I18n, isLanguage, type Language, LOCALES } from '../i18n';
 import { formatWhen, mapsUrl } from './calendar';
 
 // Classes per layout, from the design: card = invite on top and details in a centered card;
@@ -40,10 +41,13 @@ const LAYOUT = {
  */
 @Component({
   selector: 'app-invite',
+  // `providers` (not viewProviders) so projected form/confirmation content sees it too.
+  providers: [{ provide: EVENT_LANGUAGE, useFactory: () => inject(Invite).language }],
   host: {
     class:
       'rsvp-page @container relative isolate block min-h-[var(--rsvp-screen,100dvh)] overflow-hidden',
     '[attr.role]': "framed() ? null : 'main'",
+    '[attr.lang]': 'language()',
     '[style]': 'style()',
     '[attr.data-card]': 'theme().card.style',
     '[attr.data-button]': 'theme().button.style',
@@ -88,7 +92,9 @@ const LAYOUT = {
 
           <dl class="flex flex-col gap-4">
             <div class="grid grid-cols-[64px_minmax(0,1fr)] items-baseline gap-3">
-              <dt class="text-xs font-bold tracking-[0.09em] text-rsvp-muted uppercase">When</dt>
+              <dt class="text-xs font-bold tracking-[0.09em] text-rsvp-muted uppercase">
+                {{ t('guest.when') }}
+              </dt>
               <dd class="flex flex-col gap-0.5">
                 <span class="font-bold">{{ when().date }}</span>
                 <span class="text-rsvp-muted">{{ when().time }}</span>
@@ -96,7 +102,9 @@ const LAYOUT = {
             </div>
             @if (ev.location_name || ev.location_address) {
               <div class="grid grid-cols-[64px_minmax(0,1fr)] items-baseline gap-3">
-                <dt class="text-xs font-bold tracking-[0.09em] text-rsvp-muted uppercase">Where</dt>
+                <dt class="text-xs font-bold tracking-[0.09em] text-rsvp-muted uppercase">
+                  {{ t('guest.where') }}
+                </dt>
                 <dd class="flex flex-col items-start gap-0.5">
                   @if (ev.location_name) {
                     <span class="font-bold">{{ ev.location_name }}</span>
@@ -110,7 +118,7 @@ const LAYOUT = {
                     target="_blank"
                     rel="noopener"
                   >
-                    Open in Maps <span aria-hidden="true">↗</span>
+                    {{ t('guest.openInMaps') }} <span aria-hidden="true">↗</span>
                   </a>
                 </dd>
               </div>
@@ -138,10 +146,19 @@ export class Invite {
   private readonly supabase = inject(SUPABASE);
   private readonly document = inject(DOCUMENT);
 
+  private readonly i18n = inject(I18n);
+  protected readonly t = guestTranslator();
+
+  /** The event's language; guest components inside read it through EVENT_LANGUAGE. */
+  readonly language = computed<Language>(() => {
+    const language = this.event().language;
+    return isLanguage(language) ? language : 'en';
+  });
+
   private readonly imageUrl = (path: string) => publicImageUrl(this.supabase, path);
 
   protected readonly style = computed(() => themeToStyle(this.theme(), this.imageUrl));
-  protected readonly when = computed(() => formatWhen(this.event()));
+  protected readonly when = computed(() => formatWhen(this.event(), LOCALES[this.language()]));
   protected readonly heroUrl = computed(() => {
     const path = this.theme().hero.imagePath;
     return path ? this.imageUrl(path) : null;
@@ -158,5 +175,6 @@ export class Invite {
 
   constructor() {
     effect(() => loadStylesheet(this.document, fontStylesheetUrl(this.theme().typography.pairing)));
+    effect(() => void this.i18n.load(this.language()));
   }
 }

@@ -15,7 +15,7 @@ export default [
     children: [
       {
         path: 'login',
-        title: 'Sign in · RSVP',
+        title: 'titles.signIn',
         canMatch: [signedOutGuard],
         loadComponent: () => import('./login'),
       },
@@ -24,16 +24,16 @@ export default [
         canMatch: [adminGuard],
         loadComponent: () => import('./admin-shell'),
         children: [
-          { path: '', title: 'Events · RSVP', loadComponent: () => import('./dashboard') },
+          { path: '', title: 'titles.events', loadComponent: () => import('./dashboard') },
           {
             path: 'events/:id',
-            title: 'Edit event · RSVP',
+            title: 'titles.editEvent',
             loadComponent: () => import('./event-editor'),
             canDeactivate: [(editor: EventEditor) => editor.canLeave()],
           },
           {
             path: 'events/:id/rsvps',
-            title: 'Replies · RSVP',
+            title: 'titles.replies',
             loadComponent: () => import('./rsvp-list'),
           },
         ],

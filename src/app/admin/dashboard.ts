@@ -1,5 +1,7 @@
 import { Component, computed, inject, resource, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { DEFAULT_WORDING, I18n, isLanguage, LOCALES } from '../i18n';
 import { SUPABASE } from '../supabase';
 import { AdminUi, copiedState } from './ui';
 
@@ -16,40 +18,36 @@ interface EventItem {
   total: number;
 }
 
-const shortDate = new Intl.DateTimeFormat(undefined, {
-  timeZone: 'UTC',
-  weekday: 'short',
-  day: 'numeric',
-  month: 'short',
-  year: 'numeric',
-});
-
 @Component({
   selector: 'app-dashboard',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   template: `
     <main class="mx-auto flex max-w-[1120px] flex-col gap-5 px-4 pt-7 pb-16">
       <div class="flex items-center justify-between gap-3">
-        <h1 class="text-2xl leading-tight font-semibold">Events</h1>
+        <h1 class="text-2xl leading-tight font-semibold">
+          {{ 'admin.dashboard.title' | translate }}
+        </h1>
         <button type="button" class="btn btn-primary" [disabled]="creating()" (click)="newEvent()">
-          + New event
+          {{ 'admin.dashboard.newEvent' | translate }}
         </button>
       </div>
 
       @if (events.isLoading() && !events.hasValue()) {
-        <p class="text-muted" role="status">Loading events…</p>
+        <p class="text-muted" role="status">{{ 'admin.dashboard.loading' | translate }}</p>
       } @else if (events.error()) {
         <div class="panel flex flex-col items-start gap-3 p-6">
-          <p>Couldn't load events. Check your connection.</p>
-          <button type="button" class="btn" (click)="events.reload()">Try again</button>
+          <p>{{ 'admin.dashboard.loadError' | translate }}</p>
+          <button type="button" class="btn" (click)="events.reload()">
+            {{ 'common.tryAgain' | translate }}
+          </button>
         </div>
       } @else if (items().length === 0) {
         <div
           class="flex flex-col items-center gap-3 rounded-[10px] border border-dashed border-line-strong bg-white px-6 py-18 text-center"
         >
-          <h2 class="text-[17px] font-semibold">No events yet</h2>
+          <h2 class="text-[17px] font-semibold">{{ 'admin.dashboard.emptyTitle' | translate }}</h2>
           <p class="max-w-[360px] text-muted">
-            Create an event to get a link you can share with guests.
+            {{ 'admin.dashboard.emptyBody' | translate }}
           </p>
           <button
             type="button"
@@ -57,7 +55,7 @@ const shortDate = new Intl.DateTimeFormat(undefined, {
             [disabled]="creating()"
             (click)="newEvent()"
           >
-            + New event
+            {{ 'admin.dashboard.newEvent' | translate }}
           </button>
         </div>
       } @else {
@@ -66,9 +64,14 @@ const shortDate = new Intl.DateTimeFormat(undefined, {
           <div
             class="grid grid-cols-[minmax(0,2.4fr)_140px_52px_56px_48px_56px_60px_270px] items-center gap-3 border-b border-line px-5 py-2.5 text-xs font-medium text-muted"
           >
-            <span>Event</span><span>Date</span><span class="text-right">Yes</span>
-            <span class="text-right">Maybe</span><span class="text-right">No</span>
-            <span class="text-right">Total</span><span>Active</span><span></span>
+            <span>{{ 'admin.dashboard.columns.event' | translate }}</span>
+            <span>{{ 'admin.dashboard.columns.date' | translate }}</span>
+            <span class="text-right">{{ 'admin.dashboard.columns.yes' | translate }}</span>
+            <span class="text-right">{{ 'admin.dashboard.columns.maybe' | translate }}</span>
+            <span class="text-right">{{ 'admin.dashboard.columns.no' | translate }}</span>
+            <span class="text-right">{{ 'admin.dashboard.columns.total' | translate }}</span>
+            <span>{{ 'admin.dashboard.columns.active' | translate }}</span>
+            <span></span>
           </div>
           @for (e of items(); track e.id) {
             <div
@@ -90,15 +93,19 @@ const shortDate = new Intl.DateTimeFormat(undefined, {
                 role="switch"
                 class="switch"
                 [attr.aria-checked]="e.active"
-                [attr.aria-label]="'Accepting replies for ' + e.title"
+                [attr.aria-label]="'admin.dashboard.switchLabel' | translate: { title: e.title }"
                 (click)="toggle(e)"
               ></button>
               <div class="flex justify-end gap-1.5">
                 <button type="button" class="btn btn-sm min-w-[88px]" (click)="copy(e)">
-                  {{ copied.copied() === e.id ? 'Copied ✓' : 'Copy link' }}
+                  {{ (copied.copied() === e.id ? 'admin.copied' : 'admin.copyLink') | translate }}
                 </button>
-                <a class="btn btn-sm" [routerLink]="['events', e.id, 'rsvps']">View RSVPs</a>
-                <a class="btn btn-sm" [routerLink]="['events', e.id]">Edit</a>
+                <a class="btn btn-sm" [routerLink]="['events', e.id, 'rsvps']">{{
+                  'admin.dashboard.viewRsvps' | translate
+                }}</a>
+                <a class="btn btn-sm" [routerLink]="['events', e.id]">{{
+                  'admin.dashboard.edit' | translate
+                }}</a>
               </div>
             </div>
           }
@@ -122,19 +129,25 @@ const shortDate = new Intl.DateTimeFormat(undefined, {
                   role="switch"
                   class="switch -mt-2 -mr-2"
                   [attr.aria-checked]="e.active"
-                  [attr.aria-label]="'Accepting replies for ' + e.title"
+                  [attr.aria-label]="'admin.dashboard.switchLabel' | translate: { title: e.title }"
                   (click)="toggle(e)"
                 ></button>
               </div>
               <span class="font-mono text-[13px] font-medium">
-                {{ e.yes }} Yes · {{ e.maybe }} Maybe · {{ e.no }} No
+                {{
+                  'admin.dashboard.summary' | translate: { yes: e.yes, maybe: e.maybe, no: e.no }
+                }}
               </span>
               <div class="grid grid-cols-3 gap-1.5">
                 <button type="button" class="btn btn-sm h-11" (click)="copy(e)">
-                  {{ copied.copied() === e.id ? 'Copied ✓' : 'Copy link' }}
+                  {{ (copied.copied() === e.id ? 'admin.copied' : 'admin.copyLink') | translate }}
                 </button>
-                <a class="btn btn-sm h-11" [routerLink]="['events', e.id, 'rsvps']">RSVPs</a>
-                <a class="btn btn-sm h-11" [routerLink]="['events', e.id]">Edit</a>
+                <a class="btn btn-sm h-11" [routerLink]="['events', e.id, 'rsvps']">{{
+                  'admin.dashboard.rsvps' | translate
+                }}</a>
+                <a class="btn btn-sm h-11" [routerLink]="['events', e.id]">{{
+                  'admin.dashboard.edit' | translate
+                }}</a>
               </div>
             </div>
           }
@@ -147,6 +160,8 @@ export default class Dashboard {
   private readonly supabase = inject(SUPABASE);
   private readonly router = inject(Router);
   private readonly ui = inject(AdminUi);
+  private readonly i18n = inject(I18n);
+  private readonly translate = inject(TranslateService);
 
   protected readonly copied = copiedState();
   protected readonly creating = signal(false);
@@ -164,10 +179,18 @@ export default class Dashboard {
 
   protected readonly items = computed<EventItem[]>(() => {
     const today = new Date().toLocaleDateString('en-CA'); // local YYYY-MM-DD
+    const lang = this.i18n.current();
+    const shortDate = new Intl.DateTimeFormat(LOCALES[isLanguage(lang) ? lang : 'en'], {
+      timeZone: 'UTC',
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
     return (this.events.hasValue() ? this.events.value() : []).map((e) => ({
       id: e.id ?? '',
       slug: e.slug ?? '',
-      title: e.title || 'Untitled event',
+      title: e.title || (this.translate.instant('common.untitled') as string),
       date: e.event_date ? shortDate.format(new Date(`${e.event_date}T00:00:00Z`)) : '',
       past: !!e.event_date && e.event_date < today,
       active: !!e.is_active,
@@ -191,29 +214,37 @@ export default class Dashboard {
       .eq('id', item.id);
     if (error) {
       setActive(!active);
-      this.ui.toast("Couldn't update the event. Try again.");
+      this.ui.toast('admin.dashboard.updateFailed');
       return;
     }
-    this.ui.toast(active ? 'Replies open.' : 'Replies closed. The link now shows “not available”.');
+    this.ui.toast(active ? 'admin.dashboard.opened' : 'admin.dashboard.closed');
   }
 
   protected async copy(item: EventItem): Promise<void> {
     if (await this.ui.copy(this.ui.eventUrl(item.slug))) this.copied.mark(item.id);
   }
 
-  /** Creates an inactive event with the database defaults, then opens it in the editor. */
+  /**
+   * Creates an inactive event in the admin's current language (with that language's
+   * default wording), then opens it in the editor.
+   */
   protected async newEvent(): Promise<void> {
     const taken = new Set(this.items().map((e) => e.slug));
     let slug = 'new-event';
     for (let n = 2; taken.has(slug); n++) slug = `new-event-${n}`;
     const inAMonth = new Date(Date.now() + 30 * 86_400_000).toLocaleDateString('en-CA');
 
+    const current = this.i18n.current();
+    const language = isLanguage(current) ? current : 'en';
+
     this.creating.set(true);
     const { data, error } = await this.supabase
       .from('events')
       .insert({
         slug,
-        title: 'New event',
+        title: this.translate.instant('admin.dashboard.newEventTitle') as string,
+        language,
+        ...DEFAULT_WORDING[language],
         event_date: inAMonth,
         start_time: '18:00',
         end_time: '21:00',
@@ -223,10 +254,10 @@ export default class Dashboard {
     this.creating.set(false);
 
     if (error) {
-      this.ui.toast("Couldn't create the event. Try again.");
+      this.ui.toast('admin.dashboard.createFailed');
       return;
     }
-    this.ui.toast('Event created. It stays inactive until you switch replies on.');
+    this.ui.toast('admin.dashboard.created');
     await this.router.navigate(['/admin/events', data.id]);
   }
 }

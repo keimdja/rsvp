@@ -11,7 +11,9 @@ import {
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import NotFound from '../not-found';
-import { RESPONSE_LABELS, SUPABASE, type PublicEvent } from '../supabase';
+import { TranslatePipe } from '@ngx-translate/core';
+import { I18n, isLanguage } from '../i18n';
+import { RESPONSES, type RsvpResponse, SUPABASE, type PublicEvent } from '../supabase';
 import { NEUTRAL_STYLE, resolveTheme } from '../theme';
 import { Invite } from './invite';
 import { RsvpConfirmation } from './rsvp-confirmation';
@@ -32,7 +34,7 @@ function readReply(slug: string): SavedReply | null {
       typeof reply?.token === 'string' &&
       typeof reply.guest_name === 'string' &&
       typeof reply.notes === 'string' &&
-      reply.response in RESPONSE_LABELS;
+      RESPONSES.includes(reply.response as RsvpResponse);
     return valid ? reply : null;
   } catch {
     return null; // storage blocked (private mode, in-app browser) or corrupt
@@ -57,11 +59,11 @@ const KNOWN_PROBLEMS = new Set<string>([
 /** Public RSVP page at /:slug. */
 @Component({
   selector: 'app-rsvp-page',
-  imports: [Invite, NotFound, RsvpConfirmation, RsvpForm],
+  imports: [Invite, NotFound, RsvpConfirmation, RsvpForm, TranslatePipe],
   template: `
     @if (event.status() === 'loading') {
       <div class="rsvp-page min-h-dvh" [style]="neutralStyle" aria-busy="true">
-        <p role="status" class="sr-only">Loading invitation…</p>
+        <p role="status" class="sr-only">{{ 'guest.loading' | translate }}</p>
         <div
           aria-hidden="true"
           class="mx-auto flex max-w-[600px] flex-col gap-4 p-4 md:max-w-[560px] md:gap-5 md:px-0 md:pt-16"
@@ -105,11 +107,11 @@ const KNOWN_PROBLEMS = new Set<string>([
       </app-invite>
     } @else if (event.error()) {
       <app-not-found
-        heading="We couldn't load this invitation"
-        message="Check your connection and try again."
+        [heading]="'guest.loadErrorTitle' | translate"
+        [message]="'guest.loadErrorMessage' | translate"
       >
         <button type="button" class="rsvp-link min-h-11 self-start" (click)="event.reload()">
-          Try again
+          {{ 'common.tryAgain' | translate }}
         </button>
       </app-not-found>
     } @else {
@@ -123,6 +125,7 @@ export default class RsvpPage {
   private readonly supabase = inject(SUPABASE);
   private readonly document = inject(DOCUMENT);
   private readonly title = inject(Title);
+  private readonly i18n = inject(I18n);
 
   protected readonly neutralStyle = NEUTRAL_STYLE;
   protected readonly pageUrl = this.document.location.href.split(/[?#]/)[0];
@@ -134,6 +137,8 @@ export default class RsvpPage {
         .rpc('get_public_event', { p_slug: params.slug })
         .maybeSingle();
       if (error) throw error;
+      // Load the event's language before rendering, so labels never flash untranslated.
+      if (data) await this.i18n.load(isLanguage(data.language) ? data.language : 'en');
       return data;
     },
   });
@@ -149,7 +154,10 @@ export default class RsvpPage {
   protected readonly problem = signal<RsvpProblem | null>(null);
 
   constructor() {
-    effect(() => this.title.setTitle(this.current()?.title ?? 'RSVP'));
+    effect(() => {
+      const title = this.current()?.title;
+      if (title) this.title.setTitle(title);
+    });
   }
 
   protected async submit({ draft, bot }: RsvpSubmission): Promise<void> {
