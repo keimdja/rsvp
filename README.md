@@ -15,10 +15,11 @@ Angular (standalone components, signals, zoneless) · TypeScript · Tailwind CSS
 
 ```text
 src/app/
-  app.routes.ts          /admin (lazy), /:slug (lazy), everything else → "not available"
+  app.routes.ts          / (landing), /admin (lazy), /:slug (lazy), anything else → "not available"
   supabase.ts            the single Supabase client, image URLs, row types
   database.types.ts      generated from the live schema (npm run db:types)
   theme.ts               event theme model, presets, validation, CSS variables, contrast
+  home.ts                landing page: guests paste their link or code, hosts go to sign in
   not-found.ts
   guest/                 public RSVP page: layout, form, confirmation, calendar links
   admin/                 login, dashboard, event editor + live preview, replies, CSV
@@ -58,12 +59,12 @@ Requires Node 22+.
 
 `npm start` and `npm run build` run `scripts/write-env.mjs` first, which writes the gitignored `src/environments/environment.ts`.
 
-| Script               | What it does                                                    |
-| -------------------- | --------------------------------------------------------------- |
-| `npm start`          | Dev server on port 4200                                         |
-| `npm run build`      | Production build into `dist/rsvp/browser` (base href `/rsvp/`)  |
-| `npm test`           | Unit tests (theme, calendar and time zones, CSV)                |
-| `npm run db:types`   | Regenerates `src/app/database.types.ts` from the linked project |
+| Script             | What it does                                                    |
+| ------------------ | --------------------------------------------------------------- |
+| `npm start`        | Dev server on port 4200                                         |
+| `npm run build`    | Production build into `dist/rsvp/browser` (base href `/rsvp/`)  |
+| `npm test`         | Unit tests (theme, calendar and time zones, CSV)                |
+| `npm run db:types` | Regenerates `src/app/database.types.ts` from the linked project |
 
 > Never put the service-role or secret key in `.env`, the repo or CI. The app only ever needs the publishable key; row level security does the rest.
 
@@ -102,11 +103,11 @@ The project is created with **Automatically expose new tables** off and **Automa
 
 ### Who can do what
 
-| Who | Can do |
-| --- | --- |
-| Guest (no account) | Call `get_public_event(slug)` for one active event, and `submit_rsvp(...)` to create or edit their own reply. No table access at all. |
-| Signed-in, not an admin | Nothing beyond reading their own `admins` row (which doesn't exist). |
-| Admin | Full access to events and replies; upload, replace and delete event images. |
+| Who                     | Can do                                                                                                                                |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Guest (no account)      | Call `get_public_event(slug)` for one active event, and `submit_rsvp(...)` to create or edit their own reply. No table access at all. |
+| Signed-in, not an admin | Nothing beyond reading their own `admins` row (which doesn't exist).                                                                  |
+| Admin                   | Full access to events and replies; upload, replace and delete event images.                                                           |
 
 Admins are added only in the SQL editor; there is no policy that lets anyone add themselves.
 
@@ -127,7 +128,7 @@ One-time repo setup:
 
 The workflow builds with the base href, copies `index.html` to `404.html` so deep links like `/rsvp/maya-6` survive a refresh, and adds `.nojekyll`.
 
-Live URLs: `https://<github-user>.github.io/rsvp/<slug>` for guests and `https://<github-user>.github.io/rsvp/admin` for admins.
+Live URLs: `https://<github-user>.github.io/rsvp/<slug>` for guests and `https://<github-user>.github.io/rsvp/admin` for admins. The site root, `https://<github-user>.github.io/rsvp/`, is a landing page where a guest can paste their invitation link or code, and hosts can follow a link to sign in.
 
 ### Keep-alive ping
 

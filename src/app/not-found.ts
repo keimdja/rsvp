@@ -19,18 +19,22 @@ import { DEFAULT_THEME, fontStylesheetUrl, loadStylesheet, NEUTRAL_STYLE } from 
         ?
       </div>
       <h1 class="rsvp-heading text-[calc(28px*var(--rsvp-scale))] leading-[1.15] text-balance">
-        {{ heading() }}
+        {{ heading() ?? defaultHeading }}
       </h1>
-      <p class="text-pretty text-rsvp-muted">{{ message() }}</p>
+      <p class="text-pretty text-rsvp-muted">{{ message() ?? defaultMessage }}</p>
       <ng-content />
     </main>
   `,
 })
 export default class NotFound {
-  readonly heading = input("This RSVP page isn't available");
-  readonly message = input(
-    'The link may be mistyped, or the host has closed replies for this event. If you think this is a mistake, contact the person who invited you.',
-  );
+  // Optional with template fallbacks: as a route component, router input binding sets
+  // inputs that have no matching route param to undefined, which would erase defaults.
+  readonly heading = input<string>();
+  readonly message = input<string>();
+
+  protected readonly defaultHeading = "This RSVP page isn't available";
+  protected readonly defaultMessage =
+    'The link may be mistyped, or the host has closed replies for this event. If you think this is a mistake, contact the person who invited you.';
 
   protected readonly style = NEUTRAL_STYLE;
 
