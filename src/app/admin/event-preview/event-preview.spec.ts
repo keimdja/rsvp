@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { provideTranslateService, TranslateLoader } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import en from '../../../public/i18n/en.json';
-import type { PublicEvent } from '../api/models';
-import { PublicApi } from '../api/public-api';
-import { DEFAULT_THEME } from '../theme';
+import en from '../../../../public/i18n/en.json';
+import type { PublicEvent } from '../../api/models';
+import { PublicApi } from '../../api/public-api';
+import { DEFAULT_THEME } from '../../theme';
 import { EventPreview } from './event-preview';
 
 const event: PublicEvent = {

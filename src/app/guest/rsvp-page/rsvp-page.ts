@@ -10,21 +10,21 @@ import {
   signal,
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import NotFound from '../not-found';
+import NotFound from '../../not-found/not-found';
 import { TranslatePipe } from '@ngx-translate/core';
-import { I18n, isLanguage } from '../i18n';
+import { I18n, isLanguage } from '../../i18n';
 import {
   ApiError,
   type PublicEvent,
   type ReplyInput,
   RESPONSES,
   type RsvpResponse,
-} from '../api/models';
-import { PublicApi } from '../api/public-api';
-import { NEUTRAL_STYLE, resolveTheme } from '../theme';
-import { Invite } from './invite';
-import { RsvpConfirmation } from './rsvp-confirmation';
-import { RsvpForm, type RsvpProblem, type RsvpSubmission } from './rsvp-form';
+} from '../../api/models';
+import { PublicApi } from '../../api/public-api';
+import { NEUTRAL_STYLE, resolveTheme } from '../../theme';
+import { Invite } from '../invite/invite';
+import { RsvpConfirmation } from '../rsvp-confirmation/rsvp-confirmation';
+import { RsvpForm, type RsvpProblem, type RsvpSubmission } from '../rsvp-form/rsvp-form';
 
 /** A guest's reply, kept in their browser so "Change my reply" can edit it. */
 interface SavedReply extends ReplyInput {
@@ -67,64 +67,7 @@ const KNOWN_PROBLEMS = new Set<string>([
 @Component({
   selector: 'app-rsvp-page',
   imports: [Invite, NotFound, RsvpConfirmation, RsvpForm, TranslatePipe],
-  template: `
-    @if (event.status() === 'loading') {
-      <div class="rsvp-page min-h-dvh" [style]="neutralStyle" aria-busy="true">
-        <p role="status" class="sr-only">{{ 'guest.loading' | translate }}</p>
-        <div
-          aria-hidden="true"
-          class="mx-auto flex max-w-[600px] flex-col gap-4 p-4 md:max-w-[560px] md:gap-5 md:px-0 md:pt-16"
-        >
-          <div class="aspect-4/5 w-full rounded-[20px] bg-rsvp-skel"></div>
-          <div class="flex flex-col gap-6 rounded-[20px] bg-rsvp-surface px-[22px] py-[30px]">
-            <div class="h-[34px] w-[72%] rounded-lg bg-rsvp-skel"></div>
-            <div class="flex flex-col gap-2.5">
-              <div class="h-3.5 w-[58%] rounded-md bg-rsvp-skel"></div>
-              <div class="h-3.5 w-[40%] rounded-md bg-rsvp-skel"></div>
-            </div>
-            <div class="h-[52px] rounded-xl bg-rsvp-skel"></div>
-            <div class="grid grid-cols-3 gap-2">
-              <div class="h-16 rounded-xl bg-rsvp-skel"></div>
-              <div class="h-16 rounded-xl bg-rsvp-skel"></div>
-              <div class="h-16 rounded-xl bg-rsvp-skel"></div>
-            </div>
-            <div class="h-14 rounded-xl bg-rsvp-skel"></div>
-          </div>
-        </div>
-      </div>
-    } @else if (current(); as ev) {
-      <app-invite [event]="ev" [theme]="theme()">
-        @if (showConfirmation() && saved(); as reply) {
-          <app-rsvp-confirmation
-            [event]="ev"
-            [reply]="reply"
-            [pageUrl]="pageUrl"
-            [focusOnShow]="justSent()"
-            (edit)="editing.set(true)"
-          />
-        } @else {
-          <app-rsvp-form
-            [event]="ev"
-            [initial]="saved()"
-            [pending]="pending()"
-            [problem]="problem()"
-            (send)="submit($event)"
-          />
-        }
-      </app-invite>
-    } @else if (event.error()) {
-      <app-not-found
-        [heading]="'guest.loadErrorTitle' | translate"
-        [message]="'guest.loadErrorMessage' | translate"
-      >
-        <button type="button" class="rsvp-link min-h-11 self-start" (click)="event.reload()">
-          {{ 'common.tryAgain' | translate }}
-        </button>
-      </app-not-found>
-    } @else {
-      <app-not-found />
-    }
-  `,
+  templateUrl: './rsvp-page.html',
 })
 export default class RsvpPage {
   readonly slug = input.required<string>();

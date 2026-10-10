@@ -1,11 +1,11 @@
 import { Component, computed, DOCUMENT, inject, input, resource, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { I18n, isLanguage, LOCALES } from '../i18n';
-import { AdminApi } from '../api/admin-api';
-import { RESPONSES, type RsvpResponse } from '../api/models';
-import { toCsv } from './csv';
-import { AdminUi, copiedState } from './ui';
+import { I18n, isLanguage, LOCALES } from '../../i18n';
+import { AdminApi } from '../../api/admin-api';
+import { RESPONSES, type RsvpResponse } from '../../api/models';
+import { toCsv } from '../csv';
+import { AdminUi, copiedState } from '../ui';
 
 type Filter = 'all' | RsvpResponse;
 
@@ -19,162 +19,7 @@ function csvDate(iso: string): string {
 @Component({
   selector: 'app-rsvp-list',
   imports: [RouterLink, TranslatePipe],
-  template: `
-    <main class="mx-auto flex max-w-[1120px] flex-col gap-[18px] px-4 pt-6 pb-16">
-      @if (data.isLoading() && !data.hasValue()) {
-        <p class="text-muted" role="status">{{ 'admin.list.loading' | translate }}</p>
-      } @else if (data.error()) {
-        <div class="panel flex flex-col items-start gap-3 p-6">
-          <p>{{ 'admin.list.loadError' | translate }}</p>
-          <button type="button" class="btn" (click)="data.reload()">
-            {{ 'common.tryAgain' | translate }}
-          </button>
-        </div>
-      } @else if (event(); as ev) {
-        <div class="flex flex-wrap items-end justify-between gap-3">
-          <div class="flex min-w-0 flex-col gap-1.5">
-            <a routerLink="/admin" class="text-[13px] text-muted">{{
-              'common.back' | translate
-            }}</a>
-            <h1 class="text-2xl leading-tight font-semibold">{{ ev.title }}</h1>
-            <span class="font-mono text-[15px] font-medium">
-              {{ 'admin.dashboard.summary' | translate: counts() }}
-            </span>
-          </div>
-          <div class="flex gap-2">
-            <a class="btn hidden wide:inline-flex" [routerLink]="['/admin/events', ev.id]">{{
-              'admin.list.editEvent' | translate
-            }}</a>
-            <button type="button" class="btn hidden wide:inline-flex" (click)="copyLink(ev.slug)">
-              {{ (copied.copied() ? 'admin.copied' : 'admin.copyLink') | translate }}
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              [disabled]="!all().length"
-              (click)="exportCsv(ev.slug)"
-            >
-              {{ 'admin.list.exportCsv' | translate }}
-            </button>
-          </div>
-        </div>
-
-        <div class="flex flex-wrap items-center justify-between gap-2.5">
-          <div
-            role="group"
-            [attr.aria-label]="'admin.list.filterLabel' | translate"
-            class="flex max-w-full min-w-0 gap-1.5 overflow-x-auto"
-          >
-            @for (chip of chips(); track chip.value) {
-              <button
-                type="button"
-                class="h-10 shrink-0 cursor-pointer rounded-full border px-3.5 font-medium whitespace-nowrap"
-                [class]="
-                  filter() === chip.value
-                    ? 'border-ink bg-ink text-white'
-                    : 'border-[#d6d5d0] bg-white text-ink'
-                "
-                [attr.aria-pressed]="filter() === chip.value"
-                (click)="filter.set(chip.value)"
-              >
-                {{ chip.label | translate }}
-                <span class="font-mono opacity-75">{{ chip.count }}</span>
-              </button>
-            }
-          </div>
-          <input
-            #searchBox
-            type="search"
-            class="input max-w-[320px] flex-[1_1_220px] text-base!"
-            [placeholder]="'admin.list.searchPlaceholder' | translate"
-            [attr.aria-label]="'admin.list.searchLabel' | translate"
-            [value]="search()"
-            (input)="search.set(searchBox.value)"
-          />
-        </div>
-
-        <!-- Wide screens: table -->
-        <div class="panel hidden overflow-hidden wide:block">
-          <div
-            class="grid grid-cols-[minmax(0,1.3fr)_100px_minmax(0,2fr)_150px_72px] gap-4 border-b border-line px-5 py-2.5 text-xs font-medium text-muted"
-          >
-            <span>{{ 'admin.list.columns.name' | translate }}</span>
-            <span>{{ 'admin.list.columns.response' | translate }}</span>
-            <span>{{ 'admin.list.columns.notes' | translate }}</span>
-            <span>{{ 'admin.list.columns.submitted' | translate }}</span>
-            <span></span>
-          </div>
-          @for (r of rows(); track r.id) {
-            <div
-              class="grid grid-cols-[minmax(0,1.3fr)_100px_minmax(0,2fr)_150px_72px] items-center gap-4 border-b border-[#efeeea] px-5 py-3 last:border-b-0 hover:bg-[#fafaf8]"
-            >
-              <span class="font-medium break-words">{{ r.guest_name }}</span>
-              <span
-                ><span class="badge" [class]="'badge-' + r.response">{{
-                  'response.' + r.response | translate
-                }}</span></span
-              >
-              <span class="text-pretty break-words" [class.text-faint]="!r.notes">{{
-                r.notes || '—'
-              }}</span>
-              <span class="font-mono text-[13px] text-muted">{{ r.when }}</span>
-              <button
-                type="button"
-                class="btn btn-sm border-transparent bg-transparent text-danger hover:border-[#e8c9c5] hover:bg-[#fbf3f2]"
-                [attr.aria-label]="'admin.list.deleteLabel' | translate: { name: r.guest_name }"
-                (click)="remove(r)"
-              >
-                {{ 'admin.list.delete' | translate }}
-              </button>
-            </div>
-          }
-          @if (emptyMessage()) {
-            <p class="p-10 text-center text-muted">
-              {{ emptyMessage() | translate: { query: search().trim() } }}
-            </p>
-          }
-        </div>
-
-        <!-- Phones: one card per guest -->
-        <div class="flex flex-col gap-2 wide:hidden">
-          @for (r of rows(); track r.id) {
-            <div class="panel flex flex-col gap-1.5 px-3.5 pt-3 pb-1">
-              <div class="flex items-center justify-between gap-2">
-                <span class="text-[15px] font-semibold break-words">{{ r.guest_name }}</span>
-                <span class="badge" [class]="'badge-' + r.response">{{
-                  'response.' + r.response | translate
-                }}</span>
-              </div>
-              <span class="text-pretty break-words" [class.text-faint]="!r.notes">{{
-                r.notes || '—'
-              }}</span>
-              <div class="flex items-center justify-between">
-                <span class="font-mono text-xs text-muted">{{ r.when }}</span>
-                <button
-                  type="button"
-                  class="h-11 cursor-pointer pr-1 pl-3 text-danger"
-                  [attr.aria-label]="'admin.list.deleteLabel' | translate: { name: r.guest_name }"
-                  (click)="remove(r)"
-                >
-                  {{ 'admin.list.delete' | translate }}
-                </button>
-              </div>
-            </div>
-          }
-          @if (emptyMessage()) {
-            <p class="panel p-8 text-center text-muted">
-              {{ emptyMessage() | translate: { query: search().trim() } }}
-            </p>
-          }
-        </div>
-      } @else {
-        <div class="panel flex flex-col items-start gap-3 p-6">
-          <p>{{ 'admin.list.missing' | translate }}</p>
-          <a routerLink="/admin" class="btn">{{ 'common.back' | translate }}</a>
-        </div>
-      }
-    </main>
-  `,
+  templateUrl: './rsvp-list.html',
 })
 export default class RsvpList {
   readonly id = input.required<string>();

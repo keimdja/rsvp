@@ -1,0 +1,18 @@
+<div
+  role="group"
+  [class]="appearance() === 'guest' ? 'rsvp-lang' : 'segmented'"
+  [attr.aria-label]="'common.language' | translate"
+>
+  @for (lang of languages; track lang) {
+    <button
+      type="button"
+      class="uppercase"
+      [attr.lang]="lang"
+      [attr.aria-label]="'common.languages.' + lang | translate"
+      [attr.aria-pressed]="(current() ?? i18n.current()) === lang"
+      (click)="i18n.use(lang, true)"
+    >
+      {{ lang }}
+    </button>
+  }
+</div>

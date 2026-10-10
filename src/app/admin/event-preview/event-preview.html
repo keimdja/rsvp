@@ -1,0 +1,38 @@
+<div class="flex items-center justify-between gap-2 px-4 wide:px-0">
+  <h2 class="font-semibold">{{ 'admin.preview.title' | translate }}</h2>
+  <div class="segmented">
+    @for (s of states; track s) {
+      <button type="button" [attr.aria-pressed]="state() === s" (click)="state.set(s)">
+        {{ 'admin.preview.states.' + s | translate }}
+      </button>
+    }
+  </div>
+</div>
+
+@if (!active()) {
+  <p role="status" class="warning mx-4 wide:mx-0">
+    <span aria-hidden="true" class="font-bold">!</span>{{ 'admin.preview.inactive' | translate }}
+  </p>
+}
+
+<div
+  class="wide:box-content wide:h-[min(720px,calc(100dvh-160px))] wide:w-[346px] wide:self-center wide:overflow-hidden wide:rounded-[36px] wide:border-8 wide:border-ink wide:bg-black"
+>
+  <div class="wide:h-full wide:overflow-x-hidden wide:overflow-y-auto">
+    <div
+      class="wide:w-[375px] wide:[--rsvp-screen:calc(min(720px,100dvh-160px)/0.9227)] wide:[zoom:0.9227]"
+    >
+      <!-- Always the invite, even while replies are off: the host is still building it. -->
+      <app-invite framed [event]="event()" [theme]="theme()">
+        @switch (state()) {
+          @case ('sent') {
+            <app-rsvp-confirmation [event]="event()" [reply]="sample" [pageUrl]="pageUrl()" />
+          }
+          @default {
+            <app-rsvp-form [event]="event()" [showErrors]="state() === 'errors'" />
+          }
+        }
+      </app-invite>
+    </div>
+  </div>
+</div>

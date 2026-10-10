@@ -17,7 +17,10 @@ Angular (standalone components, signals, zoneless) · TypeScript · Tailwind CSS
 
 ```text
 src/app/
+  app.ts + app.html      root component (router outlet)
   app.routes.ts          / (landing), /admin (lazy), /:slug (lazy), anything else → "not available"
+  i18n.ts                languages, translation loading, title strategy
+  theme.ts               event theme model, presets, validation, CSS variables, contrast
   api/                   the only code that talks to Supabase (see "API")
     public-api.ts        guest endpoints: get an event, send a reply, image URLs
     admin-api.ts         admin endpoints: events, replies, image upload and removal
@@ -25,14 +28,24 @@ src/app/
     models.ts            data shapes and ApiError, used by the rest of the app
     supabase.ts          the client and response handling (internal)
     database.types.ts    generated from the live schema (npm run db:types)
-  theme.ts               event theme model, presets, validation, CSS variables, contrast
-  home.ts                landing page: guests paste their link or code, hosts go to sign in
-  not-found.ts
-  guest/                 public RSVP page: layout, form, confirmation, calendar links
-  admin/                 login, dashboard, event editor + live preview, replies, CSV
+  home/                  landing page: guests paste their link or code, hosts go to sign in
+  not-found/  logo/  language-switch/
+  guest/
+    rsvp-page/           the public page: loads the event, saved reply, submit, states
+    invite/              themed layout and details (also the admin's live preview)
+    rsvp-form/  rsvp-confirmation/
+    calendar.ts          time zones, date formatting, Google/Outlook/.ics
+  admin/
+    admin-shell/  login/  dashboard/  event-editor/  look-editor/  event-preview/  rsvp-list/
+    admin.routes.ts  auth.ts  ui.ts  csv.ts
+```
+
+Each component has its own folder with `<name>.ts` (logic) and `<name>.html` (template), plus `<name>.spec.ts` when it has tests.
+
+```text
 src/styles.css           Tailwind entry, event theme tokens, admin UI classes
 supabase/
-  migrations/            schema, grants, RLS, functions, storage bucket and policies
+  migrations/            schema, grants, RLS, the API functions, storage bucket and policies
   seed.sql               two demo events (birthday, wedding) with sample replies
   tests/security_checks.sql
 scripts/write-env.mjs    writes src/environments/environment.ts from .env or CI variables

@@ -1,0 +1,351 @@
+@let t = theme();
+<div class="flex max-w-[640px] flex-col gap-[30px]">
+  <section class="flex flex-col gap-2.5">
+    <h3 class="font-semibold">{{ 'admin.look.presets' | translate }}</h3>
+    <div class="flex flex-wrap gap-1.5">
+      @for (p of presets; track p.key) {
+        <button type="button" class="btn btn-sm rounded-full pl-2" (click)="applyPreset(p.key)">
+          <span
+            aria-hidden="true"
+            class="size-[18px] rounded-full"
+            [style.background]="
+              'linear-gradient(135deg, ' +
+              p.theme.colors.primary +
+              ' 50%, ' +
+              p.theme.colors.accent +
+              ' 50%)'
+            "
+          ></span>
+          {{ 'admin.look.presetNames.' + p.key | translate }}
+        </button>
+      }
+    </div>
+  </section>
+
+  <section class="flex flex-col gap-2.5">
+    <h3 class="font-semibold">{{ 'admin.look.layout' | translate }}</h3>
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2.5">
+      @for (l of layouts; track l) {
+        @let on = t.layout === l;
+        <button
+          type="button"
+          class="flex cursor-pointer items-center gap-3.5 rounded-[10px] bg-white p-3 text-left"
+          [class]="on ? 'border-2 border-ink' : 'm-px border border-line'"
+          [attr.aria-pressed]="on"
+          (click)="setLayout(l)"
+        >
+          <span
+            aria-hidden="true"
+            class="relative h-16 w-11 shrink-0 overflow-hidden rounded bg-track"
+          >
+            @if (l === 'card') {
+              <span class="absolute inset-x-1.5 top-[5px] h-[22px] rounded-xs bg-[#bdbcb6]"></span>
+              <span class="absolute inset-x-1.5 top-[30px] bottom-[5px] rounded-xs bg-white"></span>
+            } @else {
+              <span class="absolute inset-x-0 top-0 h-10 bg-[#bdbcb6]"></span>
+              <span class="absolute inset-x-1 top-[34px] bottom-0 rounded-t-xs bg-white"></span>
+            }
+          </span>
+          <span class="flex flex-col gap-0.5">
+            <span class="font-semibold">{{ 'admin.look.layouts.' + l | translate }}</span>
+            <span class="hint">{{ 'admin.look.layouts.' + l + 'Hint' | translate }}</span>
+          </span>
+        </button>
+      }
+    </div>
+  </section>
+
+  <section class="flex flex-col gap-2.5">
+    <h3 class="font-semibold">{{ 'admin.look.colors' | translate }}</h3>
+    <div class="panel flex flex-col">
+      @for (row of colorRows(); track row.key) {
+        <div class="flex flex-col gap-2 border-b border-[#efeeea] px-3.5 py-3 last:border-b-0">
+          <div class="grid grid-cols-[40px_minmax(0,1fr)_104px] items-center gap-3">
+            <ng-container
+              [ngTemplateOutlet]="picker"
+              [ngTemplateOutletContext]="{ key: row.key }"
+            />
+            <span class="flex min-w-0 flex-col">
+              <span class="font-medium">{{ 'admin.look.colorNames.' + row.key | translate }}</span>
+              <span class="text-xs text-muted">{{ row.hint }}</span>
+            </span>
+            <ng-container [ngTemplateOutlet]="hex" [ngTemplateOutletContext]="{ key: row.key }" />
+          </div>
+          <div class="flex justify-between gap-2 pl-[52px] text-xs">
+            <span class="text-muted">{{ row.check }}</span>
+            <span class="font-mono font-medium" [class]="row.ok ? 'text-yes' : 'text-danger'">
+              {{ row.ratio }}
+            </span>
+          </div>
+          @if (row.warning) {
+            <p role="alert" class="warning ml-[52px]">
+              <span aria-hidden="true" class="font-bold">!</span>{{ row.warning }}
+            </p>
+          }
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="flex flex-col gap-3">
+    <h3 class="font-semibold">{{ 'admin.look.background' | translate }}</h3>
+    <div class="segmented self-start">
+      @for (kind of backgroundKinds; track kind) {
+        <button
+          type="button"
+          [attr.aria-pressed]="t.background.kind === kind"
+          (click)="set('background', { kind })"
+        >
+          {{ 'admin.look.backgroundKinds.' + kind | translate }}
+        </button>
+      }
+    </div>
+    @if (t.background.kind === 'image') {
+      <div class="panel grid grid-cols-[120px_minmax(0,1fr)] items-start gap-4 p-3.5">
+        <div
+          class="h-[90px] rounded-md bg-cover bg-center"
+          [style.background-image]="imageCss(t.background.imagePath)"
+        ></div>
+        <div class="flex min-w-0 flex-col gap-3">
+          <ng-container
+            [ngTemplateOutlet]="uploader"
+            [ngTemplateOutletContext]="{ kind: 'background', path: t.background.imagePath }"
+          />
+          <label class="grid grid-cols-[64px_1fr_44px] items-center gap-2.5 text-[13px]">
+            {{ 'admin.look.overlay' | translate }}
+            <input
+              #overlay
+              type="range"
+              min="0"
+              max="80"
+              class="accent-ink"
+              [value]="round(t.background.overlay * 100)"
+              (input)="set('background', { overlay: +overlay.value / 100 })"
+            />
+            <span class="font-mono">{{ round(t.background.overlay * 100) }}%</span>
+          </label>
+          <label class="grid grid-cols-[64px_1fr_44px] items-center gap-2.5 text-[13px]">
+            {{ 'admin.look.blur' | translate }}
+            <input
+              #blur
+              type="range"
+              min="0"
+              max="12"
+              class="accent-ink"
+              [value]="t.background.blur"
+              (input)="set('background', { blur: +blur.value })"
+            />
+            <span class="font-mono">{{ t.background.blur }}px</span>
+          </label>
+          <p class="text-xs text-muted">{{ 'admin.look.photoNote' | translate }}</p>
+        </div>
+      </div>
+    } @else {
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3">
+        <div class="flex flex-col gap-1.5 text-[13px] text-muted">
+          {{
+            (t.background.kind === 'gradient' ? 'admin.look.from' : 'admin.look.color') | translate
+          }}
+          <div class="flex items-center gap-2">
+            <ng-container
+              [ngTemplateOutlet]="picker"
+              [ngTemplateOutletContext]="{ key: 'background' }"
+            />
+            <ng-container
+              [ngTemplateOutlet]="hex"
+              [ngTemplateOutletContext]="{ key: 'background' }"
+            />
+          </div>
+        </div>
+        @if (t.background.kind === 'gradient') {
+          <div class="flex flex-col gap-1.5 text-[13px] text-muted">
+            {{ 'admin.look.to' | translate }}
+            <div class="flex items-center gap-2">
+              <ng-container
+                [ngTemplateOutlet]="picker"
+                [ngTemplateOutletContext]="{ key: 'gradientTo' }"
+              />
+              <ng-container
+                [ngTemplateOutlet]="hex"
+                [ngTemplateOutletContext]="{ key: 'gradientTo' }"
+              />
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </section>
+
+  <section class="flex flex-col gap-2.5">
+    <h3 class="font-semibold">{{ 'admin.look.invitationImage' | translate }}</h3>
+    <div class="panel grid grid-cols-[96px_minmax(0,1fr)] gap-4 p-3.5">
+      <div
+        class="grid h-[120px] w-24 place-items-center rounded bg-cover bg-center"
+        [style.background-image]="imageCss(t.hero.imagePath)"
+      >
+        @if (!t.hero.imagePath) {
+          <span class="font-mono text-[10px] text-[#4a4a46]">{{
+            'admin.look.none' | translate
+          }}</span>
+        }
+      </div>
+      <div class="flex min-w-0 flex-col gap-2.5">
+        <ng-container
+          [ngTemplateOutlet]="uploader"
+          [ngTemplateOutletContext]="{ kind: 'hero', path: t.hero.imagePath }"
+        />
+        <label class="field text-[13px]">
+          {{ 'admin.look.altText' | translate }}
+          <input
+            #alt
+            class="input"
+            maxlength="300"
+            [value]="t.hero.alt"
+            (input)="set('hero', { alt: alt.value })"
+          />
+          <span class="hint">{{ 'admin.look.altHint' | translate }}</span>
+        </label>
+        @if (t.hero.imagePath && !t.hero.alt.trim()) {
+          <p role="alert" class="warning">
+            <span aria-hidden="true" class="font-bold">!</span
+            >{{ 'admin.look.altWarning' | translate }}
+          </p>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="flex flex-col gap-2.5">
+    <h3 class="font-semibold">{{ 'admin.look.fonts' | translate }}</h3>
+    <div class="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-2">
+      @for (f of fonts; track f.key) {
+        @let on = t.typography.pairing === f.key;
+        <button
+          type="button"
+          class="flex cursor-pointer flex-col items-start gap-1 rounded-lg bg-white px-3 pt-3 pb-2.5 text-left"
+          [class]="on ? 'border-2 border-ink' : 'm-px border border-line'"
+          [attr.aria-pressed]="on"
+          (click)="set('typography', { pairing: f.key })"
+        >
+          <span
+            class="text-xl leading-[1.1]"
+            [style.font-family]="f.family"
+            [style.font-weight]="f.weight"
+          >
+            {{ 'admin.look.fontNames.' + f.key | translate }}
+          </span>
+          <span class="text-xs text-muted">{{ f.heading }} / {{ f.body }}</span>
+        </button>
+      }
+    </div>
+  </section>
+
+  <section class="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-3">
+    <h3 class="font-semibold">{{ 'admin.look.textSize' | translate }}</h3>
+    <div class="segmented justify-self-start">
+      @for (v of scales; track v) {
+        <button
+          type="button"
+          [attr.aria-pressed]="t.typography.scale === v"
+          (click)="set('typography', { scale: v })"
+        >
+          {{ 'admin.look.options.scale.' + v | translate }}
+        </button>
+      }
+    </div>
+    <h3 class="font-semibold">{{ 'admin.look.card' | translate }}</h3>
+    <div class="segmented justify-self-start">
+      @for (v of cardStyles; track v) {
+        <button
+          type="button"
+          [attr.aria-pressed]="t.card.style === v"
+          (click)="set('card', { style: v })"
+        >
+          {{ 'admin.look.options.card.' + v | translate }}
+        </button>
+      }
+    </div>
+    <h3 class="font-semibold">{{ 'admin.look.corners' | translate }}</h3>
+    <div class="segmented justify-self-start">
+      @for (v of radii; track v) {
+        <button
+          type="button"
+          [attr.aria-pressed]="t.card.radius === v"
+          (click)="set('card', { radius: v })"
+        >
+          {{ 'admin.look.options.radius.' + v | translate }}
+        </button>
+      }
+    </div>
+    <h3 class="font-semibold">{{ 'admin.look.buttons' | translate }}</h3>
+    <div class="segmented justify-self-start">
+      @for (v of buttonStyles; track v) {
+        <button
+          type="button"
+          [attr.aria-pressed]="t.button.style === v"
+          (click)="set('button', { style: v })"
+        >
+          {{ 'admin.look.options.button.' + v | translate }}
+        </button>
+      }
+    </div>
+  </section>
+</div>
+
+<ng-template #picker let-key="key">
+  <input
+    #pick
+    type="color"
+    class="size-10 shrink-0 cursor-pointer rounded-md border border-black/15 bg-transparent p-0"
+    [value]="color(key)"
+    [attr.aria-label]="
+      'admin.look.colorPicker' | translate: { label: 'admin.look.colorNames.' + key | translate }
+    "
+    (input)="setColor(key, pick.value)"
+  />
+</ng-template>
+
+<ng-template #hex let-key="key">
+  <span class="flex min-w-0 flex-1 flex-col gap-1">
+    <input
+      #hexInput
+      class="input h-10 font-mono text-sm!"
+      spellcheck="false"
+      [value]="hexText(key)"
+      [attr.aria-label]="
+        'admin.look.hex' | translate: { label: 'admin.look.colorNames.' + key | translate }
+      "
+      [attr.aria-invalid]="!validHex(key)"
+      (input)="typeHex(key, hexInput.value)"
+      (blur)="forgetHex(key)"
+    />
+    @if (!validHex(key)) {
+      <span class="field-error">{{ 'admin.look.hexError' | translate }}</span>
+    }
+  </span>
+</ng-template>
+
+<ng-template #uploader let-kind="kind" let-path="path">
+  <div class="flex flex-wrap gap-1.5">
+    <label class="btn btn-sm relative border-line-strong" [class.opacity-60]="uploading() === kind">
+      {{
+        (uploading() === kind
+          ? 'admin.look.uploading'
+          : 'admin.look.' + (path ? 'replace' : 'upload') + (kind === 'hero' ? 'Image' : 'Photo')
+        ) | translate
+      }}
+      <input
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        class="absolute size-px opacity-0"
+        [disabled]="uploading() !== null"
+        (change)="upload(kind, $event)"
+      />
+    </label>
+    @if (path) {
+      <button type="button" class="btn btn-sm" (click)="removeImage(kind)">
+        {{ 'common.remove' | translate }}
+      </button>
+    }
+  </div>
+</ng-template>

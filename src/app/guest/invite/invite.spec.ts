@@ -2,14 +2,14 @@ import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideTranslateService, TranslateLoader } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import en from '../../../public/i18n/en.json';
-import es from '../../../public/i18n/es.json';
-import { I18n } from '../i18n';
-import type { PublicEvent } from '../api/models';
-import { PublicApi } from '../api/public-api';
-import { DEFAULT_THEME } from '../theme';
+import en from '../../../../public/i18n/en.json';
+import es from '../../../../public/i18n/es.json';
+import { I18n } from '../../i18n';
+import type { PublicEvent } from '../../api/models';
+import { PublicApi } from '../../api/public-api';
+import { DEFAULT_THEME } from '../../theme';
 import { Invite } from './invite';
-import { RsvpForm } from './rsvp-form';
+import { RsvpForm } from '../rsvp-form/rsvp-form';
 
 const event: PublicEvent = {
   slug: 'maya-6',

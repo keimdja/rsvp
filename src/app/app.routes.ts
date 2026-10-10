@@ -3,8 +3,17 @@ import { Routes } from '@angular/router';
 // Each entry is its own lazy chunk, so guests never download admin code.
 // 'admin' must come before ':slug' (the database also reserves the slug 'admin').
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', title: 'titles.default', loadComponent: () => import('./home') },
+  {
+    path: '',
+    pathMatch: 'full',
+    title: 'titles.default',
+    loadComponent: () => import('./home/home'),
+  },
   { path: 'admin', loadChildren: () => import('./admin/admin.routes') },
-  { path: ':slug', title: 'titles.default', loadComponent: () => import('./guest/rsvp-page') },
-  { path: '**', title: 'titles.default', loadComponent: () => import('./not-found') },
+  {
+    path: ':slug',
+    title: 'titles.default',
+    loadComponent: () => import('./guest/rsvp-page/rsvp-page'),
+  },
+  { path: '**', title: 'titles.default', loadComponent: () => import('./not-found/not-found') },
 ];
