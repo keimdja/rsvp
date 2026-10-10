@@ -1,24 +1,23 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { type CanMatchFn, Router } from '@angular/router';
-import { SUPABASE } from '../supabase';
+import { AuthApi } from '../api/auth-api';
 
 /**
- * Admin session. Signing in proves who someone is; the admins table (readable only for
- * one's own row) decides whether they may manage events. RLS enforces the same rule on
- * every query, so this check only decides which screen to show.
+ * Admin session for the UI: who is signed in and whether they may manage events. The
+ * backend checks admin rights again on every admin call, so this only picks the screen.
  */
 @Injectable({ providedIn: 'root' })
 export class Auth {
-  private readonly supabase = inject(SUPABASE);
+  private readonly api = inject(AuthApi);
   private readonly router = inject(Router);
   private adminCheck: { userId: string; result: Promise<boolean> } | null = null;
 
   readonly email = signal('');
 
   constructor() {
-    this.supabase.auth.onAuthStateChange((event, session) => {
-      this.email.set(session?.user.email ?? '');
-      if (event === 'SIGNED_OUT') {
+    this.api.onChange((user, signedOut) => {
+      this.email.set(user?.email ?? '');
+      if (signedOut) {
         this.adminCheck = null;
         void this.router.navigateByUrl('/admin/login');
       }
@@ -26,41 +25,30 @@ export class Auth {
   }
 
   async isAdmin(): Promise<boolean> {
-    const { data } = await this.supabase.auth.getSession();
-    const userId = data.session?.user.id;
-    if (!userId) return false;
-    if (this.adminCheck?.userId !== userId) {
-      this.adminCheck = { userId, result: this.lookUpAdmin(userId) };
+    const user = await this.api.currentUser();
+    if (!user) return false;
+    if (this.adminCheck?.userId !== user.id) {
+      const result = this.api.isAdmin().catch(() => {
+        this.adminCheck = null; // don't cache a network failure
+        return false;
+      });
+      this.adminCheck = { userId: user.id, result };
     }
     return this.adminCheck.result;
   }
 
   /** Resolves to an error's translation key, or null when signed in as an admin. */
   async signIn(email: string, password: string): Promise<string | null> {
-    const { error } = await this.supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      return error.status === 400 ? 'admin.login.wrongCredentials' : 'admin.login.failed';
-    }
+    const outcome = await this.api.signIn(email, password);
+    if (outcome === 'wrong_credentials') return 'admin.login.wrongCredentials';
+    if (outcome === 'failed') return 'admin.login.failed';
     if (await this.isAdmin()) return null;
-    await this.supabase.auth.signOut();
+    await this.api.signOut();
     return 'admin.login.notAdmin';
   }
 
-  async signOut(): Promise<void> {
-    await this.supabase.auth.signOut();
-  }
-
-  private async lookUpAdmin(userId: string): Promise<boolean> {
-    const { data, error } = await this.supabase
-      .from('admins')
-      .select('user_id')
-      .eq('user_id', userId)
-      .maybeSingle();
-    if (error) {
-      this.adminCheck = null; // don't cache a network failure
-      return false;
-    }
-    return data !== null;
+  signOut(): Promise<void> {
+    return this.api.signOut();
   }
 }
 

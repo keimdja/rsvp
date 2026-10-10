@@ -43,6 +43,22 @@ begin
   exception when insufficient_privilege then null;
   end;
 
+  -- None of the admin API is callable without signing in.
+  foreach v_object in array array[
+    'current_user_is_admin()', 'admin_list_events()',
+    format('admin_get_event(%L)', gen_random_uuid()), 'admin_create_event()',
+    format('admin_update_event(%L, ''{}'')', gen_random_uuid()),
+    format('admin_delete_event(%L)', gen_random_uuid()),
+    format('admin_list_replies(%L)', gen_random_uuid()),
+    format('admin_delete_reply(%L)', gen_random_uuid())
+  ] loop
+    begin
+      execute 'select public.' || v_object;
+      raise exception 'FAIL: anon can call %', v_object;
+    exception when insufficient_privilege then null;
+    end;
+  end loop;
+
   begin
     insert into storage.objects (bucket_id, name) values ('event-images', 'sec-test.jpg');
     raise exception 'FAIL: anon can upload to event-images';
@@ -135,17 +151,18 @@ select set_config('request.jwt.claims',
 do $$
 declare
   v_object text;
-  v_rows   bigint;
 begin
-  if private.is_admin() then
+  if public.current_user_is_admin() then
     raise exception 'FAIL: a non-admin is reported as admin';
   end if;
 
+  -- Signed-in users have no direct table access: data goes through the API functions.
   foreach v_object in array array['events', 'rsvps', 'admins', 'event_summaries'] loop
-    execute format('select count(*) from public.%I', v_object) into v_rows;
-    if v_rows <> 0 then
-      raise exception 'FAIL: non-admin can see % rows in %', v_rows, v_object;
-    end if;
+    begin
+      execute format('select 1 from public.%I limit 1', v_object);
+      raise exception 'FAIL: signed-in user can select from %', v_object;
+    exception when insufficient_privilege then null;
+    end;
   end loop;
 
   begin
@@ -154,6 +171,22 @@ begin
     raise exception 'FAIL: non-admin can insert an event';
   exception when insufficient_privilege then null;
   end;
+
+  -- Every admin function refuses a non-admin (not_authorized is SQLSTATE 42501).
+  foreach v_object in array array[
+    'admin_list_events()',
+    format('admin_get_event(%L)', gen_random_uuid()), 'admin_create_event()',
+    format('admin_update_event(%L, ''{}'')', gen_random_uuid()),
+    format('admin_delete_event(%L)', gen_random_uuid()),
+    format('admin_list_replies(%L)', gen_random_uuid()),
+    format('admin_delete_reply(%L)', gen_random_uuid())
+  ] loop
+    begin
+      execute 'select public.' || v_object;
+      raise exception 'FAIL: non-admin can call %', v_object;
+    exception when insufficient_privilege then null;
+    end;
+  end loop;
 
   begin
     insert into storage.objects (bucket_id, name) values ('event-images', 'sec-test.jpg');
@@ -176,19 +209,72 @@ select set_config('request.jwt.claims',
 set local role authenticated;
 
 do $$
+declare
+  v_open    uuid;
+  v_closed  uuid;
+  v_created uuid;
+  v_reply   uuid;
 begin
   if current_setting('request.jwt.claims', true) = '' then
     raise notice 'SKIP: no admin yet, admin checks not run';
     return;
   end if;
-  if not private.is_admin() then
-    raise exception 'FAIL: admin is not recognised by is_admin()';
+  if not public.current_user_is_admin() then
+    raise exception 'FAIL: admin is not recognised';
   end if;
-  if not exists (select from public.events where slug = 'sec-test-closed') then
-    raise exception 'FAIL: admin cannot read inactive events';
+  v_open   := (select id from public.admin_list_events() where slug = 'sec-test-open');
+  v_closed := (select id from public.admin_list_events() where slug = 'sec-test-closed');
+
+  -- Even admins have no direct table access.
+  begin
+    perform 1 from public.events limit 1;
+    raise exception 'FAIL: admin can select from events directly';
+  exception when insufficient_privilege then null;
+  end;
+
+  if not exists (select from public.admin_list_events() where slug = 'sec-test-open' and total_count = 2)
+     or not exists (select from public.admin_list_events() where slug = 'sec-test-closed') then
+    raise exception 'FAIL: admin_list_events misses events or counts';
   end if;
-  if not exists (select from public.event_summaries where slug = 'sec-test-open' and total_count = 2) then
-    raise exception 'FAIL: admin cannot read event_summaries counts';
+  if (select title from public.admin_get_event(v_closed)) is distinct from 'Closed' then
+    raise exception 'FAIL: admin_get_event does not return the event';
+  end if;
+
+  -- Update: changes named fields only; id cannot change; duplicate links are slug_taken.
+  perform public.admin_update_event(v_closed, jsonb_build_object('title', 'Renamed', 'id', gen_random_uuid()));
+  if (select title from public.admin_get_event(v_closed)) is distinct from 'Renamed' then
+    raise exception 'FAIL: admin_update_event did not update the title (or changed the id)';
+  end if;
+  begin
+    perform public.admin_update_event(v_closed, '{"slug": "sec-test-open"}');
+    raise exception 'FAIL: admin_update_event accepted a duplicate link';
+  exception when raise_exception then
+    if sqlerrm <> 'slug_taken' then raise; end if;
+  end;
+
+  -- Create: unique link chosen on the server, always inactive.
+  v_created := public.admin_create_event('{"slug": "sec-test-open", "title": "Created", "is_active": true}');
+  if not exists (
+    select from public.admin_get_event(v_created)
+    where slug = 'sec-test-open-2' and title = 'Created' and not is_active
+  ) then
+    raise exception 'FAIL: admin_create_event did not pick a free link or left it active';
+  end if;
+
+  -- Replies: list and delete.
+  if (select count(*) from public.admin_list_replies(v_open)) <> 2 then
+    raise exception 'FAIL: admin_list_replies does not return the replies';
+  end if;
+  v_reply := (select id from public.admin_list_replies(v_open) limit 1);
+  perform public.admin_delete_reply(v_reply);
+  if (select count(*) from public.admin_list_replies(v_open)) <> 1 then
+    raise exception 'FAIL: admin_delete_reply did not delete the reply';
+  end if;
+
+  -- Delete event: gone, with its replies.
+  perform public.admin_delete_event(v_open);
+  if exists (select from public.admin_get_event(v_open)) then
+    raise exception 'FAIL: admin_delete_event did not delete the event';
   end if;
 end $$;
 

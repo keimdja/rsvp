@@ -1,0 +1,121 @@
+@let ev = event();
+<form class="relative flex flex-col gap-[26px]" novalidate (submit)="submit($event, trap.value)">
+  @if (summary(); as message) {
+    <div
+      role="alert"
+      class="flex items-start gap-2.5 rounded-(--rsvp-field-radius) border-2 border-rsvp-error px-3.5 py-3 font-semibold"
+    >
+      <span aria-hidden="true" class="font-extrabold text-rsvp-error">!</span>
+      <span>{{ message }}</span>
+    </div>
+  }
+
+  <div class="flex flex-col gap-2">
+    <label for="rsvp-name" class="font-bold">{{ t('form.yourName') }}</label>
+    <input
+      #nameInput
+      id="rsvp-name"
+      class="rsvp-field"
+      autocomplete="name"
+      maxlength="100"
+      [placeholder]="t('form.namePlaceholder')"
+      aria-required="true"
+      [value]="name()"
+      [disabled]="pending()"
+      [attr.aria-invalid]="nameError()"
+      [attr.aria-describedby]="nameError() ? 'rsvp-name-error' : null"
+      (input)="name.set(nameInput.value); nameError.set(false)"
+    />
+    @if (nameError()) {
+      <span id="rsvp-name-error" class="rsvp-error">{{ t('form.nameError') }}</span>
+    }
+  </div>
+
+  <fieldset
+    class="flex min-w-0 flex-col gap-3"
+    [attr.aria-describedby]="choiceError() ? 'rsvp-choice-error' : null"
+  >
+    <legend class="rsvp-heading mb-3 text-[calc(24px*var(--rsvp-scale))] leading-[1.15]">
+      {{ ev.rsvp_question }}
+    </legend>
+    <div class="grid grid-cols-3 gap-2">
+      @for (choice of choices; track choice) {
+        @let checked = response() === choice;
+        <label
+          class="rsvp-choice flex min-h-[68px] flex-col items-center justify-center gap-1 px-1 py-2 text-[max(16px,1em)] font-extrabold @3xl:min-h-[76px]"
+        >
+          <input
+            type="radio"
+            name="response"
+            class="sr-only"
+            [value]="choice"
+            [checked]="checked"
+            [disabled]="pending()"
+            [attr.aria-invalid]="choiceError()"
+            (change)="response.set(choice); choiceError.set(false)"
+          />
+          <span aria-hidden="true" class="text-lg leading-none">{{ checked ? '✓' : '○' }}</span>
+          <span>{{ t('response.' + choice) }}</span>
+        </label>
+      }
+    </div>
+    @if (choiceError()) {
+      <span id="rsvp-choice-error" class="rsvp-error">{{ t('form.choiceError') }}</span>
+    }
+  </fieldset>
+
+  @if (ev.notes_enabled) {
+    <div class="flex flex-col gap-2">
+      <label for="rsvp-notes" class="flex flex-wrap items-baseline gap-2">
+        <span class="font-bold">{{ ev.notes_label }}</span>
+        <span class="text-[13px] font-semibold text-rsvp-muted">
+          {{ t(ev.notes_required ? 'form.required' : 'form.optional') }}
+        </span>
+      </label>
+      <textarea
+        #notesInput
+        id="rsvp-notes"
+        class="rsvp-field min-h-24 resize-y"
+        rows="3"
+        maxlength="1000"
+        [value]="notes()"
+        [disabled]="pending()"
+        [attr.aria-required]="ev.notes_required"
+        [attr.aria-invalid]="notesError()"
+        [attr.aria-describedby]="notesError() ? 'rsvp-notes-error' : null"
+        (input)="notes.set(notesInput.value); notesError.set(false)"
+      ></textarea>
+      @if (notesError()) {
+        <span id="rsvp-notes-error" class="rsvp-error">{{ t('form.notesError') }}</span>
+      }
+    </div>
+  }
+
+  <!-- Honeypot: invisible to people, tempting to bots. -->
+  <div aria-hidden="true" class="absolute -left-[10000px] size-px overflow-hidden">
+    <label
+      >{{ t('form.honeypot') }} <input #trap name="website" tabindex="-1" autocomplete="off"
+    /></label>
+  </div>
+
+  <div class="flex flex-col gap-3">
+    <button
+      type="submit"
+      class="rsvp-submit flex min-h-[58px] w-full items-center justify-center gap-2.5"
+      [class.opacity-85]="pending()"
+      [disabled]="pending()"
+      [attr.aria-busy]="pending()"
+    >
+      @if (pending()) {
+        <span
+          aria-hidden="true"
+          class="size-[18px] animate-spin rounded-full border-[2.5px] border-current border-r-transparent"
+        ></span>
+        <span>{{ t('form.sending') }}</span>
+      } @else {
+        {{ ev.button_text }}
+      }
+    </button>
+    <p class="text-center text-sm text-rsvp-muted">{{ t('form.privacy') }}</p>
+  </div>
+</form>

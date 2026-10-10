@@ -36,6 +36,8 @@ jobs:
           SUPABASE_URL: ${{ vars.SUPABASE_URL }}
           SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
 
+      - name: Check API boundary
+        run: node scripts/check-api-boundary.mjs
       - name: Build
         run: npx ng build --configuration production --base-href "${{ vars.BASE_HREF || format('/{0}/', github.event.repository.name) }}"
 
