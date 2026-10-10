@@ -2,13 +2,13 @@ import { Component, input, signal } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Invite } from '../guest/invite';
 import { RsvpConfirmation } from '../guest/rsvp-confirmation';
-import { type RsvpDraft, RsvpForm } from '../guest/rsvp-form';
-import type { PublicEvent } from '../supabase';
+import { RsvpForm } from '../guest/rsvp-form';
+import type { PublicEvent, ReplyInput } from '../api/models';
 import type { EventTheme } from '../theme';
 
 type PreviewState = 'form' | 'errors' | 'sent';
 
-const SAMPLE_REPLY: RsvpDraft = { guest_name: 'Priya Shah', response: 'yes', notes: '' };
+const SAMPLE_REPLY: ReplyInput = { guest_name: 'Priya Shah', response: 'yes', notes: '' };
 
 /**
  * The guest page as guests will see it, rendered by the same components. On wide screens

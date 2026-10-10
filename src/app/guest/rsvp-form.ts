@@ -1,16 +1,10 @@
 import { Component, computed, input, linkedSignal, output } from '@angular/core';
 import { guestLocale, guestTranslator } from '../i18n';
-import { type PublicEvent, RESPONSES, type RsvpResponse } from '../supabase';
-
-export interface RsvpDraft {
-  guest_name: string;
-  response: RsvpResponse;
-  notes: string;
-}
+import { type PublicEvent, type ReplyInput, RESPONSES } from '../api/models';
 
 /** `bot` is true when the hidden honeypot field was filled in. */
 export interface RsvpSubmission {
-  draft: RsvpDraft;
+  draft: ReplyInput;
   bot: boolean;
 }
 
@@ -157,7 +151,7 @@ export class RsvpForm {
       >
     >();
   /** Prefills the form, e.g. when a guest changes an earlier reply. */
-  readonly initial = input<RsvpDraft | null>(null);
+  readonly initial = input<ReplyInput | null>(null);
   readonly pending = input(false);
   readonly problem = input<RsvpProblem | null>(null);
   /** Admin preview: show the empty-form validation state. */

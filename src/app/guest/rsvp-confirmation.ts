@@ -11,9 +11,8 @@ import {
   viewChild,
 } from '@angular/core';
 import { guestTranslator } from '../i18n';
-import type { PublicEvent } from '../supabase';
+import type { PublicEvent, ReplyInput } from '../api/models';
 import { googleCalendarUrl, icsFile, outlookCalendarUrl } from './calendar';
-import type { RsvpDraft } from './rsvp-form';
 
 @Component({
   selector: 'app-rsvp-confirmation',
@@ -73,7 +72,7 @@ import type { RsvpDraft } from './rsvp-form';
 })
 export class RsvpConfirmation {
   readonly event = input.required<PublicEvent>();
-  readonly reply = input.required<RsvpDraft>();
+  readonly reply = input.required<ReplyInput>();
   readonly pageUrl = input.required<string>();
   /** Move focus to the message, so screen readers announce it right after submitting. */
   readonly focusOnShow = input(false);

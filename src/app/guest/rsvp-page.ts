@@ -13,14 +13,21 @@ import { Title } from '@angular/platform-browser';
 import NotFound from '../not-found';
 import { TranslatePipe } from '@ngx-translate/core';
 import { I18n, isLanguage } from '../i18n';
-import { RESPONSES, type RsvpResponse, SUPABASE, type PublicEvent } from '../supabase';
+import {
+  ApiError,
+  type PublicEvent,
+  type ReplyInput,
+  RESPONSES,
+  type RsvpResponse,
+} from '../api/models';
+import { PublicApi } from '../api/public-api';
 import { NEUTRAL_STYLE, resolveTheme } from '../theme';
 import { Invite } from './invite';
 import { RsvpConfirmation } from './rsvp-confirmation';
-import { type RsvpDraft, RsvpForm, type RsvpProblem, type RsvpSubmission } from './rsvp-form';
+import { RsvpForm, type RsvpProblem, type RsvpSubmission } from './rsvp-form';
 
 /** A guest's reply, kept in their browser so "Change my reply" can edit it. */
-interface SavedReply extends RsvpDraft {
+interface SavedReply extends ReplyInput {
   token: string; // edit token from submit_rsvp; empty for replies that never reached the server
 }
 
@@ -122,7 +129,7 @@ const KNOWN_PROBLEMS = new Set<string>([
 export default class RsvpPage {
   readonly slug = input.required<string>();
 
-  private readonly supabase = inject(SUPABASE);
+  private readonly api = inject(PublicApi);
   private readonly document = inject(DOCUMENT);
   private readonly title = inject(Title);
   private readonly i18n = inject(I18n);
@@ -133,10 +140,7 @@ export default class RsvpPage {
   protected readonly event = resource({
     params: () => ({ slug: this.slug() }),
     loader: async ({ params }): Promise<PublicEvent | null> => {
-      const { data, error } = await this.supabase
-        .rpc('get_public_event', { p_slug: params.slug })
-        .maybeSingle();
-      if (error) throw error;
+      const data = await this.api.getEvent(params.slug);
       // Load the event's language before rendering, so labels never flash untranslated.
       if (data) await this.i18n.load(isLanguage(data.language) ? data.language : 'en');
       return data;
@@ -169,24 +173,19 @@ export default class RsvpPage {
     }
 
     this.pending.set(true);
-    const { data: token, error } = await this.supabase.rpc('submit_rsvp', {
-      p_slug: this.slug(),
-      p_guest_name: draft.guest_name,
-      p_response: draft.response,
-      p_notes: draft.notes || undefined,
-      p_edit_token: this.saved()?.token || undefined,
-    });
-    this.pending.set(false);
-
-    if (error) {
-      if (error.message === 'event_unavailable') {
+    let token: string;
+    try {
+      token = await this.api.submitReply(this.slug(), draft, this.saved()?.token);
+    } catch (error) {
+      const code = error instanceof ApiError ? error.code : 'network';
+      if (code === 'event_unavailable') {
         this.event.reload(); // closed or removed meanwhile: show "not available"
       } else {
-        this.problem.set(
-          KNOWN_PROBLEMS.has(error.message) ? (error.message as RsvpProblem) : 'network',
-        );
+        this.problem.set(KNOWN_PROBLEMS.has(code) ? (code as RsvpProblem) : 'network');
       }
       return;
+    } finally {
+      this.pending.set(false);
     }
 
     const reply: SavedReply = { ...draft, token };

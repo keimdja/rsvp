@@ -2,7 +2,7 @@ import { Component, computed, inject, resource, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DEFAULT_WORDING, I18n, isLanguage, LOCALES } from '../i18n';
-import { SUPABASE } from '../supabase';
+import { AdminApi } from '../api/admin-api';
 import { AdminUi, copiedState } from './ui';
 
 interface EventItem {
@@ -157,7 +157,7 @@ interface EventItem {
   `,
 })
 export default class Dashboard {
-  private readonly supabase = inject(SUPABASE);
+  private readonly api = inject(AdminApi);
   private readonly router = inject(Router);
   private readonly ui = inject(AdminUi);
   private readonly i18n = inject(I18n);
@@ -166,16 +166,7 @@ export default class Dashboard {
   protected readonly copied = copiedState();
   protected readonly creating = signal(false);
 
-  protected readonly events = resource({
-    loader: async () => {
-      const { data, error } = await this.supabase
-        .from('event_summaries')
-        .select('*')
-        .order('event_date');
-      if (error) throw error;
-      return data;
-    },
-  });
+  protected readonly events = resource({ loader: () => this.api.listEvents() });
 
   protected readonly items = computed<EventItem[]>(() => {
     const today = new Date().toLocaleDateString('en-CA'); // local YYYY-MM-DD
@@ -208,11 +199,9 @@ export default class Dashboard {
         list?.map((e) => (e.id === item.id ? { ...e, is_active: value } : e)),
       );
     setActive(active);
-    const { error } = await this.supabase
-      .from('events')
-      .update({ is_active: active })
-      .eq('id', item.id);
-    if (error) {
+    try {
+      await this.api.updateEvent(item.id, { is_active: active });
+    } catch {
       setActive(!active);
       this.ui.toast('admin.dashboard.updateFailed');
       return;
@@ -229,35 +218,24 @@ export default class Dashboard {
    * default wording), then opens it in the editor.
    */
   protected async newEvent(): Promise<void> {
-    const taken = new Set(this.items().map((e) => e.slug));
-    let slug = 'new-event';
-    for (let n = 2; taken.has(slug); n++) slug = `new-event-${n}`;
-    const inAMonth = new Date(Date.now() + 30 * 86_400_000).toLocaleDateString('en-CA');
-
     const current = this.i18n.current();
     const language = isLanguage(current) ? current : 'en';
 
     this.creating.set(true);
-    const { data, error } = await this.supabase
-      .from('events')
-      .insert({
-        slug,
+    let id: string;
+    try {
+      id = await this.api.createEvent({
         title: this.translate.instant('admin.dashboard.newEventTitle') as string,
         language,
         ...DEFAULT_WORDING[language],
-        event_date: inAMonth,
-        start_time: '18:00',
-        end_time: '21:00',
-      })
-      .select('id')
-      .single();
-    this.creating.set(false);
-
-    if (error) {
+      });
+    } catch {
       this.ui.toast('admin.dashboard.createFailed');
       return;
+    } finally {
+      this.creating.set(false);
     }
     this.ui.toast('admin.dashboard.created');
-    await this.router.navigate(['/admin/events', data.id]);
+    await this.router.navigate(['/admin/events', id]);
   }
 }

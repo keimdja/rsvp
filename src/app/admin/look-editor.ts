@@ -1,7 +1,8 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Component, computed, DOCUMENT, inject, input, model, output, signal } from '@angular/core';
-import { IMAGE_BUCKET, publicImageUrl, SUPABASE } from '../supabase';
+import { AdminApi } from '../api/admin-api';
+import { PublicApi } from '../api/public-api';
 import {
   BUTTON_STYLES,
   CARD_STYLES,
@@ -431,7 +432,8 @@ export class LookEditor {
   /** Storage paths uploaded in this session, so the editor can clean up unused ones. */
   readonly uploaded = output<string>();
 
-  private readonly supabase = inject(SUPABASE);
+  private readonly api = inject(AdminApi);
+  private readonly publicApi = inject(PublicApi);
   private readonly document = inject(DOCUMENT);
   private readonly ui = inject(AdminUi);
   private readonly translate = inject(TranslateService);
@@ -578,7 +580,7 @@ export class LookEditor {
 
   protected imageCss(path: string | undefined): string {
     return path
-      ? `url("${publicImageUrl(this.supabase, path)}")`
+      ? `url("${this.publicApi.imageUrl(path)}")`
       : 'repeating-linear-gradient(135deg, rgb(0 0 0 / 0.07) 0 8px, transparent 8px 16px), linear-gradient(#ebeae6, #ebeae6)';
   }
 
@@ -590,13 +592,11 @@ export class LookEditor {
 
     this.uploading.set(kind);
     try {
-      const blob = await toWebImage(file, this.document);
-      const ext = blob.type === 'image/webp' ? 'webp' : 'jpg';
-      const path = `${this.eventId()}/${kind}-${crypto.randomUUID()}.${ext}`;
-      const { error } = await this.supabase.storage
-        .from(IMAGE_BUCKET)
-        .upload(path, blob, { contentType: blob.type, cacheControl: '31536000' });
-      if (error) throw error;
+      const path = await this.api.uploadImage(
+        this.eventId(),
+        kind,
+        await toWebImage(file, this.document),
+      );
       this.uploaded.emit(path);
       this.setImage(kind, path);
     } catch {

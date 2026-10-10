@@ -164,6 +164,77 @@ export type Database = {
       };
     };
     Functions: {
+      admin_create_event: { Args: { p_fields?: Json }; Returns: string };
+      admin_delete_event: { Args: { p_id: string }; Returns: undefined };
+      admin_delete_reply: { Args: { p_id: string }; Returns: undefined };
+      admin_get_event: {
+        Args: { p_id: string };
+        Returns: {
+          button_text: string;
+          confirmation_message: string;
+          created_at: string;
+          description: string | null;
+          end_time: string | null;
+          event_date: string;
+          id: string;
+          is_active: boolean;
+          language: string;
+          location_address: string | null;
+          location_name: string | null;
+          location_url: string | null;
+          notes_enabled: boolean;
+          notes_label: string;
+          notes_required: boolean;
+          rsvp_question: string;
+          slug: string;
+          start_time: string;
+          theme: Json;
+          timezone: string;
+          title: string;
+          updated_at: string;
+        }[];
+        SetofOptions: {
+          from: '*';
+          to: 'events';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
+      admin_list_events: {
+        Args: never;
+        Returns: {
+          event_date: string | null;
+          id: string | null;
+          is_active: boolean | null;
+          maybe_count: number | null;
+          no_count: number | null;
+          slug: string | null;
+          title: string | null;
+          total_count: number | null;
+          yes_count: number | null;
+        }[];
+        SetofOptions: {
+          from: '*';
+          to: 'event_summaries';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
+      admin_list_replies: {
+        Args: { p_event_id: string };
+        Returns: {
+          created_at: string;
+          guest_name: string;
+          id: string;
+          notes: string;
+          response: Database['public']['Enums']['rsvp_response'];
+        }[];
+      };
+      admin_update_event: {
+        Args: { p_fields: Json; p_id: string };
+        Returns: undefined;
+      };
+      current_user_is_admin: { Args: never; Returns: boolean };
       get_public_event: {
         Args: { p_slug: string };
         Returns: {

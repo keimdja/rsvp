@@ -5,7 +5,8 @@ import { of } from 'rxjs';
 import en from '../../../public/i18n/en.json';
 import es from '../../../public/i18n/es.json';
 import { I18n } from '../i18n';
-import { SUPABASE, type PublicEvent } from '../supabase';
+import type { PublicEvent } from '../api/models';
+import { PublicApi } from '../api/public-api';
 import { DEFAULT_THEME } from '../theme';
 import { Invite } from './invite';
 import { RsvpForm } from './rsvp-form';
@@ -58,7 +59,7 @@ describe('Invite', () => {
           fallbackLang: 'en',
           lang: 'en',
         }),
-        { provide: SUPABASE, useValue: {} },
+        { provide: PublicApi, useValue: { imageUrl: (path: string) => path } },
       ],
     });
   });

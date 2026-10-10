@@ -2,7 +2,9 @@
 
 A small personal RSVP site. Each event gets its own themed page at `/<slug>` where guests reply Yes, Maybe or No without an account; one or more admins manage events and replies at `/admin`.
 
-It is a static Angular app on GitHub Pages talking to one Supabase project. There is no server and no secret key anywhere: guests can only call two locked-down database functions, and everything else requires a signed-in admin, enforced by row level security.
+It is a static Angular app on GitHub Pages talking to one Supabase project. There is no server and no secret key anywhere.
+
+**Backend and frontend are separate.** All data logic lives in the database as named functions (the API, in `supabase/migrations`). The app calls them as endpoints (`/rest/v1/rpc/<name>`) through the services in `src/app/api` and holds no queries of its own. Guests can call two functions; everything else requires a signed-in admin, checked inside each function. Nobody has direct table access.
 
 - Architecture and decisions: [docs/architecture.md](docs/architecture.md)
 - Visual design (Claude Design export): [docs/design/](docs/design)
@@ -16,8 +18,13 @@ Angular (standalone components, signals, zoneless) · TypeScript · Tailwind CSS
 ```text
 src/app/
   app.routes.ts          / (landing), /admin (lazy), /:slug (lazy), anything else → "not available"
-  supabase.ts            the single Supabase client, image URLs, row types
-  database.types.ts      generated from the live schema (npm run db:types)
+  api/                   the only code that talks to Supabase (see "API")
+    public-api.ts        guest endpoints: get an event, send a reply, image URLs
+    admin-api.ts         admin endpoints: events, replies, image upload and removal
+    auth-api.ts          sign in/out, session, admin check
+    models.ts            data shapes and ApiError, used by the rest of the app
+    supabase.ts          the client and response handling (internal)
+    database.types.ts    generated from the live schema (npm run db:types)
   theme.ts               event theme model, presets, validation, CSS variables, contrast
   home.ts                landing page: guests paste their link or code, hosts go to sign in
   not-found.ts
@@ -29,6 +36,7 @@ supabase/
   seed.sql               two demo events (birthday, wedding) with sample replies
   tests/security_checks.sql
 scripts/write-env.mjs    writes src/environments/environment.ts from .env or CI variables
+scripts/check-api-boundary.mjs  fails the build if anything outside src/app/api uses Supabase
 .github/workflows/
   deploy-prod.yml        main → build → GitHub Pages
   keep-alive.yml         twice-weekly ping so the free Supabase project doesn't pause
@@ -59,12 +67,12 @@ Requires Node 22+.
 
 `npm start` and `npm run build` run `scripts/write-env.mjs` first, which writes the gitignored `src/environments/environment.ts`.
 
-| Script             | What it does                                                    |
-| ------------------ | --------------------------------------------------------------- |
-| `npm start`        | Dev server on port 4200                                         |
-| `npm run build`    | Production build into `dist/rsvp/browser` (base href `/rsvp/`)  |
-| `npm test`         | Unit tests (theme, calendar and time zones, CSV)                |
-| `npm run db:types` | Regenerates `src/app/database.types.ts` from the linked project |
+| Script             | What it does                                                        |
+| ------------------ | ------------------------------------------------------------------- |
+| `npm start`        | Dev server on port 4200                                             |
+| `npm run build`    | Production build into `dist/rsvp/browser` (base href `/rsvp/`)      |
+| `npm test`         | Unit tests (theme, calendar and time zones, CSV)                    |
+| `npm run db:types` | Regenerates `src/app/api/database.types.ts` from the linked project |
 
 > Never put the service-role or secret key in `.env`, the repo or CI. The app only ever needs the publishable key; row level security does the rest.
 
@@ -99,17 +107,30 @@ The project is created with **Automatically expose new tables** off and **Automa
    - **Authentication → URL Configuration:** set the Site URL to `https://<github-user>.github.io/rsvp/`.
    - **Authentication → Passwords:** turn on leaked password protection if your plan includes it.
 
-4. Verify. Paste [supabase/tests/security_checks.sql](supabase/tests/security_checks.sql) into the SQL editor and run it; it works inside a rolled-back transaction and ends with `PASS: all security checks passed`. Then run **Advisors → Security Advisor**. Four warnings are expected and intentional: `get_public_event` and `submit_rsvp` are `SECURITY DEFINER` functions callable by `anon` and `authenticated`, because they are the guest API.
+4. Verify. Paste [supabase/tests/security_checks.sql](supabase/tests/security_checks.sql) into the SQL editor and run it; it works inside a rolled-back transaction and ends with `PASS: all security checks passed`. Then run **Advisors → Security Advisor**. "Security definer function executable" warnings are expected for the API functions, because they are the API: `get_public_event` and `submit_rsvp` (callable by `anon` and `authenticated`) and the `admin_*` functions (callable by `authenticated`, and refusing anyone who isn't an admin).
 
-### Who can do what
+### API
 
-| Who                     | Can do                                                                                                                                |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| Guest (no account)      | Call `get_public_event(slug)` for one active event, and `submit_rsvp(...)` to create or edit their own reply. No table access at all. |
-| Signed-in, not an admin | Nothing beyond reading their own `admins` row (which doesn't exist).                                                                  |
-| Admin                   | Full access to events and replies; upload, replace and delete event images.                                                           |
+Every endpoint is a database function, called as `POST /rest/v1/rpc/<name>`. Failures come back as a named error (e.g. `slug_taken`), which the app receives as an `ApiError` code.
 
-Admins are added only in the SQL editor; there is no policy that lets anyone add themselves.
+| Endpoint                                                               | Who       | Does                                                                   |
+| ---------------------------------------------------------------------- | --------- | ---------------------------------------------------------------------- |
+| `get_public_event(p_slug)`                                             | anyone    | One active event's public fields, or nothing                           |
+| `submit_rsvp(p_slug, p_guest_name, p_response, p_notes, p_edit_token)` | anyone    | Creates a reply, or updates it given its edit token; returns the token |
+| `current_user_is_admin()`                                              | signed in | Whether the caller is an admin                                         |
+| `admin_list_events()`                                                  | admin     | Every event with Yes/Maybe/No counts                                   |
+| `admin_get_event(p_id)`                                                | admin     | One event, all fields                                                  |
+| `admin_create_event(p_fields)`                                         | admin     | Creates an inactive event with the given fields; picks a free link     |
+| `admin_update_event(p_id, p_fields)`                                   | admin     | Saves the given fields; a used link fails with `slug_taken`            |
+| `admin_delete_event(p_id)`                                             | admin     | Deletes the event and its replies                                      |
+| `admin_list_replies(p_event_id)`                                       | admin     | The event's replies, newest first                                      |
+| `admin_delete_reply(p_id)`                                             | admin     | Deletes one reply                                                      |
+
+Images use Supabase's Storage endpoint (bucket `event-images`): public to read, uploads and deletes for admins only.
+
+Nobody has direct table access, signed in or not; RLS stays on as a backstop. Admins are added only in the SQL editor.
+
+To add an endpoint: write the function in a new migration (start admin ones with `perform private.require_admin();`), push it, run `npm run db:types`, then add a method to the matching service in `src/app/api`.
 
 ## Deployment
 

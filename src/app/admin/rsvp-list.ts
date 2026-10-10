@@ -2,7 +2,8 @@ import { Component, computed, DOCUMENT, inject, input, resource, signal } from '
 import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { I18n, isLanguage, LOCALES } from '../i18n';
-import { RESPONSES, type RsvpResponse, SUPABASE } from '../supabase';
+import { AdminApi } from '../api/admin-api';
+import { RESPONSES, type RsvpResponse } from '../api/models';
 import { toCsv } from './csv';
 import { AdminUi, copiedState } from './ui';
 
@@ -178,7 +179,7 @@ function csvDate(iso: string): string {
 export default class RsvpList {
   readonly id = input.required<string>();
 
-  private readonly supabase = inject(SUPABASE);
+  private readonly api = inject(AdminApi);
   private readonly document = inject(DOCUMENT);
   private readonly ui = inject(AdminUi);
   private readonly i18n = inject(I18n);
@@ -192,16 +193,10 @@ export default class RsvpList {
     params: () => ({ id: this.id() }),
     loader: async ({ params }) => {
       const [event, rsvps] = await Promise.all([
-        this.supabase.from('events').select('id, slug, title').eq('id', params.id).maybeSingle(),
-        this.supabase
-          .from('rsvps')
-          .select('id, guest_name, response, notes, created_at')
-          .eq('event_id', params.id)
-          .order('created_at', { ascending: false }),
+        this.api.getEvent(params.id),
+        this.api.listReplies(params.id),
       ]);
-      if (event.error) throw event.error;
-      if (rsvps.error) throw rsvps.error;
-      return { event: event.data, rsvps: rsvps.data };
+      return { event, rsvps };
     },
   });
 
@@ -261,8 +256,9 @@ export default class RsvpList {
     });
     if (!confirmed) return;
 
-    const { error } = await this.supabase.from('rsvps').delete().eq('id', reply.id);
-    if (error) {
+    try {
+      await this.api.deleteReply(reply.id);
+    } catch {
       this.ui.toast('admin.list.deleteFailed');
       return;
     }

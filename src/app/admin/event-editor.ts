@@ -12,7 +12,8 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { toMapLink } from '../guest/calendar';
 import { DEFAULT_WORDING, isLanguage, type Language, LANGUAGES } from '../i18n';
-import { type EventRow, IMAGE_BUCKET, type PublicEvent, SUPABASE } from '../supabase';
+import { AdminApi } from '../api/admin-api';
+import { type AdminEvent, ApiError, type PublicEvent } from '../api/models';
 import { type EventTheme, resolveTheme } from '../theme';
 import { EventPreview } from './event-preview';
 import { LookEditor } from './look-editor';
@@ -62,7 +63,7 @@ const TIME_ZONES = [
 const RESERVED_SLUGS = ['admin', 'login', 'assets', 'index']; // matches the database check
 const hhmm = (time: string | null) => time?.slice(0, 5) ?? '';
 
-function toDraft(row: EventRow): Draft {
+function toDraft(row: AdminEvent): Draft {
   return {
     title: row.title,
     slug: row.slug,
@@ -576,7 +577,7 @@ const themePaths = (theme: EventTheme) =>
 export default class EventEditor {
   readonly id = input.required<string>();
 
-  private readonly supabase = inject(SUPABASE);
+  private readonly api = inject(AdminApi);
   private readonly document = inject(DOCUMENT);
   private readonly ui = inject(AdminUi);
   private readonly translate = inject(TranslateService);
@@ -604,15 +605,7 @@ export default class EventEditor {
 
   protected readonly event = resource({
     params: () => ({ id: this.id() }),
-    loader: async ({ params }) => {
-      const { data, error } = await this.supabase
-        .from('events')
-        .select('*')
-        .eq('id', params.id)
-        .maybeSingle();
-      if (error) throw error;
-      return data;
-    },
+    loader: ({ params }) => this.api.getEvent(params.id),
   });
 
   private readonly saved = linkedSignal<Draft | null>(() =>
@@ -737,11 +730,10 @@ export default class EventEditor {
     }
 
     this.saving.set(true);
-    const { error } = await this.supabase.from('events').update(toRow(draft)).eq('id', this.id());
-    this.saving.set(false);
-
-    if (error) {
-      if (error.code === '23505') {
+    try {
+      await this.api.updateEvent(this.id(), toRow(draft));
+    } catch (error) {
+      if (error instanceof ApiError && error.code === 'slug_taken') {
         this.errors.set({ slug: 'admin.editor.errors.slugTaken' });
         this.tab.set('details');
         this.ui.toast('admin.editor.fixFields');
@@ -749,6 +741,8 @@ export default class EventEditor {
         this.ui.toast('admin.editor.saveFailed');
       }
       return;
+    } finally {
+      this.saving.set(false);
     }
 
     const previous = this.saved();
@@ -757,19 +751,13 @@ export default class EventEditor {
     this.ui.toast('admin.editor.saved');
   }
 
-  /**
-   * Deletes the event after confirmation. Replies go with it (on delete cascade);
-   * its images are removed from Storage afterwards.
-   */
+  /** Deletes the event, its replies and its images, after confirmation. */
   protected async deleteEvent(): Promise<void> {
     const title = this.saved()?.title || (this.translate.instant('common.untitled') as string);
-    const { count } = await this.supabase
-      .from('rsvps')
-      .select('id', { count: 'exact', head: true })
-      .eq('event_id', this.id());
+    const count = (await this.api.listReplies(this.id()).catch(() => [])).length;
     const replies = this.translate.instant(
       count === 1 ? 'admin.editor.replyOne' : 'admin.editor.replyOther',
-      { count: count ?? 0 },
+      { count },
     ) as string;
     const confirmed = await this.ui.confirm({
       title: 'admin.editor.deleteConfirmTitle',
@@ -781,16 +769,13 @@ export default class EventEditor {
     if (!confirmed) return;
 
     this.deleting.set(true);
-    const { error } = await this.supabase.from('events').delete().eq('id', this.id());
-    if (error) {
+    try {
+      await this.api.deleteEvent(this.id());
+    } catch {
       this.deleting.set(false);
       this.ui.toast('admin.editor.deleteFailed');
       return;
     }
-
-    const bucket = this.supabase.storage.from(IMAGE_BUCKET);
-    const { data: files } = await bucket.list(this.id());
-    if (files?.length) await bucket.remove(files.map((f) => `${this.id()}/${f.name}`));
 
     this.deleted = true;
     this.ui.toast('admin.editor.deleted');
@@ -820,6 +805,6 @@ export default class EventEditor {
     const inUse = new Set(themePaths(kept));
     const unused = [...earlier, ...this.uploads].filter((path) => !inUse.has(path));
     this.uploads.clear();
-    if (unused.length) void this.supabase.storage.from(IMAGE_BUCKET).remove(unused);
+    void this.api.removeImages(unused);
   }
 }

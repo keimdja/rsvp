@@ -7,7 +7,8 @@ import {
   inject,
   input,
 } from '@angular/core';
-import { publicImageUrl, SUPABASE, type PublicEvent } from '../supabase';
+import type { PublicEvent } from '../api/models';
+import { PublicApi } from '../api/public-api';
 import { fontStylesheetUrl, loadStylesheet, themeToStyle, type EventTheme } from '../theme';
 import { NgTemplateOutlet } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
@@ -173,7 +174,7 @@ export class Invite {
   /** Rendered inside the admin preview: the page is not the document's main landmark. */
   readonly framed = input(false, { transform: booleanAttribute });
 
-  private readonly supabase = inject(SUPABASE);
+  private readonly api = inject(PublicApi);
   private readonly document = inject(DOCUMENT);
 
   private readonly i18n = inject(I18n);
@@ -196,7 +197,7 @@ export class Invite {
     return this.framed() ? eventLanguage : (this.i18n.chosen() ?? eventLanguage);
   });
 
-  private readonly imageUrl = (path: string) => publicImageUrl(this.supabase, path);
+  private readonly imageUrl = (path: string) => this.api.imageUrl(path);
 
   protected readonly style = computed(() => themeToStyle(this.theme(), this.imageUrl));
   protected readonly when = computed(() => formatWhen(this.event(), LOCALES[this.language()]));
